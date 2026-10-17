@@ -1,0 +1,11 @@
+pluginManagement {
+    repositories {
+        maven { url = 'https://maven.fabricmc.net/' }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    // wersja Loom może być podmieniona z linii poleceń (-Ploom_version=...), np. dla nowszego Minecrafta
+    plugins {
+        id 'fabric-loom' version "${loom_version}"
+    }
+}

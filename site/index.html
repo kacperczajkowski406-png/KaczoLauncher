@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kaczo Client – launcher i mod do Minecrafta</title>
+  <meta name="description" content="Kaczo Client: szklany launcher, mody z Modrinth, własny HUD z muzyką i aktualizacje w tle. Dla Minecrafta 1.21–1.21.8.">
+  <link rel="icon" href="img/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"></div>
+
+  <header class="top">
+    <a class="brand" href="#top"><img src="img/logo.svg" alt="" width="34" height="34"><span>Kaczo Client</span></a>
+    <nav aria-label="Sekcje">
+      <a href="#funkcje">Funkcje</a>
+      <a href="#wersje">Wersje Minecrafta</a>
+      <a href="#aktualizacje">Aktualizacje</a>
+      <a href="#instalacja">Instalacja</a>
+      <a href="#pytania">Pytania</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <h1>Launcher i mod do Minecrafta w jednej instalacji</h1>
+        <p class="lead">Szklany launcher, mody z Modrinth jednym kliknięciem, HUD z muzyką i aktualizacje w tle. Instalujesz raz, a potem aplikacja sama pilnuje nowych wersji.</p>
+        <ul class="ticks">
+          <li>Minecraft 1.21 – 1.21.8, Fabric</li>
+          <li>Konto premium i offline</li>
+          <li>Za darmo, bez reklam</li>
+        </ul>
+      </div>
+
+      <aside class="dl" aria-label="Pobieranie">
+        <img class="dl-duck" src="img/duck.svg" alt="" width="132" height="132">
+        <div class="dl-title">Kaczo Client <span id="dl-version" class="pill">wczytywanie…</span></div>
+        <a id="dl-btn" class="btn-main" href="#">Pobierz dla Windows</a>
+        <p id="dl-meta" class="dl-meta">Windows 10 / 11, 64-bit</p>
+        <a id="dl-all" class="dl-alt" href="#">Wszystkie wersje na GitHubie</a>
+      </aside>
+    </section>
+
+    <section id="funkcje" class="rows">
+      <article class="row">
+        <figure class="shot"><img src="img/launcher-play.png" alt="Ekran Graj w launcherze Kaczo Client" loading="lazy"></figure>
+        <div class="txt">
+          <h2>Launcher, który nie przeszkadza</h2>
+          <ul>
+            <li>Osobne instancje: każda ma własną wersję gry, mody i światy.</li>
+            <li>Mody z Modrinth instalujesz bez wychodzenia z aplikacji.</li>
+            <li>Pakiet optymalizacji (Sodium, Lithium i inne) dla większej liczby FPS.</li>
+            <li>Logowanie Microsoft albo konto offline. Java pobiera się sama.</li>
+            <li>Polski i angielski, także w samej grze.</li>
+            <li>Rich Presence w Discordzie.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="row flip">
+        <figure class="shot"><img src="img/launcher-launch.png" alt="Animacja uruchamiania gry" loading="lazy"></figure>
+        <div class="txt">
+          <h2>Mod Kaczo HUD wchodzi razem z grą</h2>
+          <ul>
+            <li>Szklany HUD: FPS, ping, koordynaty, zdrowie, głód, XP, CPS, klawisze i więcej.</li>
+            <li>Teraz gra: okładka i jedna linijka tekstu piosenki, zgrana z muzyką (Windows).</li>
+            <li>Własny celownik, który robi się czerwony na graczu.</li>
+            <li>Przesuwalna i przezroczysta tablica wyników.</li>
+            <li>Animowany ekran ładowania zamiast czerwonego ekranu Mojang, a w lobby nowe tło, logo i szklane przyciski.</li>
+            <li>Menu pod Prawym Shiftem, wszystko do ustawienia kolorami RGBA lub tęczą.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="row">
+        <figure class="shot"><img src="img/launcher-settings.png" alt="Ustawienia i aktualizacje w launcherze" loading="lazy"></figure>
+        <div class="txt">
+          <h2>Aktualizacje bez przeinstalowywania</h2>
+          <p>Launcher sprawdza nowe wersje przy starcie i co kilka godzin, pobiera je w tle i pokazuje przycisk „Zaktualizuj”. Mod jest częścią instalatora, więc aktualizuje się razem z aplikacją. Nie musisz niczego podmieniać ręcznie.</p>
+          <p>Wygląd launchera przełączysz w Ustawieniach: nowoczesne szkło, neon albo klockowy styl.</p>
+        </div>
+      </article>
+    </section>
+
+    <section id="wersje" class="plain">
+      <h2>Wersje Minecrafta</h2>
+      <p class="sect-lead">Mod Kaczo HUD jest budowany osobno dla każdej wersji. Launcher sam dobiera właściwy plik do instancji.</p>
+      <div class="vers" role="list">
+        <span role="listitem" class="v ok">1.21</span>
+        <span role="listitem" class="v ok">1.21.1</span>
+        <span role="listitem" class="v ok">1.21.2</span>
+        <span role="listitem" class="v ok">1.21.3</span>
+        <span role="listitem" class="v ok">1.21.4</span>
+        <span role="listitem" class="v ok">1.21.5</span>
+        <span role="listitem" class="v exp">1.21.6</span>
+        <span role="listitem" class="v exp">1.21.7</span>
+        <span role="listitem" class="v exp">1.21.8</span>
+      </div>
+      <p class="note"><span class="v ok sm">pełne wsparcie</span> <span class="v exp sm">eksperymentalne</span> – mod działa, ale bez płynnego zanikania animacji i bez przezroczystości tablicy wyników. Na innych wersjach gra uruchomi się bez moda.</p>
+    </section>
+
+    <section id="aktualizacje" class="plain">
+      <h2>Co nowego</h2>
+      <p class="sect-lead">Lista zmian pobiera się na żywo z wydań na GitHubie.</p>
+      <ol id="log" class="log"><li class="log-item"><div class="log-head"><strong>Wczytywanie…</strong></div></li></ol>
+    </section>
+
+    <section id="instalacja" class="plain">
+      <h2>Instalacja</h2>
+      <ol class="steps">
+        <li><strong>Pobierz instalator</strong> przyciskiem na górze strony.</li>
+        <li><strong>Uruchom plik</strong>. Jeśli Windows pokaże niebieskie okno „System Windows ochronił ten komputer”, kliknij „Więcej informacji”, a potem „Uruchom mimo to”. Instalator nie jest jeszcze podpisany certyfikatem, więc Windows tak reaguje na każdy nowy program.</li>
+        <li><strong>Wybierz folder</strong> i zakończ instalację. Na pulpicie pojawi się skrót Kaczo Client.</li>
+        <li><strong>Zaloguj się</strong> kontem Microsoft albo dodaj konto offline, utwórz instancję i kliknij GRAJ.</li>
+      </ol>
+    </section>
+
+    <section id="pytania" class="plain faq">
+      <h2>Pytania</h2>
+      <details><summary>Czy to oficjalny launcher Minecrafta?</summary><p>Nie. Kaczo Client to niezależny projekt. Nie jest związany z Mojang ani Microsoftem. Do gry z kontem premium potrzebujesz własnej licencji Minecrafta Java Edition.</p></details>
+      <details><summary>Czy mogę grać bez konta premium?</summary><p>Tak, launcher ma tryb offline. Na serwerach z włączoną weryfikacją kont i tak zagrasz tylko premium.</p></details>
+      <details><summary>Gdzie launcher trzyma moje dane?</summary><p>W folderze Kaczo Launcher w danych aplikacji (%APPDATA%). Tam są instancje, światy, ustawienia i wspólna konfiguracja HUD. Odinstalowanie programu nie kasuje światów.</p></details>
+      <details><summary>Dlaczego okładka piosenki albo tekst się nie pokazuje?</summary><p>Moduł Teraz gra czyta odtwarzacz z Windows, więc działa tylko w systemie Windows i z odtwarzaczami, które się w nim zgłaszają (np. Spotify). Teksty pochodzą z darmowej bazy lrclib.net, a nie każdy utwór ją ma.</p></details>
+      <details><summary>Mod się nie zainstalował w mojej wersji gry</summary><p>Sprawdź, czy Twoja wersja jest w tabeli powyżej i czy instancja używa Fabrica. Dla innych wersji launcher uruchamia grę bez moda.</p></details>
+    </section>
+  </main>
+
+  <footer>
+    <p>Kaczo Client jest projektem niezależnym i nie jest powiązany z Mojang Studios ani Microsoftem. Minecraft jest znakiem towarowym Mojang Studios.</p>
+    <p><a id="foot-repo" href="#">Kod i zgłoszenia błędów na GitHubie</a></p>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

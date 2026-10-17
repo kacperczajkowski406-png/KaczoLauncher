@@ -1,0 +1,112 @@
+/* ═════════ Motyw „klockowy” (Minecraft) ═════════ */
+:root {
+  --bg: #2b1d12; --panel: #3a3a3a; --panel-2: #6f6f6f; --line: #000;
+  --text: #ffffff; --muted: #b8b8b8; --accent: #ffd83a; --accent-2: #5fb53a; --danger: #ff5555;
+  --water: #55ffff; --pink: #ff8bd8; --radius: 0px;
+  --grad: linear-gradient(#6cc04a, #4a9a2e);
+  --bevel: inset 2px 2px 0 rgba(255,255,255,.38), inset -2px -2px 0 rgba(0,0,0,.45);
+  --bevel-in: inset 2px 2px 0 rgba(0,0,0,.55), inset -2px -2px 0 rgba(255,255,255,.14);
+  font-family: "Consolas", "Lucida Console", "Courier New", monospace;
+}
+* { border-radius: 0 !important; -webkit-font-smoothing: none; }
+body { background: #2b1d12 url(tex/dirt.png) 0 0 / 64px; image-rendering: pixelated; font-size: 14px; }
+body::before { content: ""; position: fixed; inset: 0; background: rgba(0,0,0,.55); pointer-events: none; }
+.topbar, .shell { position: relative; }
+.topbar { background: #3b2a1a url(tex/planks.png) 0 0 / 48px; border-bottom: 3px solid #000; box-shadow: 0 3px 0 rgba(0,0,0,.35); }
+.brand-mini { color: #fff; text-shadow: 2px 2px 0 #3f3f3f; letter-spacing: .2em; font-weight: 700; }
+
+/* tekst jak w grze: biały z ciemnym cieniem */
+h1, h2, .logo b, .nav-item, .btn, .play-btn, .badge, .wordmark { text-shadow: 2px 2px 0 rgba(0,0,0,.65); }
+.neon-yellow, .neon-cyan { color: #fff; text-shadow: 2px 2px 0 #3f3f3f; }
+.muted, .sub, .small { text-shadow: 1px 1px 0 rgba(0,0,0,.6); }
+
+/* boczny pasek: kamień */
+.sidebar { background: #7a7a7a url(tex/stone.png) 0 0 / 64px; border-right: 3px solid #000; box-shadow: 4px 0 0 rgba(0,0,0,.3); }
+.sidebar::before { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,.35); pointer-events: none; }
+.sidebar > * { position: relative; }
+.logo-img { filter: none; image-rendering: pixelated; }
+.logo b { font-size: 20px; letter-spacing: .06em; color: #ffd83a; }
+.logo span { color: #fff; }
+.nav-item { background: #8b8b8b; color: #fff; border: 2px solid #000; box-shadow: var(--bevel); padding: 10px 12px; }
+.nav-item:hover { background: #a0a0c8; box-shadow: var(--bevel); color: #ffffa0; }
+.nav-item.active { background: #5a8f3a; color: #fff; box-shadow: var(--bevel-in); }
+.nav-item.owner-nav { color: #ffd83a; }
+.nav-item.owner-nav.active { background: #8a6d12; color: #fff; }
+
+/* panele: ciemny kamień z fazą */
+.card, .modal, .item, .profile, .chip-account {
+  background: #3d3d3d url(tex/stone-dark.png) 0 0 / 64px; border: 3px solid #000; box-shadow: var(--bevel); color: #fff;
+}
+.card::after { pointer-events: none; }
+.item { padding: 12px 14px; }
+.modal { box-shadow: var(--bevel), 0 20px 0 rgba(0,0,0,.35); }
+.backdrop { background: rgba(0,0,0,.7); backdrop-filter: none; }
+.inst:hover { transform: none; border-color: #fff; }
+.inst.selected, .card.inst.selected { border-color: #ffd83a; box-shadow: var(--bevel), 0 0 0 2px #000; }
+.add-card { background: rgba(0,0,0,.35); border: 3px dashed #aaa; box-shadow: none; }
+.add-card:hover { color: #ffd83a; border-color: #ffd83a; }
+.owner-card, .owner-item, .item.reserved, .profile.is-owner { border-color: #c79a00; box-shadow: var(--bevel); }
+
+/* przyciski jak w grze */
+.btn { background: #7a7a7a; color: #fff; border: 2px solid #000; box-shadow: var(--bevel); padding: 9px 14px; font-weight: 700; }
+.btn:hover { background: #8a8ac0; color: #ffffa0; border-color: #000; }
+.btn:active { transform: none; box-shadow: var(--bevel-in); }
+.btn.primary, .play-btn { background: #5fa83a; color: #fff; border: 2px solid #000; box-shadow: var(--bevel); font-weight: 800; text-shadow: 2px 2px 0 #1d3a10; }
+.btn.primary:hover, .play-btn:hover { background: #75c24a; filter: none; transform: none; color: #ffffa0; }
+.play-btn { font-size: 22px; padding: 20px; letter-spacing: .14em; }
+.play-btn:active { box-shadow: var(--bevel-in); }
+.play-btn.stop { background: #b83a3a; color: #fff; text-shadow: 2px 2px 0 #3a0d0d; }
+.btn.danger { color: #ff7777; }
+.btn.ghost { background: rgba(0,0,0,.35); }
+
+/* pola */
+input[type="text"], input[type="search"], select { background: #000; color: #fff; border: 2px solid #a0a0a0; box-shadow: none; padding: 10px 12px; }
+input:focus, select:focus { border-color: #fff; box-shadow: none; }
+.segmented { background: #000; border: 2px solid #000; padding: 0; gap: 2px; }
+.segmented button { background: #6f6f6f; color: #fff; box-shadow: var(--bevel); }
+.segmented button.active { background: #5fa83a; box-shadow: var(--bevel-in); }
+.switch { width: 46px; height: 24px; }
+.switch span { background: #5a5a5a; border: 2px solid #000; box-shadow: var(--bevel-in); }
+.switch span::after { top: 2px; left: 2px; width: 16px; height: 16px; background: #d0d0d0; border: 2px solid #000; box-sizing: content-box; width: 14px; height: 14px; }
+.switch input:checked + span { background: #5fa83a; }
+.switch input:checked + span::after { transform: translateX(22px); }
+input[type="range"] { accent-color: #5fa83a; }
+.badge { background: #000; color: #ddd; border: 0; padding: 2px 8px; }
+.badge.green { background: #2f5e1a; color: #9bff6a; } .badge.blue { background: #123a4a; color: #55ffff; } .badge.pink { background: #4a1a3c; color: #ff8bd8; }
+.badge.owner { background: #c79a00; color: #fff; box-shadow: none; }
+.banner { background: #4a3a00; border: 2px solid #c79a00; color: #ffe27a; }
+.toast { background: #2a2a2a; border: 3px solid #000; box-shadow: var(--bevel); }
+.toast.ok { border-color: #5fa83a; } .toast.error { border-color: #b83a3a; }
+
+/* pasek postępu = pasek doświadczenia */
+.bar { height: 14px; background: #000; border: 2px solid #3a3a3a; }
+.bar > i { background: repeating-linear-gradient(90deg, #7bff3a 0 6px, #55c424 6px 12px); box-shadow: inset 0 3px 0 rgba(255,255,255,.35); }
+#log { background: #000; border: 2px solid #3a3a3a; color: #cfcfcf; }
+
+/* ekran Graj: niebo, chmury i trawa */
+.hero, .hero::after { image-rendering: pixelated; }
+.hero {
+  background: url(tex/grass.png) 0 100% / 64px 64px repeat-x, url(tex/sky.png) 0 0 / 512px 256px;
+  border: 3px solid #000; box-shadow: var(--bevel); min-height: 280px; padding: 30px 34px 78px; color: #fff;
+}
+.hero h1 { color: #fff; font-size: 36px; text-shadow: 3px 3px 0 #3f3f3f; }
+.hero .muted { color: #fff; text-shadow: 2px 2px 0 #3f3f3f; }
+.hero-duck { filter: none; image-rendering: pixelated; width: 120px; }
+.wordmark { position: relative; align-items: center; }
+.wordmark span:first-child { font-size: 48px; color: #ffd83a; text-shadow: 4px 4px 0 #7a5a00, 7px 7px 0 rgba(0,0,0,.35); letter-spacing: .1em; }
+.wordmark span:last-child { color: #fff; font-size: 18px; text-shadow: 3px 3px 0 #3f3f3f; }
+.splash { display: block; position: absolute; right: -34px; bottom: -22px; color: #ffff55; font-style: normal; font-weight: 800; font-size: 15px; white-space: nowrap;
+  text-shadow: 2px 2px 0 #3f3f00; transform: rotate(-18deg); animation: splash 0.8s ease-in-out infinite alternate; }
+@keyframes splash { from { transform: rotate(-18deg) scale(1); } to { transform: rotate(-18deg) scale(1.12); } }
+
+/* pasek przedmiotów jako ozdoba pod grą */
+.hotbar { display: flex; position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); display: flex; gap: 0; background: #8b8b8b; border: 3px solid #000; box-shadow: var(--bevel); }
+.hotbar i { width: 38px; height: 38px; display: grid; place-items: center; font-style: normal; font-size: 20px; border: 2px solid #373737; background: #8b8b8b; box-shadow: var(--bevel-in); }
+.hotbar i.on { outline: 3px solid #fff; outline-offset: -3px; background: #9a9a9a; z-index: 1; }
+
+main::-webkit-scrollbar, .scroll::-webkit-scrollbar { width: 14px; }
+main::-webkit-scrollbar-track { background: #000; }
+main::-webkit-scrollbar-thumb, .scroll::-webkit-scrollbar-thumb { background: #8b8b8b; border: 2px solid #000; box-shadow: var(--bevel); }
+.avatar { background: #5fa83a; border: 2px solid #000; }
+.mod-icon { background: #000; image-rendering: auto; }
+.hero-brand { padding-right: 40px; }

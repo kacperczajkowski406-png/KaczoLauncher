@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: https://cdn.modrinth.com https://mc-heads.net; font-src 'self';" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kaczo Client</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" id="theme-glass" href="glass.css" />
+  <link rel="stylesheet" id="theme-mc" href="mc.css" disabled />
+</head>
+<body>
+  <div class="topbar"><span class="brand-mini">KACZO CLIENT</span></div>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="logo">
+        <img class="logo-img" src="logo.svg" alt="" />
+        <div><b class="neon-yellow">Kaczo</b><span id="brand-sub">Client</span></div>
+      </div>
+      <nav id="nav"></nav>
+      <div class="sidebar-foot" id="sidebar-foot"></div>
+    </aside>
+    <main id="view"></main>
+  </div>
+  <div id="toasts"></div>
+  <div id="modal-root"></div>
+  <script src="i18n.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

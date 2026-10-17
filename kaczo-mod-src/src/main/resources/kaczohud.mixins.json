@@ -1,0 +1,7 @@
+{
+  "required": true,
+  "package": "pl.kaczo.hud.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": ["InGameHudMixin"],
+  "injectors": { "defaultRequire": 0 }
+}
