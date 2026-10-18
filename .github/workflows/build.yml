@@ -34,7 +34,7 @@ jobs:
         if: failure()
         working-directory: kaczo-mod-src
         run: |
-          grep -E "error:|warning: \[|What went wrong|Could not|FAILED" build.log | head -40 | while IFS= read -r l; do echo "::error::${l:0:480}"; done
+          grep -E -A2 "error:|What went wrong|Could not" build.log | grep -v "^--" | head -60 | while IFS= read -r l; do echo "::error::${l:0:480}"; done
       - run: |
           mkdir -p out
           cp kaczo-mod-src/build/libs/kaczo-hud-*[0-9].jar out/kaczo-hud-${{ matrix.mc }}.jar

@@ -129,7 +129,7 @@ public class Hud {
                     ctx.fill(x, y, x + 1, y + 1, col);
                 }
             }
-            default -> ctx.drawBorder(cx - size, cy - size, size * 2 + 1, size * 2 + 1, col);
+            default -> Compat.border(ctx, cx - size, cy - size, size * 2 + 1, size * 2 + 1, col);
         }
     }
 }

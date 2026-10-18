@@ -37,4 +37,5 @@ public final class Compat {
     public static void hitboxes(net.minecraft.client.MinecraftClient mc, boolean on) {
         mc.getEntityRenderDispatcher().setRenderHitboxes(on);
     }
+    public static void border(net.minecraft.client.gui.DrawContext ctx, int x, int y, int w, int h, int col) { ctx.drawBorder(x, y, w, h, col); }
 }

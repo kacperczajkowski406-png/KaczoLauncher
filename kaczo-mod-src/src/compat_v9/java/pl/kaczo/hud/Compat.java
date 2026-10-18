@@ -34,4 +34,5 @@ public final class Compat {
     }
     /** Od 1.21.9 hitboxy rysuje debugowy renderer – ten moduł jest tu bez efektu. */
     public static void hitboxes(net.minecraft.client.MinecraftClient mc, boolean on) { }
+    public static void border(net.minecraft.client.gui.DrawContext ctx, int x, int y, int w, int h, int col) { ctx.drawStrokedRectangle(x, y, w, h, col); }
 }
