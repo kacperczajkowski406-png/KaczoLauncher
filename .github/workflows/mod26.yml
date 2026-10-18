@@ -8,6 +8,8 @@ jobs:
   mod26:
     runs-on: ubuntu-latest
     continue-on-error: true
+    permissions:
+      contents: write
     env:
       GRADLE_USER_HOME: /tmp/gh-home
     strategy:
@@ -34,6 +36,15 @@ jobs:
           FAPI: ${{ matrix.fapi }}
           LOOM: ${{ matrix.loom }}
         run: bash tools/port26/run.sh
+      - name: Zapisz logi (gałąź port26-data)
+        if: always()
+        run: |
+          mkdir -p /tmp/data/${{ matrix.mc }}
+          cp /tmp/*.log /tmp/report.txt /tmp/data/${{ matrix.mc }}/ 2>/dev/null || true
+          cp -r kaczo-mod-26/gen /tmp/data/${{ matrix.mc }}/gen 2>/dev/null || true
+          cd /tmp/data && git init -q && git checkout -q -b port26-data && git add -A
+          git -c user.name=github-actions -c user.email=actions@github.com commit -qm "logi ${{ matrix.mc }}" || true
+          git push -f -q "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" port26-data:port26-data-${{ matrix.mc }} || true
       - run: |
           mkdir -p out && cp kaczo-mod-26/build/libs/kaczo-hud-*[0-9].jar out/kaczo-hud-${{ matrix.mc }}.jar
       - uses: actions/upload-artifact@v4
