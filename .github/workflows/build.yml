@@ -17,15 +17,15 @@ jobs:
           - { mc: '1.21.6', yarn: '1.21.6+build.1', api: '0.128.2+1.21.6', compat: v6, loom: '1.10-SNAPSHOT' }
           - { mc: '1.21.7', yarn: '1.21.7+build.8', api: '0.129.0+1.21.7', compat: v6, loom: '1.10-SNAPSHOT' }
           - { mc: '1.21.8', yarn: '1.21.8+build.1', api: '0.136.1+1.21.8', compat: v6, loom: '1.10-SNAPSHOT' }
-          - { mc: '1.21.9',  yarn: '1.21.9+build.1',  api: '0.134.1+1.21.9',  compat: v9, loom: '1.11-SNAPSHOT' }
-          - { mc: '1.21.10', yarn: '1.21.10+build.3', api: '0.138.4+1.21.10', compat: v9, loom: '1.11-SNAPSHOT' }
-          - { mc: '1.21.11', yarn: '1.21.11+build.6', api: '0.141.6+1.21.11', compat: v9, loom: '1.11-SNAPSHOT' }
+          - { mc: '1.21.9',  yarn: '1.21.9+build.1',  api: '0.134.1+1.21.9',  compat: v9, loom: '1.11.8', gradle: '8.14.3' }
+          - { mc: '1.21.10', yarn: '1.21.10+build.3', api: '0.138.4+1.21.10', compat: v9, loom: '1.11.8', gradle: '8.14.3' }
+          - { mc: '1.21.11', yarn: '1.21.11+build.6', api: '0.141.6+1.21.11', compat: v9, loom: '1.11.8', gradle: '8.14.3' }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 21 }
       - uses: gradle/actions/setup-gradle@v4
-        with: { gradle-version: '8.12' }
+        with: { gradle-version: ${{ matrix.gradle || '8.12' }} }
       - id: build
         run: set -o pipefail; gradle build --no-daemon -Pminecraft_version=${{ matrix.mc }} -Pyarn_mappings=${{ matrix.yarn }} -Pfabric_version=${{ matrix.api }} -Pcompat=${{ matrix.compat }} -Ploom_version=${{ matrix.loom }} 2>&1 | tee build.log
         working-directory: kaczo-mod-src
