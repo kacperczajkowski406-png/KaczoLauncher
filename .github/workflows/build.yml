@@ -19,7 +19,7 @@ jobs:
           - { mc: '1.21.8', yarn: '1.21.8+build.1', api: '0.136.1+1.21.8', compat: v6, loom: '1.10-SNAPSHOT' }
           - { mc: '1.21.9',  yarn: '1.21.9+build.1',  api: '0.134.1+1.21.9',  compat: v9, loom: '1.11.8', gradle: '8.14.3' }
           - { mc: '1.21.10', yarn: '1.21.10+build.3', api: '0.138.4+1.21.10', compat: v9, loom: '1.11.8', gradle: '8.14.3' }
-          - { mc: '1.21.11', yarn: '1.21.11+build.6', api: '0.141.6+1.21.11', compat: v9, loom: '1.11.8', gradle: '8.14.3' }
+          - { mc: '1.21.11', yarn: '1.21.11+build.6', api: '0.141.6+1.21.11', compat: v9, loom: '1.13.6', gradle: '9.2.0' }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
