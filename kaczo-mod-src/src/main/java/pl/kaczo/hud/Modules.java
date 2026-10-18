@@ -176,6 +176,22 @@ public class Modules {
         reg(new Module("waypoint", "Waypoint", "Distance and direction to a saved point (B = set, Shift+B = clear).", "HUD", "WAY").fresh().hud(100, 154)
                 .text(Extras::waypointText));
         reg(new Module("freelook", "Perspective (Freelook)", "Hold Left Alt to look around without turning.", "Visual", "LOOK").fresh().on());
+        reg(new Module("sky", "Kaczo Sky", "Decorative sky overlay: duck rain, aurora, stars, sunset and more.", "Visual", "SKY").fresh()
+                .add(Setting.choice("style", "Style", 0, Sky.STYLES))
+                .add(Setting.num("intensity", "Intensity", 5, 100, 60).unit("%"))
+                .add(Setting.num("speed", "Speed", 10, 200, 50).unit("%"))
+                .add(Setting.header("Ducks"))
+                .add(Setting.bool("ducks", "Ducks on any style", false))
+                .add(Setting.num("count", "Duck count", 1, 80, 22))
+                .add(Setting.num("size", "Duck size", 1, 5, 2))
+                .add(Setting.header("Look"))
+                .add(Setting.num("density", "Density", 1, 100, 40))
+                .add(Setting.bool("follow", "Follow camera", true))
+                .add(Setting.bool("fade", "Soft horizon", true))
+                .add(Setting.header("Shader look"))
+                .add(Setting.bool("grade", "Color grading", true))
+                .add(Setting.num("vignette", "Vignette", 0, 100, 35).unit("%"))
+                .add(Setting.color("tint", "Tint", "255,255,255,0,0")));
         reg(new Module("hitbox", "Hitboxes", "Shows entity hitboxes (like F3 + B).", "Visual", "BOX").fresh());
         reg(new Module("nohurtcam", "No Hurt Camera", "No camera shake when you take damage.", "Visual", "HURT").fresh());
         reg(new Module("nobob", "No View Bobbing", "Turns off the swaying of the view while walking.", "Visual", "BOB").fresh());

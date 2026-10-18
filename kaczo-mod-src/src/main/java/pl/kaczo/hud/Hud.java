@@ -43,6 +43,7 @@ public class Hud {
         Compat.alpha(1f); // na wszelki wypadek
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.options.hudHidden || mc.player == null) return;
+        try { Sky.render(ctx, mc); } catch (Throwable ignored) { }
         boolean anim = Modules.GENERAL.bool("hudanim");
         long since = Modules.sinceJoin();
         int idx = 0;
