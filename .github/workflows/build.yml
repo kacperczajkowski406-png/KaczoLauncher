@@ -26,8 +26,14 @@ jobs:
         with: { distribution: temurin, java-version: 21 }
       - uses: gradle/actions/setup-gradle@v4
         with: { gradle-version: '8.12' }
-      - run: gradle build --no-daemon -Pminecraft_version=${{ matrix.mc }} -Pyarn_mappings=${{ matrix.yarn }} -Pfabric_version=${{ matrix.api }} -Pcompat=${{ matrix.compat }} -Ploom_version=${{ matrix.loom }}
+      - id: build
+        run: set -o pipefail; gradle build --no-daemon -Pminecraft_version=${{ matrix.mc }} -Pyarn_mappings=${{ matrix.yarn }} -Pfabric_version=${{ matrix.api }} -Pcompat=${{ matrix.compat }} -Ploom_version=${{ matrix.loom }} 2>&1 | tee build.log
         working-directory: kaczo-mod-src
+      - name: Pokaż błędy kompilacji
+        if: failure()
+        working-directory: kaczo-mod-src
+        run: |
+          grep -E "error:|warning: \[|What went wrong|Could not|FAILED" build.log | head -40 | while IFS= read -r l; do echo "::error::${l:0:480}"; done
       - run: |
           mkdir -p out
           cp kaczo-mod-src/build/libs/kaczo-hud-*[0-9].jar out/kaczo-hud-${{ matrix.mc }}.jar
