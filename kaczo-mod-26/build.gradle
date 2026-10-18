@@ -1,0 +1,32 @@
+plugins {
+    id 'fabric-loom'
+}
+
+version = project.mod_version
+group = 'pl.kaczo'
+base { archivesName = 'kaczo-hud' }
+
+// Kod w gen/ jest GENEROWANY z kaczo-mod-src (nazwy yarn -> Mojang) przez tools/port26 – nie edytuj go ręcznie.
+sourceSets {
+    main {
+        java.srcDirs = ['gen/java']
+        resources.srcDirs = ['gen/resources']
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') { expand 'version': project.version, 'mc': project.minecraft_version }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 25
+    options.compilerArgs << '-Xmaxerrs' << '2000'
+}
+java { sourceCompatibility = JavaVersion.VERSION_25; targetCompatibility = JavaVersion.VERSION_25 }

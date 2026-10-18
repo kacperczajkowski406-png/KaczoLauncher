@@ -3,6 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
+    paths-ignore: ['tools/**', 'kaczo-mod-26/**', '.github/workflows/explore.yml', '.github/workflows/mod26.yml']
 jobs:
   mod:
     runs-on: ubuntu-latest

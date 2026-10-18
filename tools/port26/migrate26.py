@@ -14,6 +14,7 @@ import json, os, re, subprocess, sys, shutil, collections
 CLASS_OVERRIDES = {
     'net.minecraft.client.gui.DrawContext': 'net.minecraft.client.gui.GuiGraphicsExtractor',
     'net.minecraft.util.Identifier': 'net.minecraft.resources.Identifier',
+    'net.minecraft.client.gui.RotatingCubeMapRenderer': 'net.minecraft.client.renderer.Panorama',
 }
 
 def load_map(p):

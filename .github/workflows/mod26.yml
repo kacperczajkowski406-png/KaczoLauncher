@@ -1,0 +1,40 @@
+name: Mod for Minecraft 26.x
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['kaczo-mod-26/**', 'tools/port26/**', 'kaczo-mod-src/src/main/**', '.github/workflows/mod26.yml']
+jobs:
+  mod26:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    env:
+      GRADLE_USER_HOME: /tmp/gh-home
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { mc: '26.1', fapi: '0.145.1+26.1', loom: '1.17-SNAPSHOT' }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 25 }
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.5.1'
+          cache-disabled: true
+      - name: Mapowania yarn -> Mojang
+        working-directory: tools/explore
+        run: python3 mappings.py
+      - name: Generuj, kompiluj i poprawiaj
+        env:
+          MC: ${{ matrix.mc }}
+          FAPI: ${{ matrix.fapi }}
+          LOOM: ${{ matrix.loom }}
+        run: bash tools/port26/run.sh
+      - run: |
+          mkdir -p out && cp kaczo-mod-26/build/libs/kaczo-hud-*[0-9].jar out/kaczo-hud-${{ matrix.mc }}.jar
+      - uses: actions/upload-artifact@v4
+        with: { name: 'kaczo-hud-${{ matrix.mc }}', path: out/*.jar }
