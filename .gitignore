@@ -1,0 +1,7 @@
+node_modules/
+dist/
+*.log
+.gradle/
+kaczo-mod-src/build/
+kaczo-mod-src/.gradle/
+kaczo-mod/*.jar
