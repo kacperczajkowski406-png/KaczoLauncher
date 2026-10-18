@@ -2,8 +2,8 @@
 # Zrzuca nazwy klas i sygnatury z jara Minecrafta 26.x oraz Fabric API do tools/explore/out
 OUT=tools/explore/out; mkdir -p $OUT
 rm -f $OUT/net.minecraft.*.txt $OUT/fabric.*.txt
-find ~/.gradle -name "*.jar" | grep -iE "minecraft|fabric-" > $OUT/jars.txt
-MCJAR=$HOME/.gradle/caches/fabric-loom/26.1/minecraft-merged.jar
+cp /tmp/cp.txt $OUT/classpath.txt
+MCJAR=$(find /tmp/gh-home -name "minecraft-merged.jar" | head -1)
 echo "MCJAR=$MCJAR" > $OUT/mcjar.txt
 unzip -Z1 "$MCJAR" | grep '\.class$' | sed 's/\.class$//' > $OUT/classes.txt
 for c in \
@@ -20,12 +20,16 @@ for c in \
  net.minecraft.world.entity.player.Inventory net.minecraft.world.item.ItemStack net.minecraft.sounds.SoundEvent net.minecraft.sounds.SoundSource net.minecraft.client.gui.screens.DeathScreen \
  net.minecraft.world.phys.EntityHitResult net.minecraft.world.entity.player.Player net.minecraft.client.multiplayer.ClientLevel net.minecraft.client.multiplayer.ServerData \
  net.minecraft.client.resources.sounds.AbstractTickableSoundInstance net.minecraft.client.gui.screens.Overlay net.minecraft.client.gui.components.events.GuiEventListener \
- net.minecraft.client.renderer.RenderPipelines net.minecraft.world.food.FoodData net.minecraft.client.OptionInstance ; do
+ net.minecraft.client.renderer.RenderPipelines 'net.minecraft.client.KeyMapping$Category' net.minecraft.client.input.PreeditEvent net.minecraft.client.renderer.Panorama net.minecraft.client.gui.screens.Screen net.minecraft.client.gui.components.events.AbstractContainerEventHandler 'net.minecraft.client.sounds.SoundManager' 'net.minecraft.client.resources.sounds.SoundInstance$Attenuation' com.mojang.blaze3d.platform.InputConstants net.minecraft.world.food.FoodData net.minecraft.client.OptionInstance ; do
   javap -p -cp "$MCJAR" $c > $OUT/$c.txt 2>&1
 done
-# Fabric API: najnowsza wersja każdego modułu
-for m in $(grep -oE "fabric-[a-z0-9-]+-v[0-9]+" $OUT/jars.txt | sort -u); do
-  j=$(grep "/$m-[0-9]" $OUT/jars.txt | sort -V | tail -1)
-  [ -n "$j" ] && echo "$j"
-done > $OUT/fabric-latest-jars.txt
-for j in $(cat $OUT/fabric-latest-jars.txt); do unzip -Z1 $j 2>/dev/null | grep -E 'net/fabricmc/fabric/api/client/' | grep '\.class$' | sed "s#^#$(basename $j) #"; done > $OUT/fabric-classes.txt
+# Fabric API: moduły są zagnieżdżone w fabric-api.jar (META-INF/jars)
+mkdir -p /tmp/fapi; : > $OUT/fabric-classes.txt
+for j in $(cat $OUT/classpath.txt | grep -i fabric-api); do
+  unzip -qo $j 'META-INF/jars/*' -d /tmp/fapi 2>/dev/null
+done
+for j in /tmp/fapi/META-INF/jars/*.jar; do unzip -Z1 $j 2>/dev/null | grep -E 'net/fabricmc/fabric/api/client/' | grep '\.class$' | sed "s#^#$(basename $j) #" >> $OUT/fabric-classes.txt; done
+for c in net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry net.fabricmc.fabric.api.client.screen.v1.ScreenEvents net.fabricmc.fabric.api.client.screen.v1.Screens net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper; do
+  CPX=$(ls /tmp/fapi/META-INF/jars/*.jar | tr '\n' ':')
+  javap -p -cp "$CPX$MCJAR" $c > $OUT/fabric.$c.txt 2>&1
+done

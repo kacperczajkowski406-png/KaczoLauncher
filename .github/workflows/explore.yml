@@ -7,6 +7,8 @@ on:
 jobs:
   explore:
     runs-on: ubuntu-latest
+    env:
+      GRADLE_USER_HOME: /tmp/gh-home
     permissions:
       contents: write
     steps:
@@ -22,6 +24,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.5.1'
+          cache-disabled: true
       - name: Projekt próbny 26.1
         run: |
           mkdir -p /tmp/probe && cd /tmp/probe
@@ -38,7 +41,10 @@ jobs:
           }
           java { sourceCompatibility = JavaVersion.VERSION_25; targetCompatibility = JavaVersion.VERSION_25 }
           EOF
-          gradle build --no-daemon 2>&1 | tail -30 || true
+          cat >> build.gradle <<'EOF'
+          tasks.register('printCp') { doLast { new File('/tmp/cp.txt').text = configurations.compileClasspath.files.join('\n') } }
+          EOF
+          gradle build printCp --no-daemon 2>&1 | tail -30 || true
       - name: Zrzut API
         run: bash tools/explore/dump.sh
       - name: Wypchnij wyniki
