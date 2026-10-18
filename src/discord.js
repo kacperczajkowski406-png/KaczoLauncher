@@ -74,4 +74,9 @@ function stop() {
   sock = null; ready = false; pending = null;
 }
 
-module.exports = { start, stop, frame };
+/** Domyślne ID aplikacji Discord (dla wszystkich graczy) – z pliku discord.json. */
+function defaultId() {
+  try { return String(require('./discord.json').appId || ''); } catch { return ''; }
+}
+
+module.exports = { start, stop, frame, defaultId };

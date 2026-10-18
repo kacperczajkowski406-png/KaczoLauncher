@@ -66,7 +66,7 @@ function createWindow() {
 
 app.whenReady().then(() => {
   if (process.platform !== 'darwin') Menu.setApplicationMenu(null);
-  updater.init(app, (ch, p) => emit(ch, p));
+  updater.init(app, (ch, p) => emit(ch, p), () => !game.isRunning());
   purgeReservedOfflineAccounts();
   createWindow();
   app.on('activate', () => { if (!BrowserWindow.getAllWindows().length) createWindow(); });
@@ -291,6 +291,30 @@ handle('mods:addLocal', async (id) => {
   return mods.listInstalled(inst);
 });
 
+function importReport(r) {
+  const lines = [];
+  if (r.copied.length) lines.push(`Skopiowano: ${r.copied.length}`);
+  if (r.updated.length) lines.push(`Pobrano nowsze wersje: ${r.updated.length}`);
+  if (r.skipped.length) lines.push(`Pominięto: ${r.skipped.length}\n` + r.skipped.slice(0, 12).join('\n'));
+  return lines.join('\n') || 'Nie znaleziono modów do zaimportowania.';
+}
+
+handle('mods:importFolder', async (id) => {
+  const inst = getInstance(id);
+  const res = await dialog.showOpenDialog(win, { title: 'Wybierz folder z modami (np. mods z innego klienta)', properties: ['openDirectory'] });
+  if (res.canceled || !res.filePaths[0]) return mods.listInstalled(inst);
+  const r = await mods.importFrom(inst, res.filePaths[0]);
+  await dialog.showMessageBox(win, { type: 'info', message: 'Import modów zakończony', detail: importReport(r) });
+  return mods.listInstalled(inst);
+});
+
+handle('mods:importInstance', async (id, fromId) => {
+  const inst = getInstance(id), from = getInstance(fromId);
+  const r = await mods.importFromInstance(inst, from);
+  await dialog.showMessageBox(win, { type: 'info', message: `Mody z „${from.name}” (${from.mc}) przeniesione na ${inst.mc}`, detail: importReport(r) });
+  return mods.listInstalled(inst);
+});
+
 handle('mods:search', (id, opts) => mods.search(getInstance(id), opts || {}));
 
 handle('mods:install', async (id, projectId) => {
@@ -417,6 +441,7 @@ handle('game:play', async () => {
     account,
     settings: d.settings,
     emit: (channel, payload) => {
+      if (channel === 'game:crash') { onCrash(payload); return; }
       emit(channel, payload);
       if (channel === 'game:log' && logStream) logStream.write(String(payload).replace(/\n?$/, '\n'));
       if (channel === 'game:state' && payload.closed && win && !win.isDestroyed()) {
@@ -432,5 +457,35 @@ handle('game:play', async () => {
   if (d.settings.minimizeOnLaunch && win) win.minimize();
   return publicState();
 });
+
+/** Po awarii gry: pokazuje krótki opis i pozwala wysłać raport (link trafia do schowka). */
+async function onCrash(c) {
+  try { fs.writeFileSync(path.join(P.logs, 'last-crash.txt'), c.report || c.summary || ''); } catch { /* ignoruj */ }
+  if (!win || win.isDestroyed()) return;
+  const r = await dialog.showMessageBox(win, {
+    type: 'error',
+    title: 'Kaczo Client – awaria gry',
+    message: `Gra zakończyła się błędem (Minecraft ${c.mc}).`,
+    detail: (c.summary || 'Brak szczegółów.') + (c.retry ? '\n\nUruchamiam grę ponownie bez moda Kaczo HUD.' : ''),
+    buttons: ['Wyślij raport (skopiuj link)', 'Zamknij'],
+    defaultId: 0, cancelId: 1,
+  });
+  if (r.response !== 0) return;
+  try {
+    const res = await fetch('https://api.mclo.gs/1/log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'KaczoClient/1.0' },
+      body: new URLSearchParams({ content: (c.report || c.summary || 'brak').slice(0, 9_000_000) }),
+    });
+    const j = await res.json();
+    if (j && j.success && j.url) {
+      clipboard.writeText(j.url);
+      dialog.showMessageBox(win, { type: 'info', message: 'Link do raportu skopiowany do schowka – wklej go w czacie.', detail: j.url });
+    } else throw new Error((j && j.error) || 'błąd serwera');
+  } catch (e) {
+    clipboard.writeText(c.report || c.summary || '');
+    dialog.showMessageBox(win, { type: 'info', message: 'Nie udało się wysłać raportu – cała treść jest w schowku.', detail: String((e && e.message) || e) });
+  }
+}
 
 handle('game:stop', () => { game.stop(); return true; });

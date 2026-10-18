@@ -57,6 +57,8 @@ jobs:
       # każda budowa dostaje nowszy numer wersji, dzięki czemu zainstalowana aplikacja widzi aktualizację
       - run: npm version 1.2.${{ github.run_number }} --no-git-tag-version
         shell: bash
+      # adres wydań dla automatycznych aktualizacji bierzemy z nazwy repozytorium (działa też po jego zmianie)
+      - run: node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json'));const [o,r]=process.env.GITHUB_REPOSITORY.split('/');p.build.publish=[{provider:'github',owner:o,repo:r}];fs.writeFileSync('package.json',JSON.stringify(p,null,2))"
       - run: npm install
       - run: npm run dist
       - uses: actions/upload-artifact@v4

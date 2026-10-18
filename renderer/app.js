@@ -493,6 +493,12 @@ function renderInstalled(view, inst) {
   view.append(el('div', { class: 'row' },
     el('button', { class: 'btn', onclick: async () => { const l = await act('mods:addLocal', inst.id); if (l) { modsUI.installed = l; render(); } } }, t('mods.addJar')),
     el('button', { class: 'btn', onclick: () => act('instance:openFolder', inst.id) }, t('mods.openFolder')),
+    el('button', { class: 'btn', onclick: async () => { const l = await act('mods:importFolder', inst.id); if (l) { modsUI.installed = l; render(); } } }, 'Importuj z folderu…'),
+    S.instances.filter((i) => i.id !== inst.id && i.loader === 'fabric').length
+      ? el('select', { class: 'btn', onchange: async (e) => { const from = e.target.value; e.target.value = ''; if (!from) return; const l = await act('mods:importInstance', inst.id, from); if (l) { modsUI.installed = l; render(); } } },
+        el('option', { value: '' }, 'Przenieś z instancji…'),
+        ...S.instances.filter((i) => i.id !== inst.id && i.loader === 'fabric').map((i) => el('option', { value: i.id }, `${i.name} (${i.mc})`)))
+      : null,
     el('span', { class: 'spacer' }), el('span', { class: 'muted small' }, t('mods.count', { n: modsUI.installed.length }))));
   const list = el('div', { class: 'list gap-top' });
   if (!modsUI.installed.length) list.append(emptyState(t('mods.noneTitle'), t('mods.noneText')));

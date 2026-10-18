@@ -6,7 +6,7 @@ const INVOKE = new Set([
   'versions:list', 'versions:fabric',
   'account:microsoft', 'account:offline', 'account:select', 'account:remove',
   'instance:create', 'instance:update', 'instance:remove', 'instance:select', 'instance:openFolder',
-  'mods:list', 'mods:toggle', 'mods:remove', 'mods:addLocal', 'mods:search', 'mods:install',
+  'mods:list', 'mods:toggle', 'mods:remove', 'mods:addLocal', 'mods:search', 'mods:install', 'mods:importFolder', 'mods:importInstance',
   'settings:save', 'settings:pickJava', 'app:openData',
   'owner:diagnostics', 'owner:copyDiagnostics', 'owner:openLogs', 'owner:devtools',
   'owner:resetOptions', 'owner:clearJava', 'owner:discordId', 'owner:blockNick', 'owner:unblockNick',

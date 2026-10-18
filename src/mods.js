@@ -224,7 +224,66 @@ function installHud(inst, log = () => {}, dir = P.hudMods) {
   return true;
 }
 
+/** Usuwa mod Kaczo HUD z instancji (tryb bezpieczny po awarii). */
+function removeHud(inst) {
+  fs.rmSync(path.join(modsDir(inst), HUD_FILE), { force: true });
+}
+
+const crypto = require('crypto');
+
+/**
+ * Import modów z innego folderu (np. z innego klienta) albo z innej instancji. Każdy plik sprawdzamy w Modrinth po sumie sha1:
+ *  – jeśli ten sam plik działa na wersji tej instancji, kopiujemy go bez pobierania,
+ *  – jeśli ma wersję dla tej gry, pobieramy odpowiednią (zamiast starej),
+ *  – jeśli takiej wersji nie ma (albo mod nie jest na Modrinth), pomijamy go i zgłaszamy w raporcie.
+ */
+async function importFrom(inst, srcDir, onStatus = () => {}) {
+  requireFabric(inst);
+  const files = fs.readdirSync(srcDir).filter((f) => f.endsWith('.jar'));
+  const result = { copied: [], updated: [], skipped: [] };
+  if (!files.length) return result;
+  const hashes = {};
+  for (const f of files) hashes[crypto.createHash('sha1').update(fs.readFileSync(path.join(srcDir, f))).digest('hex')] = f;
+  let known = {};
+  try {
+    const res = await fetch(`${API}/version_files`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'User-Agent': 'KaczoClient/1.0' },
+      body: JSON.stringify({ hashes: Object.keys(hashes), algorithm: 'sha1' }),
+      signal: AbortSignal.timeout(30000),
+    });
+    if (res.ok) known = await res.json();
+  } catch { /* bez sieci – kopiujemy tylko pliki, które na pewno pasują */ }
+  const dir = modsDir(inst);
+  const seen = new Set();
+  for (const [hash, f] of Object.entries(hashes)) {
+    const v = known[hash];
+    onStatus(f);
+    try {
+      if (!v) { result.skipped.push(`${f} (nieznany mod – pominięto)`); continue; }
+      if (v.game_versions.includes(inst.mc) && v.loaders.includes('fabric')) {
+        fs.copyFileSync(path.join(srcDir, f), safeJoin(dir, f));
+        result.copied.push(f);
+      } else {
+        if (seen.has(v.project_id)) continue;
+        seen.add(v.project_id);
+        const added = await installProject(inst, v.project_id, onStatus, new Set(), 0);
+        result.updated.push(added.file || f);
+      }
+    } catch (e) {
+      result.skipped.push(`${f} (brak wersji na ${inst.mc})`);
+    }
+  }
+  return result;
+}
+
+function importFromInstance(inst, fromInst, onStatus) {
+  return importFrom(inst, modsDir(fromInst), onStatus);
+}
+
 module.exports = {
+  importFrom, importFromInstance,
+  removeHud,
   instanceDir, modsDir, listInstalled, toggle, remove, addLocal, search, install,
   ensurePack, installHud, hudVersions, PACK_SLUGS,
 };

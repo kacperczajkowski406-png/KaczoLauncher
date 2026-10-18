@@ -1,6 +1,7 @@
 // Aktualizacje w aplikacji: launcher sam sprawdza GitHub Releases, pobiera nową wersję w tle
 // i instaluje ją po kliknięciu „Uruchom ponownie i zaktualizuj” (albo przy zamknięciu aplikacji).
 // Mod Kaczo HUD jest częścią instalatora, więc aktualizuje się razem z aplikacją.
+// Aktualizacja sprawdza się od razu po uruchomieniu i instaluje automatycznie (gdy nie trwa gra).
 
 const state = { status: 'idle', version: '', percent: 0, error: '', supported: false };
 let updater = null;
@@ -12,7 +13,7 @@ function set(patch) {
   notify({ ...state });
 }
 
-function init(app, emit) {
+function init(app, emit, canInstall = () => true) {
   notify = (s) => emit('update:state', s);
   if (!app.isPackaged) return; // w trybie developerskim (npm start) aktualizacji nie ma
   try {
@@ -28,9 +29,17 @@ function init(app, emit) {
   updater.on('update-available', (info) => set({ status: 'downloading', version: info.version, percent: 0 }));
   updater.on('update-not-available', () => set({ status: 'none' }));
   updater.on('download-progress', (p) => set({ status: 'downloading', percent: Math.round(p.percent || 0) }));
-  updater.on('update-downloaded', (info) => set({ status: 'ready', version: info.version, percent: 100 }));
+  updater.on('update-downloaded', (info) => {
+    set({ status: 'ready', version: info.version, percent: 100 });
+    // automatyczna instalacja: zaraz po pobraniu (o ile gra nie jest uruchomiona), bez klikania
+    const tryInstall = () => {
+      if (canInstall()) { try { updater.quitAndInstall(true, true); } catch { /* spróbuje przy zamknięciu */ } }
+      else setTimeout(tryInstall, 30000);
+    };
+    setTimeout(tryInstall, 2500);
+  });
   updater.on('error', (e) => set({ status: 'error', error: String((e && e.message) || e).slice(0, 200) }));
-  setTimeout(check, 4000);
+  setTimeout(check, 800);
   timer = setInterval(check, 4 * 3600 * 1000);
   if (timer.unref) timer.unref();
 }
