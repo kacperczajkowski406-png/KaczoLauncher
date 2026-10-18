@@ -32,7 +32,7 @@ jobs:
           pluginManagement { repositories { maven { url = 'https://maven.fabricmc.net/' }; mavenCentral(); gradlePluginPortal() } }
           EOF
           cat > build.gradle <<'EOF'
-          plugins { id 'fabric-loom' version '1.17-SNAPSHOT' }
+          plugins { id 'net.fabricmc.fabric-loom' version '1.17-SNAPSHOT' }
           repositories { }
           dependencies {
             minecraft "com.mojang:minecraft:26.1"
