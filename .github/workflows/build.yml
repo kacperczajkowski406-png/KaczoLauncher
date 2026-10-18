@@ -1,9 +1,5 @@
 name: Build installer and mod
-
-on:
-  workflow_dispatch:
-  push:
-
+on: [workflow_dispatch, push]
 jobs:
   mod:
     runs-on: ubuntu-latest
@@ -17,29 +13,26 @@ jobs:
           - { mc: '1.21.2', yarn: '1.21.2+build.1', api: '0.106.1+1.21.2', compat: new, loom: '1.9-SNAPSHOT' }
           - { mc: '1.21.3', yarn: '1.21.3+build.2', api: '0.114.1+1.21.3', compat: new, loom: '1.9-SNAPSHOT' }
           - { mc: '1.21.4', yarn: '1.21.4+build.8', api: '0.119.4+1.21.4', compat: new, loom: '1.9-SNAPSHOT' }
-          - { mc: '1.21.5', yarn: '1.21.5+build.1', api: '0.128.2+1.21.5', compat: new, loom: '1.9-SNAPSHOT' }
+          - { mc: '1.21.5', yarn: '1.21.5+build.1', api: '0.128.2+1.21.5', compat: new5, loom: '1.10-SNAPSHOT' }
           - { mc: '1.21.6', yarn: '1.21.6+build.1', api: '0.128.2+1.21.6', compat: v6, loom: '1.10-SNAPSHOT' }
           - { mc: '1.21.7', yarn: '1.21.7+build.8', api: '0.129.0+1.21.7', compat: v6, loom: '1.10-SNAPSHOT' }
           - { mc: '1.21.8', yarn: '1.21.8+build.1', api: '0.136.1+1.21.8', compat: v6, loom: '1.10-SNAPSHOT' }
+          - { mc: '1.21.9',  yarn: '1.21.9+build.1',  api: '0.134.1+1.21.9',  compat: v9, loom: '1.11-SNAPSHOT' }
+          - { mc: '1.21.10', yarn: '1.21.10+build.3', api: '0.138.4+1.21.10', compat: v9, loom: '1.11-SNAPSHOT' }
+          - { mc: '1.21.11', yarn: '1.21.11+build.6', api: '0.141.6+1.21.11', compat: v9, loom: '1.11-SNAPSHOT' }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 21
+        with: { distribution: temurin, java-version: 21 }
       - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.12'
+        with: { gradle-version: '8.12' }
       - run: gradle build --no-daemon -Pminecraft_version=${{ matrix.mc }} -Pyarn_mappings=${{ matrix.yarn }} -Pfabric_version=${{ matrix.api }} -Pcompat=${{ matrix.compat }} -Ploom_version=${{ matrix.loom }}
         working-directory: kaczo-mod-src
       - run: |
           mkdir -p out
           cp kaczo-mod-src/build/libs/kaczo-hud-*[0-9].jar out/kaczo-hud-${{ matrix.mc }}.jar
       - uses: actions/upload-artifact@v4
-        with:
-          name: 'kaczo-hud-${{ matrix.mc }}'
-          path: out/*.jar
-
+        with: { name: 'kaczo-hud-${{ matrix.mc }}', path: out/*.jar }
   win:
     runs-on: windows-latest
     needs: mod
@@ -48,22 +41,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
-        with:
-          pattern: 'kaczo-hud-*'
-          path: kaczo-mod
-          merge-multiple: true
+        with: { pattern: 'kaczo-hud-*', path: kaczo-mod, merge-multiple: true }
       - uses: actions/setup-node@v4
-        with:
-          node-version: 20
+        with: { node-version: 20 }
       # każda budowa dostaje nowszy numer wersji, dzięki czemu zainstalowana aplikacja widzi aktualizację
       - run: npm version 1.2.${{ github.run_number }} --no-git-tag-version
         shell: bash
       - run: npm install
       - run: npm run dist
       - uses: actions/upload-artifact@v4
-        with:
-          name: Kaczo-Client-Setup
-          path: dist/*Setup*.exe
+        with: { name: Kaczo-Client-Setup, path: dist/*Setup*.exe }
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.2.${{ github.run_number }}
