@@ -27,16 +27,7 @@ def parse_tiny(lines):
     return cols, classes
 
 yl = tiny_from_jar(f'https://maven.fabricmc.net/net/fabricmc/yarn/{YARN}/yarn-{YARN}-mergedv2.jar')
-il = tiny_from_jar(f'https://maven.fabricmc.net/net/fabricmc/intermediary/{MC}/intermediary-{MC}-v2.jar')
 ycols, yclasses = parse_tiny(yl)      # intermediary, named
-icols, iclasses = parse_tiny(il)      # official, intermediary
-
-inter2off = {c['n'][1]: c for c in iclasses}
-# per-class: intermediary -> (official class, {inter method name+desc -> official name}, {inter field -> official})
-off_m = {}; off_f = {}
-for c in iclasses:
-    for d, n in c['m']: off_m[(c['n'][1], n[1], d)] = n[0]     # key: inter class, inter method, official desc
-    for d, n in c['f']: off_f[(c['n'][1], n[1])] = n[0]
 
 # Mojang proguard
 man = json.loads(get('https://piston-meta.mojang.com/mc/game/version_manifest_v2.json'))
@@ -80,33 +71,17 @@ for ocls, mem in members.items():
         mf[(ocls.replace('.', '/'), obf)] = name
 
 out = {'classes': {}, 'methods': {}, 'fields': {}}
-miss = 0
 for yc in yclasses:
-    inter, named = yc['n']
-    ic = inter2off.get(inter)
-    if not ic: continue
-    off = ic['n'][0]
+    off, inter, named = yc['n']
     mojname = off2moj.get(off.replace('/', '.'))
     ycn = named.replace('/', '.')
     if mojname: out['classes'][ycn] = mojname
     for d, n in yc['m']:
-        # d jest deskryptorem w nazwach intermediary – szukamy oficjalnego przez tablicę intermediary
-        pass
-    # metody: dopasuj po intermediary (nazwa unikalna w klasie+desc)
-    for d, n in yc['m']:
-        key = (inter, n[0])
-        # znajdź oficjalną nazwę i deskryptor
-        for d2, n2 in ic['m']:
-            if n2[1] == n[0]:
-                mname = mm.get((off, n2[0], d2))
-                if mname: out['methods'][f'{ycn}#{n[1]}#{d2}'] = mname
-                break
+        mname = mm.get((off, n[0], d))
+        if mname: out['methods'][f'{ycn}#{n[2]}#{d}'] = mname
     for d, n in yc['f']:
-        for d2, n2 in ic['f']:
-            if n2[1] == n[0]:
-                fname = mf.get((off, n2[0]))
-                if fname: out['fields'][f'{ycn}#{n[1]}'] = fname
-                break
+        fname = mf.get((off, n[0]))
+        if fname: out['fields'][f'{ycn}#{n[2]}'] = fname
 
 import os
 os.makedirs('out', exist_ok=True)
