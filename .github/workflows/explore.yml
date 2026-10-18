@@ -1,0 +1,49 @@
+name: Explore 26 API
+on:
+  push:
+    paths: ['tools/explore/**', '.github/workflows/explore.yml']
+  workflow_dispatch:
+jobs:
+  explore:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Mapowania yarn -> Mojang
+        working-directory: tools/explore
+        run: python3 mappings.py
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 25 }
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.5.1'
+      - name: Projekt próbny 26.1
+        run: |
+          mkdir -p /tmp/probe && cd /tmp/probe
+          cat > settings.gradle <<'EOF'
+          pluginManagement { repositories { maven { url = 'https://maven.fabricmc.net/' }; mavenCentral(); gradlePluginPortal() } }
+          EOF
+          cat > build.gradle <<'EOF'
+          plugins { id 'fabric-loom' version '1.17-SNAPSHOT' }
+          repositories { }
+          dependencies {
+            minecraft "com.mojang:minecraft:26.1"
+            implementation "net.fabricmc:fabric-loader:0.19.3"
+            implementation "net.fabricmc.fabric-api:fabric-api:0.145.1+26.1"
+          }
+          java { sourceCompatibility = JavaVersion.VERSION_25; targetCompatibility = JavaVersion.VERSION_25 }
+          EOF
+          gradle build --no-daemon 2>&1 | tail -30 || true
+      - name: Zrzut API
+        run: bash tools/explore/dump.sh
+      - name: Wypchnij wyniki
+        run: |
+          git config user.name github-actions; git config user.email actions@github.com
+          git checkout -B explore-data
+          git add -f out tools/explore/out 2>/dev/null || true
+          git add -f tools/explore/out
+          git commit -m "dane eksploracji" || true
+          git push -f origin explore-data
