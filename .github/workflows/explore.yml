@@ -1,6 +1,7 @@
 name: Explore 26 API
 on:
   push:
+    branches: [main]
     paths: ['tools/explore/**', '.github/workflows/explore.yml']
   workflow_dispatch:
 jobs:

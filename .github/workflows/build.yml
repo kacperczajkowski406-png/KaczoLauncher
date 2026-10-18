@@ -1,5 +1,8 @@
 name: Build installer and mod
-on: [workflow_dispatch, push]
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
 jobs:
   mod:
     runs-on: ubuntu-latest
