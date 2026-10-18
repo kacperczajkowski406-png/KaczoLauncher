@@ -45,15 +45,7 @@ public final class Sb {
 
     private static ScoreboardObjective objective(MinecraftClient mc) {
         Scoreboard sb = mc.world.getScoreboard();
-        ScoreboardObjective obj = null;
-        try {
-            Team t = sb.getScoreHolderTeam(mc.player.getNameForScoreboard());
-            if (t != null) {
-                ScoreboardDisplaySlot slot = ScoreboardDisplaySlot.fromFormattingColor(t.getColor());
-                if (slot != null) obj = sb.getObjectiveForSlot(slot);
-            }
-        } catch (Throwable ignored) { }
-        return obj != null ? obj : sb.getObjectiveForSlot(ScoreboardDisplaySlot.SIDEBAR);
+        return sb.getObjectiveForSlot(ScoreboardDisplaySlot.SIDEBAR);
     }
 
     private static void draw(DrawContext ctx, MinecraftClient mc, Module m) {

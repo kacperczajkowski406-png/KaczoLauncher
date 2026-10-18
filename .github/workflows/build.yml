@@ -52,6 +52,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with: { pattern: 'kaczo-hud-*', path: kaczo-mod, merge-multiple: true }
+      - name: Sprawdź, czy mody się zbudowały
+        shell: bash
+        run: |
+          n=$(ls kaczo-mod/*.jar 2>/dev/null | wc -l); echo "zbudowane wersje moda: $n"
+          if [ "$n" -lt 8 ]; then echo "::error::Zbudowało się tylko $n wersji moda – instalator nie zostanie wydany"; exit 1; fi
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       # każda budowa dostaje nowszy numer wersji, dzięki czemu zainstalowana aplikacja widzi aktualizację
