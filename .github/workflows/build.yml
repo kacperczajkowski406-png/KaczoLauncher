@@ -25,7 +25,8 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 21 }
       - uses: gradle/actions/setup-gradle@v4
-        with: { gradle-version: ${{ matrix.gradle || '8.12' }} }
+        with:
+          gradle-version: ${{ matrix.gradle || '8.12' }}
       - id: build
         run: set -o pipefail; gradle build --no-daemon -Pminecraft_version=${{ matrix.mc }} -Pyarn_mappings=${{ matrix.yarn }} -Pfabric_version=${{ matrix.api }} -Pcompat=${{ matrix.compat }} -Ploom_version=${{ matrix.loom }} 2>&1 | tee build.log
         working-directory: kaczo-mod-src
