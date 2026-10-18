@@ -10,7 +10,8 @@
     "CameraMixin",
     "EntityLookMixin",
     "BossBarMixin",
-    "GameRendererMixin"
+    "GameRendererMixin",
+    "OverlayMixin"
   ],
   "injectors": {
     "defaultRequire": 0

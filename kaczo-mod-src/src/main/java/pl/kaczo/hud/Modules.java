@@ -192,6 +192,8 @@ public class Modules {
                 .add(Setting.bool("grade", "Color grading", true))
                 .add(Setting.num("vignette", "Vignette", 0, 100, 35).unit("%"))
                 .add(Setting.color("tint", "Tint", "255,255,255,0,0")));
+        reg(new Module("nofire", "No Fire Overlay", "Hides the fire on your screen when you are burning.", "Visual", "FIRE").fresh());
+        reg(new Module("nowater", "Clear Water", "Removes the blue overlay when you are underwater.", "Visual", "H2O").fresh());
         reg(new Module("hitbox", "Hitboxes", "Shows entity hitboxes (like F3 + B).", "Visual", "BOX").fresh());
         reg(new Module("nohurtcam", "No Hurt Camera", "No camera shake when you take damage.", "Visual", "HURT").fresh());
         reg(new Module("nobob", "No View Bobbing", "Turns off the swaying of the view while walking.", "Visual", "BOB").fresh());
@@ -219,7 +221,9 @@ public class Modules {
                 .add(Setting.num("strength", "Strength %", 10, 100, 50)));
         SCOREBOARD = reg(new Module("scoreboard", "Scoreboard", "Sidebar scoreboard: hide, scale, make transparent.", "Utility", "SB").on()
                 .add(Setting.num("scale", "Size %", 40, 150, 100))
-                .add(Setting.num("opacity", "Opacity %", 10, 100, 100)));
+                .add(Setting.num("opacity", "Background opacity %", 0, 100, 70))
+                .add(Setting.bool("scores", "Show numbers", true))
+                .add(Setting.color("accent", "Accent line", "255,225,74,200,0")));
     }
 
     private static String brandText() { return "KACZO CLIENT"; }

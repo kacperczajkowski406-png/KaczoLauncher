@@ -45,12 +45,7 @@ public class EditScreen extends KScreen {
         return Ui.in(mx, my, m.x() - 3, m.y() - 3, w(m) + 6, h(m) + 6);
     }
 
-    private int[] sbRect() {
-        Module sb = Modules.SCOREBOARD;
-        float sc = sb.num("scale") / 100f;
-        int w = Math.round(110 * sc), h = Math.round(80 * sc);
-        return new int[]{width - w + Hud.sbDx(), height / 2 - h / 2 + Hud.sbDy(), w, h};
-    }
+    private int[] sbRect() { return Sb.rect(width, height); }
 
     private int f(int argb) { return Ui.fade(argb, anim); }
 

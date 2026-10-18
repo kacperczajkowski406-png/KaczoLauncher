@@ -11,7 +11,7 @@ import net.minecraft.client.gui.DrawContext;
 public final class Sky {
     private Sky() { }
 
-    public static final String[] STYLES = {"Duck rain", "Aurora", "Starfield", "Sunset", "Candy", "Matrix", "Rainbow"};
+    public static final String[] STYLES = {"Duck rain", "Aurora", "Starfield", "Sunset", "Candy", "Matrix", "Rainbow", "Storm"};
 
     // 9x8 pikseli: y = żółty, o = dziób, e = oko, w = jasny połysk
     private static final String[] DUCK = {
@@ -78,6 +78,7 @@ public final class Sky {
             case 3 -> vgrad(ctx, w, 0, horizon, 0x2B1A5E, 0xFF8A3D, base);
             case 4 -> vgrad(ctx, w, 0, horizon, 0xFFB3E6, 0xB3E6FF, base);
             case 5 -> vgrad(ctx, w, 0, horizon, 0x000A00, 0x021A06, base);
+            case 7 -> vgrad(ctx, w, 0, horizon, 0x1E1030, 0x8A5A9C, base);
             default -> vgrad(ctx, w, 0, horizon, 0x6A5CFF, 0xFF7AA8, base);
         }
         if (tinted) ctx.fill(0, 0, w, horizon, argb(Math.min(110, (tint >>> 24) * base / 255), tint));
@@ -89,6 +90,7 @@ public final class Sky {
             case 4 -> clouds(ctx, w, horizon, t, px, strength);
             case 5 -> matrix(ctx, w, horizon, t, m.num("density"), strength);
             case 6 -> rainbow(ctx, w, horizon, t, px, strength);
+            case 7 -> storm(ctx, w, horizon, t, px, strength);
             default -> { }
         }
         if (style == 0 || m.bool("ducks")) ducks(ctx, w, horizon, t, px, py, m.num("count"), m.num("size"), strength, style == 0);
@@ -231,7 +233,7 @@ public final class Sky {
 
     /** „Shaderowy” klimat: delikatna korekcja kolorów całego obrazu i winieta. */
     private static void grade(DrawContext ctx, int w, int h, int style, int strength, int vignette) {
-        int[] tints = {0xFFE9B0, 0x66FFD0, 0x8F9CFF, 0xFF9A5C, 0xFFB8E8, 0x30FF70, 0xC0A8FF};
+        int[] tints = {0xFFE9B0, 0x66FFD0, 0x8F9CFF, 0xFF9A5C, 0xFFB8E8, 0x30FF70, 0xC0A8FF, 0xB48CD8};
         int a = Math.round(strength / 100f * 20);
         ctx.fill(0, 0, w, h, argb(a, tints[Math.max(0, Math.min(tints.length - 1, style))]));
         int v = Math.round(vignette / 100f * 120);
@@ -245,5 +247,22 @@ public final class Sky {
             ctx.fill(d, 0, d + Math.max(2, w / 60), h, argb(al, 0x000000));
             ctx.fill(w - d - Math.max(2, w / 60), 0, w - d, h, argb(al, 0x000000));
         }
+    }
+
+    /** Burzowe, fioletowe niebo z ciężkimi chmurami i rzadkimi rozbłyskami. */
+    private static void storm(DrawContext ctx, int w, int horizon, float t, float px, int strength) {
+        int a = Math.round(strength / 100f * 120);
+        for (int i = 0; i < 12; i++) {
+            float x = ((hash(i * 11 + 4) * (w + 220) + t * (2 + i % 3) * 2 + px * 0.5f) % (w + 220) + (w + 220)) % (w + 220) - 110;
+            int y = (int) (horizon * (0.05f + 0.7f * hash(i * 17 + 9)));
+            int cw = 90 + (int) (hash(i * 19 + 2) * 120);
+            for (int l = 0; l < 7; l++) {
+                int in = l * 6;
+                ctx.fill((int) x + in, y - 6 + l * 2, (int) x + cw - in, y + 14 - l, argb(a / 4, l < 3 ? 0x2B1A3F : 0x4D3566));
+            }
+            ctx.fill((int) x + 12, y + 14, (int) x + cw - 12, y + 18, argb(a / 3, 0xFF9AD0));   // różowa poświata od spodu
+        }
+        float flash = (float) Math.max(0, Math.sin(t * 0.9) * Math.sin(t * 2.3 + 1.7) - 0.86) * 6f;
+        if (flash > 0) ctx.fill(0, 0, w, horizon, argb(Math.round(flash * a), 0xE8D8FF));
     }
 }
