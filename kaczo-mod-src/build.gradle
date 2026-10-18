@@ -8,7 +8,7 @@ base { archivesName = 'kaczo-hud' }
 
 repositories { }
 
-// wariant API rysowania wybierany przez -Pcompat=old (1.21-1.21.1) | new (1.21.2-1.21.5) | v6 (1.21.6-1.21.8)
+// wariant API rysowania wybierany przez -Pcompat=old (1.21-1.21.1) | new (1.21.2-1.21.5) | v6 (1.21.6-1.21.8) | v9 (1.21.9-1.21.11)
 sourceSets.main.java.srcDir('src/compat_' + (project.findProperty('compat') ?: 'new') + '/java')
 
 dependencies {

@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
@@ -16,8 +17,9 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
- * Nowoczesny wygląd menu gry w samym kodzie (bez texture packa): „szklane” przyciski, logo na środku ekranu
- * tytułowego i animowane wejście. Wszystko do wyłączenia w ustawieniach moda.
+ * Nowoczesny wygląd lobby gry w samym kodzie (bez texture packa): „szklane” przyciski – także te dodane przez inne mody
+ * (np. „Mody”) i ikony języka/ułatwień dostępu – logo na środku ekranu tytułowego i animowane wejście.
+ * Działa wyłącznie na ekranie tytułowym; reszta menu zostaje standardowa. Wszystko do wyłączenia w ustawieniach moda.
  */
 public final class Glass {
     private Glass() { }
@@ -47,6 +49,10 @@ public final class Glass {
                 introPlayed = true;
             }
             if (screen instanceof TitleScreen) {
+                long now = System.currentTimeMillis();
+                try {
+                    for (ClickableWidget b : Screens.getButtons(screen)) if (glassKind(b) != 0) SEEN.put(b, now);   // bez mignięcia oryginału w 1. klatce
+                } catch (Throwable ignored) { }
                 ScreenEvents.beforeRender(screen).register((s, ctx, mx, my, delta) -> {
                     try { if (titleBgOn()) Visual.aurora(ctx, s.width, s.height, 1f); } catch (Throwable ignored) { }
                 });
@@ -71,6 +77,21 @@ public final class Glass {
         return (al << 24) | (argb & 0xFFFFFF);
     }
 
+    /** 0 = nie ruszamy, 1 = przycisk z napisem, 2 = ikona języka, 3 = ikona ułatwień dostępu. */
+    private static int glassKind(ClickableWidget b) {
+        if (!(b instanceof ButtonWidget) || !b.visible) return 0;
+        Text msg = b.getMessage();
+        if (!msg.getString().isEmpty() && b.getWidth() >= 30) return 1;
+        try {
+            if (msg.getContent() instanceof TranslatableTextContent t) {
+                String k = t.getKey();
+                if (k.contains("language")) return 2;
+                if (k.contains("accessibility")) return 3;
+            }
+        } catch (Throwable ignored) { }
+        return 0;
+    }
+
     /** Płynne „najechanie” – postęp 0..1 osobno dla każdego przycisku. */
     private static final Map<Object, Float> HOVER = new WeakHashMap<>();
     private static long lastFrame = System.currentTimeMillis();
@@ -79,14 +100,15 @@ public final class Glass {
         long now = System.currentTimeMillis();
         float dt = Math.min(0.1f, (now - lastFrame) / 1000f);
         lastFrame = now;
-        float p = screen instanceof TitleScreen ? intro() : 1f;
         if (!(screen instanceof TitleScreen)) return;          // szkło tylko w lobby gry – reszta menu zostaje standardowa
+        float p = intro();
         if (logoOn()) logo(mc, screen, ctx, p);
         if (!buttonsOn()) return;
         List<ClickableWidget> btns = Screens.getButtons(screen);
         int i = 0;
         for (ClickableWidget b : btns) {
-            if (b.getClass() != ButtonWidget.class || !b.visible) continue;
+            int kind = glassKind(b);
+            if (kind == 0) continue;
             SEEN.put(b, now);
             float k = ease((p - 0.25f - i * 0.07f) / 0.5f);
             i++;
@@ -102,11 +124,35 @@ public final class Glass {
             int grow = Math.round(te * 1.5f);
             int alpha = !b.active ? 0x1E : 0x3A + Math.round(te * 0x2C);
             int fill = (alpha << 24) | (hover || te > 0.5f ? 0xFFF4D0 : 0xFFFFFF);
-            Ui.glass(ctx, b.getX() - grow, y - grow, w + 2 * grow, h + 2 * grow, h / 2, fade(fill, k));
-            Text msg = b.getMessage();
-            int tw = mc.textRenderer.getWidth(msg);
+            int rad = kind == 1 ? h / 2 : h / 2;
+            Ui.glass(ctx, b.getX() - grow, y - grow, w + 2 * grow, h + 2 * grow, rad, fade(fill, k));
             int tc = b.active ? (te > 0.5f ? 0xFFFFF2B0 : 0xFFFFFFFF) : 0xFF9AA3B5;
-            ctx.drawTextWithShadow(mc.textRenderer, msg, b.getX() + (w - tw) / 2, y + (h - 8) / 2, fade(tc, k));
+            if (kind == 1) {
+                Text msg = b.getMessage();
+                int tw = mc.textRenderer.getWidth(msg);
+                ctx.drawTextWithShadow(mc.textRenderer, msg, b.getX() + (w - tw) / 2, y + (h - 8) / 2, fade(tc, k));
+            } else {
+                icon(ctx, kind, b.getX() + w / 2.0, y + h / 2.0, Math.min(w, h), fade(tc, k));
+            }
+        }
+    }
+
+    /** Ikony narysowane z gładkich kształtów (kula ziemska i człowieczek ułatwień dostępu). */
+    private static void icon(DrawContext ctx, int kind, double cx, double cy, int size, int col) {
+        double r = size * 0.33, th = Math.max(0.7, size * 0.055);
+        Ui.ringT(ctx, cx - r, cy - r, 2 * r, 2 * r, r, th, col);
+        if (kind == 2) {
+            Ui.ringT(ctx, cx - r * 0.42, cy - r, r * 0.84, 2 * r, r * 0.42, th, col);          // południk
+            Ui.rrectD(ctx, cx - r, cy - th / 2, 2 * r, th, th / 2, col);                        // równik
+            Ui.rrectD(ctx, cx - r * 0.86, cy - r * 0.5 - th / 2, r * 1.72, th, th / 2, col);    // równoleżniki
+            Ui.rrectD(ctx, cx - r * 0.86, cy + r * 0.5 - th / 2, r * 1.72, th, th / 2, col);
+        } else {
+            double hd = r * 0.34;
+            Ui.rrectD(ctx, cx - hd, cy - r * 0.62 - hd, 2 * hd, 2 * hd, hd, col);                       // głowa
+            Ui.rrectD(ctx, cx - r * 0.62, cy - r * 0.2 - th / 2, r * 1.24, th * 1.2, th / 2, col);     // ręce
+            Ui.rrectD(ctx, cx - th / 2, cy - r * 0.2, th * 1.2, r * 0.62, th / 2, col);                 // tułów
+            Ui.rrectD(ctx, cx - r * 0.34, cy + r * 0.3, th * 1.1, r * 0.55, th / 2, col);               // nogi
+            Ui.rrectD(ctx, cx + r * 0.34 - th, cy + r * 0.3, th * 1.1, r * 0.55, th / 2, col);
         }
     }
 

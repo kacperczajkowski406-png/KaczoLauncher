@@ -46,16 +46,25 @@ public final class Visual {
 
     private static float ease(float t) { t = Math.max(0, Math.min(1, t)); float u = 1 - t; return 1 - u * u * u; }
 
+    private static Object curOverlay;
+    private static long overlayT0;
+
     /**
      * Ekran ładowania gry: poświata, pulsujące logo z pierścieniami i szklany pasek postępu.
-     * Rysowany NA wierzch standardowego ekranu Mojang (który ma wtedy kolor czerwony), z tą samą logiką znikania.
+     * Rysowany na wierzch ekranu Mojang (jego czerwone tło jest wyłączone w SplashOverlayMixin), z tą samą logiką znikania.
      */
-    public static void splash(DrawContext ctx, float progress, long completeAt) {
+    public static void splash(Object inst, DrawContext ctx, float progress, long completeAt) {
         MinecraftClient mc = MinecraftClient.getInstance();
+        long nowMs = System.currentTimeMillis();
+        if (inst != curOverlay) { curOverlay = inst; overlayT0 = nowMs; }
         float f = completeAt > -1L ? (Util.getMeasuringTimeMs() - completeAt) / 1000f : -1f;
         float a = f < 1f ? 1f : 1f - Math.max(0f, Math.min(1f, f - 1f));
-        a = Math.min(1f, a * 1.7f);      // znika odrobinę szybciej niż oryginał, żeby nie prześwitywała czerwień
+        a = Math.min(1f, a * 1.5f);      // znika odrobinę szybciej niż oryginał, żeby nie prześwitywało logo Mojang
+        a *= Math.min(1f, (nowMs - overlayT0) / 380f);   // płynne wejście
         if (a <= 0f) return;
+        if (completeAt > -1L) progress = 1f;
+        // najpierw dorysuj wszystko, co było wcześniej (ekran pod spodem) – inaczej jego tekst wyskakuje NA WIERZCH naszego tła
+        Compat.flush(ctx);
         int w = ctx.getScaledWindowWidth(), h = ctx.getScaledWindowHeight();
         aurora(ctx, w, h, a);
 

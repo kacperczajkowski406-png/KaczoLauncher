@@ -20,7 +20,9 @@ public class Modules {
     public static final Module GENERAL = new Module("general", "Settings", "", "", "");
     public static Module CROSSHAIR, SCOREBOARD, MUSIC, ZOOM;
 
-    private static boolean zooming = false, nvAdded = false;
+    private static boolean zooming = false, nvAdded = false, fovSaved = false, hitboxSet = false;
+    private static int fovBefore = 70;
+    private static double fxBefore = 1.0;
     private static int savedFov = 70;
     private static int tick = 0;
     private static long joinStart = -1;
@@ -34,17 +36,22 @@ public class Modules {
     private static final net.minecraft.util.Identifier LOGO = net.minecraft.util.Identifier.of("kaczohud", "textures/gui/logo.png");
 
     static {
-        GENERAL.add(Setting.bool("hint", "Show key hint", true));
+        GENERAL.add(Setting.header("Title screen"));
+        GENERAL.add(Setting.bool("glassbtn", "Glass buttons on title screen", true));
+        GENERAL.add(Setting.bool("titlelogo", "Logo on title screen", true));
+        GENERAL.add(Setting.num("logosize", "Title logo size %", 40, 140, 80).unit("%"));
+        GENERAL.add(Setting.bool("titlebg", "Animated title background", true));
+        GENERAL.add(Setting.bool("loadscreen", "Custom loading screen", true));
+        GENERAL.add(Setting.bool("intro", "Intro animation", true));
+        GENERAL.add(Setting.header("HUD"));
         GENERAL.add(Setting.choice("style", "HUD style", 0, "Glass", "Flat"));
         GENERAL.add(Setting.num("radius", "Corner radius", 0, 8, 4));
         GENERAL.add(Setting.bool("glassborder", "Glass border", true));
-        GENERAL.add(Setting.bool("glassbtn", "Glass buttons in game menus", true));
-        GENERAL.add(Setting.bool("titlelogo", "Logo on title screen", true));
-        GENERAL.add(Setting.bool("intro", "Intro animation", true));
         GENERAL.add(Setting.bool("hudanim", "Animate HUD on join", true));
-        GENERAL.add(Setting.bool("titlebg", "Animated title background", true));
-        GENERAL.add(Setting.bool("loadscreen", "Custom loading screen", true));
-        GENERAL.add(Setting.num("logosize", "Title logo size %", 40, 140, 80));
+        GENERAL.add(Setting.bool("hint", "Show key hint", true));
+        GENERAL.add(Setting.header("Music"));
+        GENERAL.add(Setting.choice("music", "Kaczo music", 1, "Off", "Menu", "Menu + game"));
+        GENERAL.add(Setting.num("musicvol", "Music volume", 0, 100, 70).unit("%"));
 
         reg(new Module("fps", "FPS", "Frames per second.", "HUD", "FPS").on().hud(6, 6)
                 .text(mc -> mc.getCurrentFps() + " FPS"));
@@ -150,6 +157,32 @@ public class Modules {
                 .add(Setting.bool("lyrics", "Show lyrics", true))
                 .add(Setting.num("width", "Min width", 100, 320, 130))
                 .add(Setting.bool("hide", "Hide when nothing plays", true)));
+
+        reg(new Module("reach", "Reach Display", "Distance of your last hit.", "PvP", "REACH").fresh().hud(6, 290)
+                .text(mc -> Extras.reachText()));
+        reg(new Module("combo", "Combo Display", "Consecutive hits in a row.", "PvP", "COMBO").fresh().hud(6, 304)
+                .text(mc -> Extras.comboText()));
+        reg(new Module("mousestrokes", "Mouse Strokes", "Shows your mouse movement.", "PvP", "MOUSE").fresh().hud(80, 290)
+                .draw(48, 48, Extras::drawMouse));
+        reg(new Module("pvpitems", "PvP Items", "Totems, crystals, apples and pearls in your inventory.", "PvP", "ITEMS").fresh().hud(140, 290)
+                .size(Extras::pvpSize).draw(80, 22, Extras::drawPvpItems)
+                .add(Setting.bool("totem", "Totem", true)).add(Setting.bool("crystal", "End crystal", true))
+                .add(Setting.bool("gapple", "Golden apple", true)).add(Setting.bool("egapple", "Enchanted apple", false))
+                .add(Setting.bool("xpb", "XP bottle", false)).add(Setting.bool("pearl", "Ender pearl", true)));
+        reg(new Module("inventory", "Inventory", "Your inventory on the screen.", "HUD", "INV").fresh().hud(6, 340)
+                .draw(162, 54, Extras::drawInventory));
+        reg(new Module("deathinfo", "Death Info", "Coordinates of your last death.", "HUD", "DEATH").fresh().hud(100, 140)
+                .text(Extras::deathText));
+        reg(new Module("waypoint", "Waypoint", "Distance and direction to a saved point (B = set, Shift+B = clear).", "HUD", "WAY").fresh().hud(100, 154)
+                .text(Extras::waypointText));
+        reg(new Module("freelook", "Perspective (Freelook)", "Hold Left Alt to look around without turning.", "Visual", "LOOK").fresh().on());
+        reg(new Module("hitbox", "Hitboxes", "Shows entity hitboxes (like F3 + B).", "Visual", "BOX").fresh());
+        reg(new Module("nohurtcam", "No Hurt Camera", "No camera shake when you take damage.", "Visual", "HURT").fresh());
+        reg(new Module("nobob", "No View Bobbing", "Turns off the swaying of the view while walking.", "Visual", "BOB").fresh());
+        reg(new Module("hidebossbar", "Hide Boss Bar", "Hides boss health bars at the top of the screen.", "Visual", "BOSS").fresh());
+        reg(new Module("fov", "FOV Changer", "Sets your field of view and the sprint/speed FOV effect.", "Visual", "FOV").fresh()
+                .add(Setting.num("value", "Field of view", 30, 110, 90))
+                .add(Setting.num("fx", "Speed FOV effect", 0, 100, 100).unit("%")));
 
         CROSSHAIR = reg(new Module("crosshair", "Custom Crosshair", "Your own crosshair.", "PvP", "+").on()
                 .add(Setting.choice("style", "Style", 1, "Dot", "Cross", "Circle", "Square"))
@@ -268,7 +301,9 @@ public class Modules {
     // ───────────── logika co tick ─────────────
 
     public static void tick(MinecraftClient mc) {
+        try { Music.tick(mc); } catch (Throwable ignored) { /* muzyka nie może wywrócić gry */ }
         Cps.tick(mc);
+        try { Extras.tick(mc); } catch (Throwable ignored) { }
         if (mc.player == null) { zooming = false; nvAdded = false; hadPlayer = false; return; }
         if (!hadPlayer) { hadPlayer = true; joinStart = System.currentTimeMillis(); }
         tick++;
@@ -277,10 +312,26 @@ public class Modules {
 
         // Zoom (trzymaj C)
         boolean want = ZOOM.enabled() && mc.currentScreen == null
-                && InputUtil.isKeyPressed(mc.getWindow().getHandle(), GLFW.GLFW_KEY_C);
+                && Compat.keyDown(mc, GLFW.GLFW_KEY_C);
         if (want && !zooming) { savedFov = mc.options.getFov().getValue(); zooming = true; }
         if (want) mc.options.getFov().setValue(Math.max(30, Math.min(110, ZOOM.num("fov"))));
         if (!want && zooming) { mc.options.getFov().setValue(savedFov); zooming = false; }
+
+        // FOV Changer (nie podczas zoomu)
+        Module fv = byId("fov");
+        if (fv.enabled() && !zooming) {
+            if (!fovSaved) { fovBefore = mc.options.getFov().getValue(); fxBefore = mc.options.getFovEffectScale().getValue(); fovSaved = true; }
+            mc.options.getFov().setValue(Math.max(30, Math.min(110, fv.num("value"))));
+            mc.options.getFovEffectScale().setValue(Math.max(0, Math.min(100, fv.num("fx"))) / 100.0);
+        } else if (!fv.enabled() && fovSaved) {
+            mc.options.getFov().setValue(fovBefore);
+            mc.options.getFovEffectScale().setValue(fxBefore);
+            fovSaved = false;
+        }
+
+        // Hitboxy
+        if (byId("hitbox").enabled()) { Compat.hitboxes(mc, true); hitboxSet = true; }
+        else if (hitboxSet) { Compat.hitboxes(mc, false); hitboxSet = false; }
 
         // Fullbright
         boolean fb = byId("fullbright").enabled();
@@ -292,7 +343,7 @@ public class Modules {
 
         // Toggle Sneak
         if (byId("togglesneak").enabled() && mc.currentScreen == null) {
-            boolean phys = InputUtil.isKeyPressed(mc.getWindow().getHandle(),
+            boolean phys = Compat.keyDown(mc,
                     net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper.getBoundKeyOf(mc.options.sneakKey).getCode());
             if (phys && !sneakHeld) sneakToggled = !sneakToggled;
             sneakHeld = phys;

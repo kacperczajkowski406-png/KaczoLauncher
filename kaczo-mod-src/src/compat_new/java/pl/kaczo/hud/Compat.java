@@ -7,7 +7,7 @@ import net.minecraft.util.Identifier;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.render.RenderLayer;
 
-/** Różnice API Minecrafta między wersjami (1.21.2 – 1.21.5). */
+/** Różnice API Minecrafta między wersjami (1.21.2 – 1.21.4). */
 public final class Compat {
     private Compat() { }
 
@@ -25,4 +25,14 @@ public final class Compat {
     public static void flush(DrawContext ctx) { ctx.draw(); }
     public static void alpha(float a) { RenderSystem.setShaderColor(1f, 1f, 1f, a); }
 
+    // --- różnice dodane dla wspólnego kodu (klawisze, skróty, hitboxy) ---
+    public static boolean keyDown(net.minecraft.client.MinecraftClient mc, int code) {
+        return net.minecraft.client.util.InputUtil.isKeyPressed(mc.getWindow().getHandle(), code);
+    }
+    public static net.minecraft.client.option.KeyBinding newKey(String id, int code) {
+        return new net.minecraft.client.option.KeyBinding(id, net.minecraft.client.util.InputUtil.Type.KEYSYM, code, "key.categories.kaczohud");
+    }
+    public static void hitboxes(net.minecraft.client.MinecraftClient mc, boolean on) {
+        mc.getEntityRenderDispatcher().setRenderHitboxes(on);
+    }
 }

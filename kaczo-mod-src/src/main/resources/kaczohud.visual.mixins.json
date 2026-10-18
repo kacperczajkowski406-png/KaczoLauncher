@@ -2,6 +2,17 @@
   "required": false,
   "package": "pl.kaczo.hud.mixin",
   "compatibilityLevel": "JAVA_21",
-  "client": ["PressableWidgetMixin", "LogoDrawerMixin", "SplashOverlayMixin", "PanoramaMixin"],
-  "injectors": { "defaultRequire": 0 }
+  "client": [
+    "ClickableWidgetMixin",
+    "LogoDrawerMixin",
+    "SplashOverlayMixin",
+    "PanoramaMixin",
+    "CameraMixin",
+    "EntityLookMixin",
+    "BossBarMixin",
+    "GameRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
 }

@@ -149,4 +149,98 @@ public class Ui {
     public static void centered(DrawContext ctx, MinecraftClient mc, String s, int cx, int y, int color) {
         ctx.drawText(mc.textRenderer, s, cx - mc.textRenderer.getWidth(s) / 2, y, color, false);
     }
+
+    // ───────────── animacje i dodatkowe prymitywy (nowy wygląd menu) ─────────────
+
+    private static long lastT = System.nanoTime();
+    private static float DT = 0.016f;
+    private static final java.util.Map<String, Float> TW = new java.util.HashMap<>();
+
+    /** Wołaj raz na początku klatki ekranu – liczy czas od poprzedniej klatki dla animacji. */
+    public static void beginFrame() {
+        long n = System.nanoTime();
+        DT = Math.max(0.001f, Math.min(0.1f, (n - lastT) / 1e9f));
+        lastT = n;
+    }
+
+    public static float dt() { return DT; }
+
+    /** Płynnie zbliża wartość zapamiętaną pod kluczem do celu (0..1); pierwszy odczyt od razu daje cel. */
+    public static float tween(String key, float target) { return tween(key, target, 14f); }
+
+    public static float tween(String key, float target, float speed) {
+        Float old = TW.get(key);
+        float v = old == null ? target : old;
+        v += (target - v) * Math.min(1f, DT * speed);
+        if (Math.abs(target - v) < 0.003f) v = target;
+        TW.put(key, v);
+        return v;
+    }
+
+    public static float clamp01(float v) { return Math.max(0f, Math.min(1f, v)); }
+
+    public static float easeOut(float t) { t = clamp01(t); float u = 1 - t; return 1 - u * u * u; }
+
+    /** Liniowa mieszanka dwóch kolorów ARGB. */
+    public static int mix(int a, int b, float t) {
+        t = clamp01(t);
+        int aa = (int) (((a >>> 24) & 255) * (1 - t) + ((b >>> 24) & 255) * t);
+        int rr = (int) (((a >> 16) & 255) * (1 - t) + ((b >> 16) & 255) * t);
+        int gg = (int) (((a >> 8) & 255) * (1 - t) + ((b >> 8) & 255) * t);
+        int bb = (int) ((a & 255) * (1 - t) + (b & 255) * t);
+        return (aa << 24) | (rr << 16) | (gg << 8) | bb;
+    }
+
+    /** Wypełniony zaokrąglony prostokąt – współrzędne mogą być ułamkowe (rysowane w pikselach ekranu). */
+    public static void rrectD(DrawContext ctx, double x, double y, double w, double h, double r, int color) {
+        double s = sf();
+        begin(ctx, s);
+        pr(ctx, px(x, s), px(y, s), px(w, s), px(h, s), px(r, s), color);
+        end(ctx);
+    }
+
+    /** Obwódka o zadanej grubości (w pikselach GUI, może być ułamkowa). */
+    public static void ringT(DrawContext ctx, double x, double y, double w, double h, double r, double thick, int color) {
+        double s = sf();
+        begin(ctx, s);
+        int X = px(x, s), Y = px(y, s), W = px(w, s), H = px(h, s), R = px(r, s), t = Math.max(1, px(thick, s));
+        for (int k = 0; k < t; k++) pring(ctx, X + k, Y + k, W - 2 * k, H - 2 * k, Math.max(0, R - k), color, color);
+        end(ctx);
+    }
+
+    /** Samo szkło bez cienia – delikatna obwódka i połysk (do kafelków i pól wewnątrz okna). */
+    public static void card(DrawContext ctx, int x, int y, int w, int h, int r, int fill, int border) {
+        double s = sf();
+        int X = px(x, s), Y = px(y, s), W = px(w, s), H = px(h, s), R = px(r, s);
+        begin(ctx, s);
+        pr(ctx, X, Y, W, H, R, fill);
+        if (border != 0) pring(ctx, X, Y, W, H, R, border, cov(border, 0.55));
+        end(ctx);
+    }
+
+    /** Pozioma płynna zmiana koloru (po kolumnach – tylko do małych elementów). */
+    public static void hgrad(DrawContext ctx, int x, int y, int w, int h, int c1, int c2) {
+        for (int i = 0; i < w; i++) ctx.fill(x + i, y, x + i + 1, y + h, mix(c1, c2, w <= 1 ? 0 : i / (float) (w - 1)));
+    }
+
+    /** Przełącznik „iOS”: t = 0 (wyłączony) .. 1 (włączony). */
+    public static void toggle(DrawContext ctx, int x, int y, int w, int h, float t, int onColor) {
+        int track = mix(0x55FFFFFF, onColor, t);
+        rrectD(ctx, x, y, w, h, h / 2.0, track);
+        ringT(ctx, x, y, w, h, h / 2.0, 0.4, mix(0x30FFFFFF, 0x40FFFFFF, t));
+        double d = h - 4;
+        double kx = x + 2 + (w - 4 - d) * t;
+        rrectD(ctx, kx, y + 2.5, d, d, d / 2, 0x40000000);
+        rrectD(ctx, kx, y + 2, d, d, d / 2, 0xFFFFFFFF);
+    }
+
+    /** Suwak: tor, wypełnienie i gałka; f = 0..1. */
+    public static void slider(DrawContext ctx, int x, int y, int w, float f, int accent, boolean hot) {
+        rrectD(ctx, x, y + 2, w, 3, 1.5, 0x40FFFFFF);
+        int fw = Math.max(2, Math.round(w * f));
+        rrectD(ctx, x, y + 2, fw, 3, 1.5, accent);
+        double d = hot ? 9 : 8;
+        rrectD(ctx, x + w * f - d / 2, y + 3.5 - d / 2 + 0.5, d, d, d / 2, 0x50000000);
+        rrectD(ctx, x + w * f - d / 2, y + 3.5 - d / 2, d, d, d / 2, 0xFFFFFFFF);
+    }
 }

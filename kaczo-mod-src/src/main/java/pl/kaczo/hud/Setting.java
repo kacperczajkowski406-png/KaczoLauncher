@@ -1,8 +1,8 @@
 package pl.kaczo.hud;
 
-/** Jedno ustawienie modułu: przełącznik, liczba (suwak), kolor albo lista opcji. */
+/** Jedno ustawienie modułu: przełącznik, liczba (suwak), kolor, lista opcji albo nagłówek sekcji. */
 public class Setting {
-    public enum Type { BOOL, INT, COLOR, ENUM }
+    public enum Type { BOOL, INT, COLOR, ENUM, HEADER }
     public static final int[] PALETTE = {0xFFFFFF, 0xFFE14A, 0x35E6FF, 0xFF4FD8, 0xFF8F3A, 0x55FF55, 0xFF5555, 0xAAAAAA};
 
     public final String key, label;
@@ -10,6 +10,8 @@ public class Setting {
     public final double min, max;
     public final String[] opts;
     public final String def;
+    /** Dopisek po wartości suwaka (np. "%"), pusty = brak. */
+    public String unit = "";
 
     private Setting(String key, String label, Type type, double min, double max, String[] opts, String def) {
         this.key = key; this.label = label; this.type = type; this.min = min; this.max = max; this.opts = opts; this.def = def;
@@ -21,4 +23,8 @@ public class Setting {
     public static Setting color(String key, String label, String def) { return new Setting(key, label, Type.COLOR, 0, 255, null, def); }
     public static final String YELLOW = "255,225,74,255,0", BLACK_BG = "0,0,0,144,0", WHITE = "255,255,255,255,0";
     public static Setting choice(String key, String label, int defIndex, String... opts) { return new Setting(key, label, Type.ENUM, 0, opts.length - 1, opts, String.valueOf(defIndex)); }
+    /** Nagłówek sekcji w oknie ustawień (nic nie przechowuje). */
+    public static Setting header(String label) { return new Setting("#" + label, label, Type.HEADER, 0, 0, null, ""); }
+
+    public Setting unit(String u) { this.unit = u; return this; }
 }

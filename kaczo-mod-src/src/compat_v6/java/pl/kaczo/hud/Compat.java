@@ -24,4 +24,14 @@ public final class Compat {
     public static void flush(DrawContext ctx) { }
     public static void alpha(float a) { }
 
+    // --- różnice dodane dla wspólnego kodu (klawisze, skróty, hitboxy) ---
+    public static boolean keyDown(net.minecraft.client.MinecraftClient mc, int code) {
+        return net.minecraft.client.util.InputUtil.isKeyPressed(mc.getWindow().getHandle(), code);
+    }
+    public static net.minecraft.client.option.KeyBinding newKey(String id, int code) {
+        return new net.minecraft.client.option.KeyBinding(id, net.minecraft.client.util.InputUtil.Type.KEYSYM, code, "key.categories.kaczohud");
+    }
+    public static void hitboxes(net.minecraft.client.MinecraftClient mc, boolean on) {
+        mc.getEntityRenderDispatcher().setRenderHitboxes(on);
+    }
 }
