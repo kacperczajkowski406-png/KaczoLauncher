@@ -45,6 +45,7 @@ let proc = null;
 function start(emit) {
   if (process.platform !== 'win32' || proc) return;
   const enc = Buffer.from(PS, 'utf16le').toString('base64');
+  try {
   proc = spawn('powershell.exe', ['-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden', '-EncodedCommand', enc], { windowsHide: true });
   let buf = '';
   proc.stdout.setEncoding('utf8');
@@ -57,7 +58,10 @@ function start(emit) {
       try { emit('media:state', JSON.parse(line)); } catch { /* ignoruj */ }
     }
   });
+  proc.on('error', () => { proc = null; });
+  proc.stderr.on('data', () => {});
   proc.on('exit', () => { proc = null; });
+  } catch { proc = null; }
 }
 function stop() { try { proc && proc.kill(); } catch { /* */ } proc = null; }
 

@@ -67,7 +67,7 @@ function createWindow() {
 
 app.whenReady().then(() => {
   if (process.platform !== 'darwin') Menu.setApplicationMenu(null);
-  nowplaying.start((ch, p) => emit(ch, p));
+  try { nowplaying.start((ch, p) => { try { emit(ch, p); } catch { /* okno zamknięte */ } }); } catch { /* opcjonalne */ }
   app.on('before-quit', () => nowplaying.stop());
   updater.init(app, (ch, p) => emit(ch, p), () => !game.isRunning());
   purgeReservedOfflineAccounts();
