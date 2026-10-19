@@ -41,7 +41,7 @@
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
+      "createDesktopShortcut": "always",
       "createStartMenuShortcut": true,
       "shortcutName": "Kaczo Client",
       "runAfterFinish": true,
