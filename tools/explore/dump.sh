@@ -20,7 +20,7 @@ for c in \
  net.minecraft.world.entity.player.Inventory net.minecraft.world.item.ItemStack net.minecraft.sounds.SoundEvent net.minecraft.sounds.SoundSource net.minecraft.client.gui.screens.DeathScreen \
  net.minecraft.world.phys.EntityHitResult net.minecraft.world.entity.player.Player net.minecraft.client.multiplayer.ClientLevel net.minecraft.client.multiplayer.ServerData \
  net.minecraft.client.resources.sounds.AbstractTickableSoundInstance net.minecraft.client.gui.screens.Overlay net.minecraft.client.gui.components.events.GuiEventListener \
- net.minecraft.client.renderer.RenderPipelines 'net.minecraft.client.KeyMapping$Category' net.minecraft.client.input.PreeditEvent net.minecraft.client.renderer.Panorama net.minecraft.client.gui.screens.Screen net.minecraft.client.gui.components.events.AbstractContainerEventHandler 'net.minecraft.client.sounds.SoundManager' 'net.minecraft.client.resources.sounds.SoundInstance$Attenuation' com.mojang.blaze3d.platform.InputConstants net.minecraft.world.food.FoodData net.minecraft.client.OptionInstance ; do
+ net.minecraft.client.renderer.RenderPipelines net.minecraft.world.scores.PlayerScoreEntry net.minecraft.world.scores.Scoreboard net.minecraft.world.scores.Objective net.minecraft.world.scores.PlayerTeam net.minecraft.world.scores.DisplaySlot net.minecraft.client.ClientClockManager net.minecraft.world.clock.ClockManager net.minecraft.network.chat.numbers.StyledFormat 'net.minecraft.client.KeyMapping$Category' net.minecraft.client.input.PreeditEvent net.minecraft.client.renderer.Panorama net.minecraft.client.gui.screens.Screen net.minecraft.client.gui.components.events.AbstractContainerEventHandler 'net.minecraft.client.sounds.SoundManager' 'net.minecraft.client.resources.sounds.SoundInstance$Attenuation' com.mojang.blaze3d.platform.InputConstants net.minecraft.world.food.FoodData net.minecraft.client.OptionInstance ; do
   javap -p -cp "$MCJAR" $c > $OUT/$c.txt 2>&1
 done
 # Fabric API: moduły są zagnieżdżone w fabric-api.jar (META-INF/jars)
@@ -29,7 +29,7 @@ for j in $(cat $OUT/classpath.txt | grep -i fabric-api); do
   unzip -qo $j 'META-INF/jars/*' -d /tmp/fapi 2>/dev/null
 done
 for j in /tmp/fapi/META-INF/jars/*.jar; do unzip -Z1 $j 2>/dev/null | grep -E 'net/fabricmc/fabric/api/client/' | grep '\.class$' | sed "s#^#$(basename $j) #" >> $OUT/fabric-classes.txt; done
-for c in net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry net.fabricmc.fabric.api.client.screen.v1.ScreenEvents net.fabricmc.fabric.api.client.screen.v1.Screens net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper; do
+for c in net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry net.fabricmc.fabric.api.client.screen.v1.ScreenEvents net.fabricmc.fabric.api.client.screen.v1.Screens net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement; do
   CPX=$(ls /tmp/fapi/META-INF/jars/*.jar | tr '\n' ':')
   javap -p -cp "$CPX$MCJAR" $c > $OUT/fabric.$c.txt 2>&1
 done

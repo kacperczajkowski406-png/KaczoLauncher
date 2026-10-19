@@ -67,6 +67,18 @@ def add_arg(txt, name, newname, extra):
     return ''.join(out)
 
 def rewrite(txt):
+    # Fabric API 26.x
+    txt = txt.replace('ScreenEvents.beforeRender(', 'ScreenEvents.beforeExtract(').replace('ScreenEvents.afterRender(', 'ScreenEvents.afterExtract(')
+    txt = txt.replace('Screens.getButtons(', 'Screens.getWidgets(')
+    txt = txt.replace('.substrByWidth(', '.plainSubstrByWidth(')
+    txt = txt.replace('net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper', 'net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper')
+    txt = txt.replace('KeyBindingHelper.registerKeyBinding(', 'KeyMappingHelper.registerKeyMapping(').replace('KeyBindingHelper.getBoundKeyOf(', 'KeyMappingHelper.getBoundKeyOf(')
+    txt = txt.replace('import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;', 'import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;')
+    txt = re.sub(r'HudRenderCallback\.EVENT\.register\(\(ctx, tick\) ->', 'HudElementRegistry.addLast(net.minecraft.resources.Identifier.fromNamespaceAndPath("kaczohud", "hud"), (ctx, tick) ->', txt)
+    txt = txt.replace('SoundEvent.fromNamespaceAndPath(', 'SoundEvent.createVariableRangeEvent(').replace('SoundInstance.AttenuationType', 'SoundInstance.Attenuation')
+    txt = txt.replace('setDone();', 'stop();').replace('cur.isDone()', 'cur.isStopped()')
+    txt = re.sub(r'(\w+)\.getTimeOfDay\(\)', r'Compat.dayTime(\1)', txt)
+    txt = re.sub(r'mc\.player\.sendMessage\((.*), true\)', r'Compat.actionBar(mc, \1)', txt)
     txt = add_arg(txt, 'drawTextWithShadow', 'text', ', true')
     if re.search(r'extends\s+(KScreen|Screen)\b', txt):
         txt = txt.replace('public void render(GuiGraphicsExtractor', 'public void extractRenderState(GuiGraphicsExtractor')
