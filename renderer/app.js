@@ -762,3 +762,35 @@ bridge.on('update:state', (p) => { U = p; if (S) S.update = p; refreshUpdate(); 
     $('np-time').textContent = (m.playing ? '▶ ' : '❚❚ ') + f(m.pos || 0) + (m.dur > 0 ? ' / ' + f(m.dur) : '');
   });
 })();
+
+// Tekst na żywo (karaoke) z plików .lrc z folderu %APPDATA%/KaczoLauncher/lyrics
+(function () {
+  let key = '', lines = [], lastIdx = -2;
+  const parse = (t) => {
+    const out = [];
+    for (const raw of t.split(/\r?\n/)) {
+      const m = raw.match(/^((?:\[\d+:\d+(?:\.\d+)?\])+)(.*)$/); if (!m) continue;
+      for (const tm of m[1].matchAll(/\[(\d+):(\d+(?:\.\d+)?)\]/g)) out.push({ t: +tm[1] * 60 + +tm[2], s: m[2].trim() });
+    }
+    return out.sort((a, b) => a.t - b.t);
+  };
+  window.api.on('media:state', async (m) => {
+    const box = document.getElementById('lyr'), inn = document.getElementById('lyr-in');
+    if (!box) return;
+    if (!m || m.none || !m.title) { box.hidden = true; return; }
+    const k = (m.artist || '') + '|' + m.title;
+    if (k !== key) {
+      key = k; lines = []; lastIdx = -2;
+      try { lines = parse((await window.api.invoke('lyrics:get', m.artist, m.title)).text || ''); } catch { /* brak */ }
+    }
+    if (!lines.length || !m.playing) { box.hidden = true; return; }
+    let i = -1; for (let j = 0; j < lines.length && lines[j].t <= (m.pos || 0) + 0.3; j++) i = j;
+    box.hidden = false;
+    if (i === lastIdx) return; lastIdx = i;
+    inn.innerHTML = '';
+    for (let j = Math.max(0, i - 1); j <= Math.min(lines.length - 1, i + 2); j++) {
+      if (!lines[j].s) continue;
+      const d = document.createElement('div'); d.textContent = lines[j].s; if (j === i) d.className = 'cur'; inn.appendChild(d);
+    }
+  });
+})();

@@ -82,6 +82,21 @@ app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(
 
 // ───────────────────────── pomocnicze ─────────────────────────
 
+handleLyrics();
+function handleLyrics() {
+  const dir = path.join(P.base, 'lyrics');
+  fs.mkdirSync(dir, { recursive: true });
+  ipcMain.handle('lyrics:get', async (_e, artist, title) => {
+    try {
+      const clean = (x) => String(x || '').replace(/[\\/:*?"<>|]/g, '').trim();
+      for (const n of [`${clean(artist)} - ${clean(title)}.lrc`, `${clean(title)}.lrc`]) {
+        const f = path.join(dir, path.basename(n));
+        if (fs.existsSync(f)) return { ok: true, data: { text: fs.readFileSync(f, 'utf8'), dir } };
+      }
+      return { ok: true, data: { text: '', dir } };
+    } catch (e) { return { ok: false, error: String(e.message || e) }; }
+  });
+}
 function handle(channel, fn) {
   ipcMain.handle(channel, async (event, ...args) => {
     try {

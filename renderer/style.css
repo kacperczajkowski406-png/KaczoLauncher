@@ -337,3 +337,9 @@ details.log summary { cursor: pointer; color: var(--muted); font-size: 13px; }
 .np-bar{height:3px;border-radius:3px;background:rgba(255,255,255,.18);margin-top:4px;overflow:hidden}
 .np-bar i{display:block;height:100%;width:0;background:var(--accent,#ffd24a);transition:width .9s linear}
 .np small{font-size:10px;opacity:.55}
+
+.lyr{position:fixed;left:0;right:0;bottom:22px;z-index:50;pointer-events:none;text-align:center;font-family:"Segoe UI Variable Display","Segoe UI",system-ui,sans-serif}
+.lyr[hidden]{display:none}
+#lyr-in{display:inline-flex;flex-direction:column;gap:6px;padding:14px 28px;border-radius:20px;background:rgba(20,16,30,.45);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.14);max-width:70vw}
+#lyr-in div{font-size:15px;opacity:.35;transition:all .35s;transform:scale(.96)}
+#lyr-in div.cur{font-size:26px;font-weight:700;opacity:1;transform:scale(1);text-shadow:0 0 18px var(--accent,#ffd24a)}

@@ -2,6 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 // Interfejs dostaje tylko wąskie, jawnie wymienione API – bez dostępu do Node.
 const INVOKE = new Set([
+  'lyrics:get',
   'app:init',
   'versions:list', 'versions:fabric',
   'account:microsoft', 'account:offline', 'account:select', 'account:remove',
