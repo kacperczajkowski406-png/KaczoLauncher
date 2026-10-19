@@ -327,3 +327,13 @@ details.log summary { cursor: pointer; color: var(--muted); font-size: 13px; }
 .launch.fail .launch-logo { animation: none; filter: grayscale(.8); }
 
 .upd-chip { width: 100%; margin-bottom: 10px; text-align: center; }
+
+.np{margin:10px 0;padding:10px;border-radius:14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(14px);display:flex;gap:10px;align-items:center}
+.np[hidden]{display:none}
+.np-cover{width:48px;height:48px;flex:none;border-radius:10px;background:#333 center/cover no-repeat;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.np-meta{min-width:0;flex:1;display:flex;flex-direction:column;gap:2px}
+.np-meta b{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np-meta span{font-size:11px;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np-bar{height:3px;border-radius:3px;background:rgba(255,255,255,.18);margin-top:4px;overflow:hidden}
+.np-bar i{display:block;height:100%;width:0;background:var(--accent,#ffd24a);transition:width .9s linear}
+.np small{font-size:10px;opacity:.55}

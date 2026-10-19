@@ -746,3 +746,19 @@ bridge.on('update:state', (p) => { U = p; if (S) S.update = p; refreshUpdate(); 
     showFatal('Launcher failed to start', e.message);
   }
 })();
+
+// Teraz gra (Spotify itp.) – okładka, tytuł, postęp
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const f = (s) => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+  window.api.on('media:state', (m) => {
+    const box = $('np'); if (!box) return;
+    if (!m || m.none || !m.title) { box.hidden = true; return; }
+    box.hidden = false;
+    $('np-title').textContent = m.title;
+    $('np-artist').textContent = m.artist || '';
+    $('np-cover').style.backgroundImage = m.cover ? 'url(' + m.cover + ')' : '';
+    $('np-prog').style.width = m.dur > 0 ? Math.min(100, (m.pos / m.dur) * 100) + '%' : '0';
+    $('np-time').textContent = (m.playing ? '▶ ' : '❚❚ ') + f(m.pos || 0) + (m.dur > 0 ? ' / ' + f(m.dur) : '');
+  });
+})();

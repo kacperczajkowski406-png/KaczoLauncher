@@ -14,6 +14,7 @@ const owner = require('./src/owner');
 const gameopts = require('./src/gameopts');
 const resourcepack = require('./src/resourcepack');
 const updater = require('./src/updater');
+const nowplaying = require('./src/nowplaying');
 const { T, GAME_LANG } = require('./src/lang');
 
 let win = null;
@@ -66,6 +67,8 @@ function createWindow() {
 
 app.whenReady().then(() => {
   if (process.platform !== 'darwin') Menu.setApplicationMenu(null);
+  nowplaying.start((ch, p) => emit(ch, p));
+  app.on('before-quit', () => nowplaying.stop());
   updater.init(app, (ch, p) => emit(ch, p), () => !game.isRunning());
   purgeReservedOfflineAccounts();
   createWindow();

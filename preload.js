@@ -13,7 +13,7 @@ const INVOKE = new Set([
   'game:play', 'game:stop',
   'update:check', 'update:install', 'update:state',
 ]);
-const EVENTS = new Set(['game:state', 'game:progress', 'game:log', 'update:state']);
+const EVENTS = new Set(['game:state', 'game:progress', 'game:log', 'update:state', 'media:state']);
 
 contextBridge.exposeInMainWorld('api', {
   invoke: async (channel, ...args) => {
