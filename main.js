@@ -69,7 +69,8 @@ app.whenReady().then(() => {
   if (process.platform !== 'darwin') Menu.setApplicationMenu(null);
   try { nowplaying.start((ch, p) => { try { emit(ch, p); } catch { /* okno zamknięte */ } }); } catch { /* opcjonalne */ }
   app.on('before-quit', () => nowplaying.stop());
-  updater.init(app, (ch, p) => emit(ch, p), () => !game.isRunning());
+  app.on('will-quit', () => nowplaying.stop());
+  updater.init(app, (ch, p) => emit(ch, p), () => !game.isRunning(), () => nowplaying.stop());
   purgeReservedOfflineAccounts();
   createWindow();
   app.on('activate', () => { if (!BrowserWindow.getAllWindows().length) createWindow(); });

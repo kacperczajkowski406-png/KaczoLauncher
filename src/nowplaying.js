@@ -46,7 +46,7 @@ function start(emit) {
   if (process.platform !== 'win32' || proc) return;
   const enc = Buffer.from(PS, 'utf16le').toString('base64');
   try {
-  proc = spawn('powershell.exe', ['-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden', '-EncodedCommand', enc], { windowsHide: true });
+  proc = spawn('powershell.exe', ['-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden', '-EncodedCommand', enc], { windowsHide: true, cwd: require('os').tmpdir(), stdio: ['ignore', 'pipe', 'pipe'] });
   let buf = '';
   proc.stdout.setEncoding('utf8');
   proc.stdout.on('data', (d) => {
@@ -63,6 +63,12 @@ function start(emit) {
   proc.on('exit', () => { proc = null; });
   } catch { proc = null; }
 }
-function stop() { try { proc && proc.kill(); } catch { /* */ } proc = null; }
+function stop() {
+  const p = proc; proc = null;
+  if (!p) return;
+  try { p.kill(); } catch { /* */ }
+  // pewność, że drzewo procesów nie blokuje plików launchera podczas aktualizacji/odinstalowania
+  try { spawn('taskkill', ['/PID', String(p.pid), '/T', '/F'], { windowsHide: true, stdio: 'ignore' }); } catch { /* */ }
+}
 
 module.exports = { start, stop };

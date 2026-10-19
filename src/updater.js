@@ -13,7 +13,9 @@ function set(patch) {
   notify({ ...state });
 }
 
-function init(app, emit, canInstall = () => true) {
+let beforeInstall = () => {};
+function init(app, emit, canInstall = () => true, onBeforeInstall = () => {}) {
+  beforeInstall = onBeforeInstall;
   notify = (s) => emit('update:state', s);
   if (!app.isPackaged) return; // w trybie developerskim (npm start) aktualizacji nie ma
   try {
@@ -33,7 +35,7 @@ function init(app, emit, canInstall = () => true) {
     set({ status: 'ready', version: info.version, percent: 100 });
     // automatyczna instalacja: zaraz po pobraniu (o ile gra nie jest uruchomiona), bez klikania
     const tryInstall = () => {
-      if (canInstall()) { try { updater.quitAndInstall(true, true); } catch { /* spróbuje przy zamknięciu */ } }
+      if (canInstall()) { try { try { beforeInstall(); } catch { /* */ } updater.quitAndInstall(true, true); } catch { /* spróbuje przy zamknięciu */ } }
       else setTimeout(tryInstall, 30000);
     };
     setTimeout(tryInstall, 2500);
@@ -53,6 +55,7 @@ async function check() {
 
 function install() {
   if (!updater || state.status !== 'ready') throw new Error('Brak pobranej aktualizacji');
+  try { beforeInstall(); } catch { /* */ }
   updater.quitAndInstall(true, true);
 }
 
