@@ -26,19 +26,14 @@ function init(app, emit, canInstall = () => true, onBeforeInstall = () => {}) {
   }
   state.supported = true;
   updater.autoDownload = true;
-  updater.autoInstallOnAppQuit = true;
+  updater.autoInstallOnAppQuit = false; // instalacja tylko na kliknięcie (bezpieczniej)
   updater.on('checking-for-update', () => set({ status: 'checking', error: '' }));
   updater.on('update-available', (info) => set({ status: 'downloading', version: info.version, percent: 0 }));
   updater.on('update-not-available', () => set({ status: 'none' }));
   updater.on('download-progress', (p) => set({ status: 'downloading', percent: Math.round(p.percent || 0) }));
   updater.on('update-downloaded', (info) => {
     set({ status: 'ready', version: info.version, percent: 100 });
-    // automatyczna instalacja: zaraz po pobraniu (o ile gra nie jest uruchomiona), bez klikania
-    const tryInstall = () => {
-      if (canInstall()) { try { try { beforeInstall(); } catch { /* */ } updater.quitAndInstall(true, true); } catch { /* spróbuje przy zamknięciu */ } }
-      else setTimeout(tryInstall, 30000);
-    };
-    setTimeout(tryInstall, 2500);
+    // instalacja: użytkownik klika baner/przycisk „Zaktualizuj” (bez cichej instalacji w tle)
   });
   updater.on('error', (e) => set({ status: 'error', error: String((e && e.message) || e).slice(0, 200) }));
   setTimeout(check, 800);
@@ -56,7 +51,7 @@ async function check() {
 function install() {
   if (!updater || state.status !== 'ready') throw new Error('Brak pobranej aktualizacji');
   try { beforeInstall(); } catch { /* */ }
-  updater.quitAndInstall(true, true);
+  updater.quitAndInstall(false, true);
 }
 
 module.exports = { init, check, install, get: () => ({ ...state }) };

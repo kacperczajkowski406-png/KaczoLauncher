@@ -7,8 +7,6 @@
   Delete "$SMPROGRAMS\Kaczo Client.lnk"
   Delete "$DESKTOP\Kaczo Launcher.lnk"
   Delete "$DESKTOP\KaczoLauncher.lnk"
-  ; zabij ewentualnie działający launcher i jego procesy, żeby nie blokowały plików
-  nsExec::Exec 'taskkill /F /T /IM "Kaczo Client.exe"'
 !macroend
 
 ; Po instalacji: jeśli instalator leży na pulpicie, usuń go (z opóźnieniem, bo sam siebie nie skasuje).
