@@ -27,8 +27,10 @@ public final class Compat {
     public static void alpha(float a) { }
 
     public static boolean keyDown(Minecraft mc, int code) { return InputConstants.isKeyDown(mc.getWindow(), code); }
+    private static KeyMapping.Category cat;
     public static KeyMapping newKey(String id, int code) {
-        return new KeyMapping(id, code, KeyMapping.Category.register(Identifier.fromNamespaceAndPath("kaczohud", "main")));
+        if (cat == null) cat = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("kaczohud", "main"));
+        return new KeyMapping(id, code, cat);
     }
     public static void hitboxes(Minecraft mc, boolean on) { }
     public static void border(GuiGraphicsExtractor ctx, int x, int y, int w, int h, int col) { ctx.outline(x, y, w, h, col); }

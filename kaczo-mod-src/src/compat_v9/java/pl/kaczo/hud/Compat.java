@@ -28,9 +28,11 @@ public final class Compat {
     public static boolean keyDown(net.minecraft.client.MinecraftClient mc, int code) {
         return net.minecraft.client.util.InputUtil.isKeyPressed(mc.getWindow(), code);
     }
+    private static net.minecraft.client.option.KeyBinding.Category cat;
+    /** Kategorię można zarejestrować tylko raz – wszystkie klawisze moda dzielą jedną. */
     public static net.minecraft.client.option.KeyBinding newKey(String id, int code) {
-        return new net.minecraft.client.option.KeyBinding(id, code,
-                net.minecraft.client.option.KeyBinding.Category.create(net.minecraft.util.Identifier.of("kaczohud", "main")));
+        if (cat == null) cat = net.minecraft.client.option.KeyBinding.Category.create(net.minecraft.util.Identifier.of("kaczohud", "main"));
+        return new net.minecraft.client.option.KeyBinding(id, code, cat);
     }
     /** Od 1.21.9 hitboxy rysuje debugowy renderer – ten moduł jest tu bez efektu. */
     public static void hitboxes(net.minecraft.client.MinecraftClient mc, boolean on) { }
