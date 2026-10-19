@@ -17,6 +17,17 @@ CLASS_OVERRIDES = {
     'net.minecraft.client.gui.RotatingCubeMapRenderer': 'net.minecraft.client.renderer.Panorama',
 }
 
+# zmiany nazw w 26.x względem mapowań Mojang z 1.21.11: (prosta nazwa klasy-właściciela, nazwa yarn) -> nazwa w 26.x
+OVR = {
+    ('GuiGraphicsExtractor', 'drawText'): 'text', ('GuiGraphicsExtractor', 'drawItem'): 'item',
+    ('GuiGraphicsExtractor', 'getScaledWindowWidth'): 'guiWidth', ('GuiGraphicsExtractor', 'getScaledWindowHeight'): 'guiHeight',
+    ('GuiGraphicsExtractor', 'getMatrices'): 'pose', ('GuiGraphicsExtractor', 'drawTexture'): 'blit',
+    ('GuiGraphicsExtractor', 'drawStackOverlay'): 'itemDecorations', ('GuiGraphicsExtractor', 'drawItemInSlot'): 'itemDecorations',
+    ('GuiGraphicsExtractor', 'drawHorizontalLine'): 'horizontalLine', ('GuiGraphicsExtractor', 'drawVerticalLine'): 'verticalLine',
+    ('Font', 'getWidth'): 'width',
+    ('TextureManager', 'registerTexture'): 'register',
+}
+
 def load_map(p):
     m = json.load(open(p))
     classes = dict(m['classes']); classes.update(CLASS_OVERRIDES)
@@ -32,6 +43,41 @@ def load_map(p):
 def simple(fq): return fq.rsplit('.', 1)[-1]
 
 # ───────────────────────── etap 1 ─────────────────────────
+def add_arg(txt, name, newname, extra):
+    """X.name(a, b) -> X.newname(a, b, extra) z dopasowaniem nawiasów."""
+    out = []; i = 0
+    pat = re.compile(r'\.' + name + r'\(')
+    while True:
+        m = pat.search(txt, i)
+        if not m: out.append(txt[i:]); break
+        out.append(txt[i:m.start()]); out.append('.' + newname + '(')
+        j = m.end(); depth = 1; instr = False
+        while j < len(txt) and depth:
+            c = txt[j]
+            if instr:
+                if c == '\\': j += 1
+                elif c == '"': instr = False
+            else:
+                if c == '"': instr = True
+                elif c == '(': depth += 1
+                elif c == ')': depth -= 1
+            j += 1
+        out.append(txt[m.end():j - 1] + extra + ')')
+        i = j
+    return ''.join(out)
+
+def rewrite(txt):
+    txt = add_arg(txt, 'drawTextWithShadow', 'text', ', true')
+    if re.search(r'extends\s+(KScreen|Screen)\b', txt):
+        txt = txt.replace('public void render(GuiGraphicsExtractor', 'public void extractRenderState(GuiGraphicsExtractor')
+        txt = txt.replace('super.render(', 'super.extractRenderState(')
+        txt = txt.replace('public void close()', 'public void onClose()')
+        txt = re.sub(r'(?<![\w.])close\(\)', 'onClose()', txt).replace('void onClose()  {', 'void onClose() {')
+        txt = re.sub(r'(?<![\w."])client(?=\s*[.,)])', 'minecraft', txt)
+        txt = re.sub(r'(?<![\w.])textRenderer\b', 'font', txt)
+        txt = txt.replace('shouldPause()', 'isPauseScreen()')
+    return txt
+
 def gen(args):
     mapp, clsfile, src, out = args[:4]
     overlay = args[4] if len(args) > 4 else None
@@ -69,9 +115,11 @@ def gen(args):
             body = fq_re.sub(lambda m: one(m.group(1)), body)
             for a_, b_ in sorted(simple_map.items(), key=lambda x: -len(x[0])):
                 body = re.sub(r'(?<![\w.])' + re.escape(a_) + r'(?![\w])', b_, body)
+            body = rewrite(head + body)[len(head):] if False else body
+            txt = rewrite(head + body)
             dest = os.path.join(out, os.path.relpath(p, src))
             os.makedirs(os.path.dirname(dest), exist_ok=True)
-            open(dest, 'w', encoding='utf8').write(head + body)
+            open(dest, 'w', encoding='utf8').write(txt)
     if overlay and os.path.isdir(overlay):
         for root, _, files in os.walk(overlay):
             for f in files:
@@ -112,14 +160,17 @@ def members(jar, cls):
         r = subprocess.run(['javap', '-p', '-cp', jar, cls], capture_output=True, text=True)
         meth = collections.defaultdict(list); fld = set()
         for l in r.stdout.split('\n'):
-            l = l.strip().rstrip(';')
+            l = l.strip()
+            if not l or l.startswith('Compiled') or l.endswith('{') or l == '}' : continue
+            l = l.rstrip(';')
             m = re.match(r'.*?([\w$]+)\((.*)\)(?:\s+throws .*)?$', l)
-            if m and '(' in l:
-                params = m.group(2); n = 0 if not params.strip() else len(re.sub(r'<[^<>]*>', '', re.sub(r'<[^<>]*>', '', params)).split(','))
+            if m:
+                params = m.group(2)
+                n = 0 if not params.strip() else len(re.sub(r'<[^<>]*>', '', re.sub(r'<[^<>]*>', '', params)).split(','))
                 meth[m.group(1)].append(n)
             else:
                 m2 = re.match(r'.*?([\w$]+)$', l)
-                if m2 and '(' not in l and l and not l.startswith(('Compiled', 'public class', 'public abstract', 'public final', 'public interface', 'public enum', 'public record', '}')) : fld.add(m2.group(1))
+                if m2: fld.add(m2.group(1))
         _members[cls] = (meth, fld)
     return _members[cls]
 
@@ -188,6 +239,10 @@ def fix(args):
         new = None
         for c in cands:
             for anc in supers(jar, c.replace('.', '.')):
+                ov = OVR.get((simple(anc), name))
+                if ov:
+                    meth, fld = members(jar, anc)
+                    if ov in meth or ov in fld: new = ov; break
                 for yc in inv.get(anc, []):
                     for mo in ymem.get(yc, {}).get(name, ()):
                         meth, fld = members(jar, anc)
@@ -196,11 +251,24 @@ def fix(args):
                         if ok and not new: new = mo
                 if new: break
             if new: break
+        if not new and kind == 'method':
+            import difflib
+            for c in cands:
+                for anc in supers(jar, c):
+                    meth, fld = members(jar, anc)
+                    ok = [k for k, v in meth.items() if nargs is None or nargs in v]
+                    best = difflib.get_close_matches(name, ok, 1, 0.72)
+                    if best: new = best[0]; print(f'PODOBNA: {name} -> {best[0]} ({anc})'); break
+                if new: break
         if not new:
             unresolved.append((m.group('file'), m.group('line'), sym, loc)); continue
         col = caret.find('^')
         ln = int(m.group('line'))
         edits[m.group('file')].append((ln, col, name, new))
+    # błędy typów: DynamicTexture nie pasuje do registerAndLoad -> register
+    for k, l in enumerate(lines):
+        mm = re.match(r'(\S+\.java):(\d+): error: incompatible types: DynamicTexture cannot be converted to ReloadableTexture', l.strip())
+        if mm: edits[mm.group(1)].append((int(mm.group(2)), 0, 'registerAndLoad', 'register'))
     changed = 0
     for f, es in edits.items():
         path = f if os.path.isabs(f) else None
@@ -213,10 +281,10 @@ def fix(args):
         L = open(path, encoding='utf8').read().split('\n')
         for ln, col, old, new in sorted(set(es), key=lambda x: (-x[0], -x[1])):
             s = L[ln - 1]
-            k = s.find(old, max(0, col))
-            if k < 0: k = s.find(old)
-            if k < 0: continue
-            L[ln - 1] = s[:k] + new + s[k + len(old):]; changed += 1
+            pat = re.compile(r'(?<![\w$])' + re.escape(old) + r'(?![\w$])')
+            mm = pat.search(s, max(0, col)) or pat.search(s)
+            if not mm: continue
+            L[ln - 1] = s[:mm.start()] + new + s[mm.end():]; changed += 1
         open(path, 'w', encoding='utf8').write('\n'.join(L))
     for u in unresolved[:60]: print('NIEROZWIĄZANE:', u)
     print(f'poprawek: {changed}, nierozwiązanych: {len(unresolved)}')
