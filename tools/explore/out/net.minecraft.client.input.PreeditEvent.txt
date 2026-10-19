@@ -1,0 +1,18 @@
+Compiled from "PreeditEvent.java"
+public final class net.minecraft.client.input.PreeditEvent extends java.lang.Record {
+  private final java.lang.String fullText;
+  private final int caretPosition;
+  private final java.util.List<java.lang.String> blocks;
+  private final int focusedBlock;
+  public net.minecraft.client.input.PreeditEvent(java.lang.String, int, java.util.List<java.lang.String>, int);
+  public static net.minecraft.client.input.PreeditEvent createFromCallback(int, long, int, long, int, int);
+  private static int[] readIntBuffer(int, long);
+  public net.minecraft.network.chat.MutableComponent toFormattedText(net.minecraft.network.chat.Style);
+  public final java.lang.String toString();
+  public final int hashCode();
+  public final boolean equals(java.lang.Object);
+  public java.lang.String fullText();
+  public int caretPosition();
+  public java.util.List<java.lang.String> blocks();
+  public int focusedBlock();
+}

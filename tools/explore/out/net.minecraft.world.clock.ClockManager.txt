@@ -1,0 +1,4 @@
+Compiled from "ClockManager.java"
+public interface net.minecraft.world.clock.ClockManager {
+  public abstract long getTotalTicks(net.minecraft.core.Holder<net.minecraft.world.clock.WorldClock>);
+}

@@ -1,0 +1,11 @@
+Compiled from "SoundInstance.java"
+public final class net.minecraft.client.resources.sounds.SoundInstance$Attenuation extends java.lang.Enum<net.minecraft.client.resources.sounds.SoundInstance$Attenuation> {
+  public static final net.minecraft.client.resources.sounds.SoundInstance$Attenuation NONE;
+  public static final net.minecraft.client.resources.sounds.SoundInstance$Attenuation LINEAR;
+  private static final net.minecraft.client.resources.sounds.SoundInstance$Attenuation[] $VALUES;
+  public static net.minecraft.client.resources.sounds.SoundInstance$Attenuation[] values();
+  public static net.minecraft.client.resources.sounds.SoundInstance$Attenuation valueOf(java.lang.String);
+  private net.minecraft.client.resources.sounds.SoundInstance$Attenuation();
+  private static net.minecraft.client.resources.sounds.SoundInstance$Attenuation[] $values();
+  static {};
+}

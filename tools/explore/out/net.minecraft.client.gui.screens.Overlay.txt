@@ -1,0 +1,6 @@
+Compiled from "Overlay.java"
+public abstract class net.minecraft.client.gui.screens.Overlay implements net.minecraft.client.gui.components.Renderable {
+  public net.minecraft.client.gui.screens.Overlay();
+  public boolean isPauseScreen();
+  public void tick();
+}

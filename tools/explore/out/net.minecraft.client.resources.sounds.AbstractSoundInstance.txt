@@ -1,0 +1,32 @@
+Compiled from "AbstractSoundInstance.java"
+public abstract class net.minecraft.client.resources.sounds.AbstractSoundInstance implements net.minecraft.client.resources.sounds.SoundInstance {
+  protected net.minecraft.client.resources.sounds.Sound sound;
+  protected final net.minecraft.sounds.SoundSource source;
+  protected final net.minecraft.resources.Identifier identifier;
+  protected float volume;
+  protected float pitch;
+  protected double x;
+  protected double y;
+  protected double z;
+  protected boolean looping;
+  protected int delay;
+  protected net.minecraft.client.resources.sounds.SoundInstance$Attenuation attenuation;
+  protected boolean relative;
+  protected final net.minecraft.util.RandomSource random;
+  protected net.minecraft.client.resources.sounds.AbstractSoundInstance(net.minecraft.sounds.SoundEvent, net.minecraft.sounds.SoundSource, net.minecraft.util.RandomSource);
+  protected net.minecraft.client.resources.sounds.AbstractSoundInstance(net.minecraft.resources.Identifier, net.minecraft.sounds.SoundSource, net.minecraft.util.RandomSource);
+  public net.minecraft.resources.Identifier getIdentifier();
+  public net.minecraft.client.sounds.WeighedSoundEvents resolve(net.minecraft.client.sounds.SoundManager);
+  public net.minecraft.client.resources.sounds.Sound getSound();
+  public net.minecraft.sounds.SoundSource getSource();
+  public boolean isLooping();
+  public int getDelay();
+  public float getVolume();
+  public float getPitch();
+  public double getX();
+  public double getY();
+  public double getZ();
+  public net.minecraft.client.resources.sounds.SoundInstance$Attenuation getAttenuation();
+  public boolean isRelative();
+  public java.lang.String toString();
+}

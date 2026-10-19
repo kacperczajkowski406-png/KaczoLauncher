@@ -1,0 +1,46 @@
+Compiled from "PlayerTeam.java"
+public class net.minecraft.world.scores.PlayerTeam extends net.minecraft.world.scores.Team {
+  private static final int BIT_FRIENDLY_FIRE;
+  private static final int BIT_SEE_INVISIBLES;
+  private final net.minecraft.world.scores.Scoreboard scoreboard;
+  private final java.lang.String name;
+  private final java.util.Set<java.lang.String> players;
+  private net.minecraft.network.chat.Component displayName;
+  private net.minecraft.network.chat.Component playerPrefix;
+  private net.minecraft.network.chat.Component playerSuffix;
+  private boolean allowFriendlyFire;
+  private boolean seeFriendlyInvisibles;
+  private net.minecraft.world.scores.Team$Visibility nameTagVisibility;
+  private net.minecraft.world.scores.Team$Visibility deathMessageVisibility;
+  private net.minecraft.ChatFormatting color;
+  private net.minecraft.world.scores.Team$CollisionRule collisionRule;
+  private final net.minecraft.network.chat.Style displayNameStyle;
+  public net.minecraft.world.scores.PlayerTeam(net.minecraft.world.scores.Scoreboard, java.lang.String);
+  public net.minecraft.world.scores.PlayerTeam$Packed pack();
+  public net.minecraft.world.scores.Scoreboard getScoreboard();
+  public java.lang.String getName();
+  public net.minecraft.network.chat.Component getDisplayName();
+  public net.minecraft.network.chat.MutableComponent getFormattedDisplayName();
+  public void setDisplayName(net.minecraft.network.chat.Component);
+  public void setPlayerPrefix(net.minecraft.network.chat.Component);
+  public net.minecraft.network.chat.Component getPlayerPrefix();
+  public void setPlayerSuffix(net.minecraft.network.chat.Component);
+  public net.minecraft.network.chat.Component getPlayerSuffix();
+  public java.util.Collection<java.lang.String> getPlayers();
+  public net.minecraft.network.chat.MutableComponent getFormattedName(net.minecraft.network.chat.Component);
+  public static net.minecraft.network.chat.MutableComponent formatNameForTeam(net.minecraft.world.scores.Team, net.minecraft.network.chat.Component);
+  public boolean isAllowFriendlyFire();
+  public void setAllowFriendlyFire(boolean);
+  public boolean canSeeFriendlyInvisibles();
+  public void setSeeFriendlyInvisibles(boolean);
+  public net.minecraft.world.scores.Team$Visibility getNameTagVisibility();
+  public net.minecraft.world.scores.Team$Visibility getDeathMessageVisibility();
+  public void setNameTagVisibility(net.minecraft.world.scores.Team$Visibility);
+  public void setDeathMessageVisibility(net.minecraft.world.scores.Team$Visibility);
+  public net.minecraft.world.scores.Team$CollisionRule getCollisionRule();
+  public void setCollisionRule(net.minecraft.world.scores.Team$CollisionRule);
+  public int packOptions();
+  public void unpackOptions(int);
+  public void setColor(net.minecraft.ChatFormatting);
+  public net.minecraft.ChatFormatting getColor();
+}

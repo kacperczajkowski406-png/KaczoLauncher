@@ -1,0 +1,29 @@
+Compiled from "TextureManager.java"
+public class net.minecraft.client.renderer.texture.TextureManager implements net.minecraft.server.packs.resources.PreparableReloadListener,java.lang.AutoCloseable {
+  private static final org.slf4j.Logger LOGGER;
+  public static final net.minecraft.resources.Identifier INTENTIONAL_MISSING_TEXTURE;
+  private final java.util.Map<net.minecraft.resources.Identifier, net.minecraft.client.renderer.texture.AbstractTexture> byPath;
+  private final java.util.Set<net.minecraft.client.renderer.texture.TickableTexture> tickableTextures;
+  private final net.minecraft.server.packs.resources.ResourceManager resourceManager;
+  public net.minecraft.client.renderer.texture.TextureManager(net.minecraft.server.packs.resources.ResourceManager);
+  public void registerAndLoad(net.minecraft.resources.Identifier, net.minecraft.client.renderer.texture.ReloadableTexture);
+  private net.minecraft.client.renderer.texture.TextureContents loadContentsSafe(net.minecraft.resources.Identifier, net.minecraft.client.renderer.texture.ReloadableTexture);
+  public void registerForNextReload(net.minecraft.resources.Identifier);
+  public void register(net.minecraft.resources.Identifier, net.minecraft.client.renderer.texture.AbstractTexture);
+  private void safeClose(net.minecraft.resources.Identifier, net.minecraft.client.renderer.texture.AbstractTexture);
+  public net.minecraft.client.renderer.texture.AbstractTexture getTexture(net.minecraft.resources.Identifier);
+  public void tick();
+  public void release(net.minecraft.resources.Identifier);
+  public void close();
+  public java.util.concurrent.CompletableFuture<java.lang.Void> reload(net.minecraft.server.packs.resources.PreparableReloadListener$SharedState, java.util.concurrent.Executor, net.minecraft.server.packs.resources.PreparableReloadListener$PreparationBarrier, java.util.concurrent.Executor);
+  public void dumpAllSheets(java.nio.file.Path);
+  private static net.minecraft.client.renderer.texture.TextureContents loadContents(net.minecraft.server.packs.resources.ResourceManager, net.minecraft.resources.Identifier, net.minecraft.client.renderer.texture.ReloadableTexture) throws java.io.IOException;
+  private static net.minecraft.client.renderer.texture.TextureManager$PendingReload scheduleLoad(net.minecraft.server.packs.resources.ResourceManager, net.minecraft.resources.Identifier, net.minecraft.client.renderer.texture.ReloadableTexture, java.util.concurrent.Executor);
+  private static net.minecraft.client.renderer.texture.TextureContents lambda$scheduleLoad$0(net.minecraft.server.packs.resources.ResourceManager, net.minecraft.resources.Identifier, net.minecraft.client.renderer.texture.ReloadableTexture);
+  private static void lambda$dumpAllSheets$0(java.nio.file.Path, net.minecraft.resources.Identifier, net.minecraft.client.renderer.texture.AbstractTexture);
+  private void lambda$reload$2(java.util.List, java.lang.Void);
+  private static java.util.concurrent.CompletableFuture[] lambda$reload$1(int);
+  private static void lambda$reload$0(java.util.List, net.minecraft.server.packs.resources.ResourceManager, java.util.concurrent.Executor, net.minecraft.resources.Identifier, net.minecraft.client.renderer.texture.AbstractTexture);
+  private static java.lang.String lambda$new$0();
+  static {};
+}

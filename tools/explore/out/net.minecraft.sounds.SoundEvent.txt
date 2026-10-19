@@ -1,0 +1,23 @@
+Compiled from "SoundEvent.java"
+public final class net.minecraft.sounds.SoundEvent extends java.lang.Record {
+  private final net.minecraft.resources.Identifier location;
+  private final java.util.Optional<java.lang.Float> fixedRange;
+  public static final com.mojang.serialization.Codec<net.minecraft.sounds.SoundEvent> DIRECT_CODEC;
+  public static final com.mojang.serialization.Codec<net.minecraft.core.Holder<net.minecraft.sounds.SoundEvent>> CODEC;
+  public static final net.minecraft.network.codec.StreamCodec<io.netty.buffer.ByteBuf, net.minecraft.sounds.SoundEvent> DIRECT_STREAM_CODEC;
+  public static final net.minecraft.network.codec.StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, net.minecraft.core.Holder<net.minecraft.sounds.SoundEvent>> STREAM_CODEC;
+  public net.minecraft.sounds.SoundEvent(net.minecraft.resources.Identifier, java.util.Optional<java.lang.Float>);
+  private static net.minecraft.sounds.SoundEvent create(net.minecraft.resources.Identifier, java.util.Optional<java.lang.Float>);
+  public static net.minecraft.sounds.SoundEvent createVariableRangeEvent(net.minecraft.resources.Identifier);
+  public static net.minecraft.sounds.SoundEvent createFixedRangeEvent(net.minecraft.resources.Identifier, float);
+  public float getRange(float);
+  public final java.lang.String toString();
+  public final int hashCode();
+  public final boolean equals(java.lang.Object);
+  public net.minecraft.resources.Identifier location();
+  public java.util.Optional<java.lang.Float> fixedRange();
+  private static net.minecraft.sounds.SoundEvent lambda$create$1(net.minecraft.resources.Identifier);
+  private static net.minecraft.sounds.SoundEvent lambda$create$0(net.minecraft.resources.Identifier, java.lang.Float);
+  private static com.mojang.datafixers.kinds.App lambda$static$0(com.mojang.serialization.codecs.RecordCodecBuilder$Instance);
+  static {};
+}

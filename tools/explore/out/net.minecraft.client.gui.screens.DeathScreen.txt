@@ -1,0 +1,30 @@
+Compiled from "DeathScreen.java"
+public class net.minecraft.client.gui.screens.DeathScreen extends net.minecraft.client.gui.screens.Screen {
+  private static final int TITLE_SCALE;
+  private static final net.minecraft.resources.Identifier DRAFT_REPORT_SPRITE;
+  private int delayTicker;
+  private final net.minecraft.network.chat.Component causeOfDeath;
+  private final boolean hardcore;
+  private final net.minecraft.client.player.LocalPlayer player;
+  private final net.minecraft.network.chat.Component deathScore;
+  private final java.util.List<net.minecraft.client.gui.components.Button> exitButtons;
+  private net.minecraft.client.gui.components.Button exitToTitleButton;
+  public net.minecraft.client.gui.screens.DeathScreen(net.minecraft.network.chat.Component, boolean, net.minecraft.client.player.LocalPlayer);
+  protected void init();
+  public boolean shouldCloseOnEsc();
+  private void handleExitToTitleScreen();
+  private void exitToTitleScreen();
+  public void extractRenderState(net.minecraft.client.gui.GuiGraphicsExtractor, int, int, float);
+  private void visitText(net.minecraft.client.gui.ActiveTextCollector);
+  public void extractBackground(net.minecraft.client.gui.GuiGraphicsExtractor, int, int, float);
+  private static void extractDeathBackground(net.minecraft.client.gui.GuiGraphicsExtractor, int, int);
+  public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent, boolean);
+  public boolean isPauseScreen();
+  public boolean isAllowedInPortal();
+  public void tick();
+  private void setButtonsActive(boolean);
+  private void lambda$handleExitToTitleScreen$0(boolean);
+  private void lambda$init$1(net.minecraft.client.gui.components.Button);
+  private void lambda$init$0(net.minecraft.client.gui.components.Button);
+  static {};
+}

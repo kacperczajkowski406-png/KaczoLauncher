@@ -1,0 +1,23 @@
+Compiled from "LogoRenderer.java"
+public class net.minecraft.client.gui.components.LogoRenderer {
+  public static final net.minecraft.resources.Identifier MINECRAFT_LOGO;
+  public static final net.minecraft.resources.Identifier EASTER_EGG_LOGO;
+  public static final net.minecraft.resources.Identifier MINECRAFT_EDITION;
+  public static final int LOGO_WIDTH;
+  public static final int LOGO_HEIGHT;
+  private static final int LOGO_TEXTURE_WIDTH;
+  private static final int LOGO_TEXTURE_HEIGHT;
+  private static final int EDITION_WIDTH;
+  private static final int EDITION_HEIGHT;
+  private static final int EDITION_TEXTURE_WIDTH;
+  private static final int EDITION_TEXTURE_HEIGHT;
+  public static final int DEFAULT_HEIGHT_OFFSET;
+  private static final int EDITION_LOGO_OVERLAP;
+  private final boolean showEasterEgg;
+  private final boolean keepLogoThroughFade;
+  public net.minecraft.client.gui.components.LogoRenderer(boolean);
+  public void extractRenderState(net.minecraft.client.gui.GuiGraphicsExtractor, int, float);
+  public void extractRenderState(net.minecraft.client.gui.GuiGraphicsExtractor, int, float, int);
+  public boolean keepLogoThroughFade();
+  static {};
+}

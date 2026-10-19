@@ -1,0 +1,21 @@
+Compiled from "BossHealthOverlay.java"
+public class net.minecraft.client.gui.components.BossHealthOverlay {
+  private static final int BAR_WIDTH;
+  private static final int BAR_HEIGHT;
+  private static final net.minecraft.resources.Identifier[] BAR_BACKGROUND_SPRITES;
+  private static final net.minecraft.resources.Identifier[] BAR_PROGRESS_SPRITES;
+  private static final net.minecraft.resources.Identifier[] OVERLAY_BACKGROUND_SPRITES;
+  private static final net.minecraft.resources.Identifier[] OVERLAY_PROGRESS_SPRITES;
+  private final net.minecraft.client.Minecraft minecraft;
+  private final java.util.Map<java.util.UUID, net.minecraft.client.gui.components.LerpingBossEvent> events;
+  public net.minecraft.client.gui.components.BossHealthOverlay(net.minecraft.client.Minecraft);
+  public void extractRenderState(net.minecraft.client.gui.GuiGraphicsExtractor);
+  private void extractBar(net.minecraft.client.gui.GuiGraphicsExtractor, int, int, net.minecraft.world.BossEvent);
+  private void extractBar(net.minecraft.client.gui.GuiGraphicsExtractor, int, int, net.minecraft.world.BossEvent, int, net.minecraft.resources.Identifier[], net.minecraft.resources.Identifier[]);
+  public void update(net.minecraft.network.protocol.game.ClientboundBossEventPacket);
+  public void reset();
+  public boolean shouldPlayMusic();
+  public boolean shouldDarkenScreen();
+  public boolean shouldCreateWorldFog();
+  static {};
+}

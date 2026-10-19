@@ -1,0 +1,35 @@
+Compiled from "DisplaySlot.java"
+public final class net.minecraft.world.scores.DisplaySlot extends java.lang.Enum<net.minecraft.world.scores.DisplaySlot> implements net.minecraft.util.StringRepresentable {
+  public static final net.minecraft.world.scores.DisplaySlot LIST;
+  public static final net.minecraft.world.scores.DisplaySlot SIDEBAR;
+  public static final net.minecraft.world.scores.DisplaySlot BELOW_NAME;
+  public static final net.minecraft.world.scores.DisplaySlot TEAM_BLACK;
+  public static final net.minecraft.world.scores.DisplaySlot TEAM_DARK_BLUE;
+  public static final net.minecraft.world.scores.DisplaySlot TEAM_DARK_GREEN;
+  public static final net.minecraft.world.scores.DisplaySlot TEAM_DARK_AQUA;
+  public static final net.minecraft.world.scores.DisplaySlot TEAM_DARK_RED;
+  public static final net.minecraft.world.scores.DisplaySlot TEAM_DARK_PURPLE;
+  public static final net.minecraft.world.scores.DisplaySlot TEAM_GOLD;
+  public static final net.minecraft.world.scores.DisplaySlot TEAM_GRAY;
+  public static final net.minecraft.world.scores.DisplaySlot TEAM_DARK_GRAY;
+  public static final net.minecraft.world.scores.DisplaySlot TEAM_BLUE;
+  public static final net.minecraft.world.scores.DisplaySlot TEAM_GREEN;
+  public static final net.minecraft.world.scores.DisplaySlot TEAM_AQUA;
+  public static final net.minecraft.world.scores.DisplaySlot TEAM_RED;
+  public static final net.minecraft.world.scores.DisplaySlot TEAM_LIGHT_PURPLE;
+  public static final net.minecraft.world.scores.DisplaySlot TEAM_YELLOW;
+  public static final net.minecraft.world.scores.DisplaySlot TEAM_WHITE;
+  public static final net.minecraft.util.StringRepresentable$EnumCodec<net.minecraft.world.scores.DisplaySlot> CODEC;
+  public static final java.util.function.IntFunction<net.minecraft.world.scores.DisplaySlot> BY_ID;
+  private final int id;
+  private final java.lang.String name;
+  private static final net.minecraft.world.scores.DisplaySlot[] $VALUES;
+  public static net.minecraft.world.scores.DisplaySlot[] values();
+  public static net.minecraft.world.scores.DisplaySlot valueOf(java.lang.String);
+  private net.minecraft.world.scores.DisplaySlot(int, java.lang.String);
+  public int id();
+  public java.lang.String getSerializedName();
+  public static net.minecraft.world.scores.DisplaySlot teamColorToSlot(net.minecraft.ChatFormatting);
+  private static net.minecraft.world.scores.DisplaySlot[] $values();
+  static {};
+}

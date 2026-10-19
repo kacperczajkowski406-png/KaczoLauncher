@@ -1,0 +1,16 @@
+Compiled from "StyledFormat.java"
+public final class net.minecraft.network.chat.numbers.StyledFormat extends java.lang.Record implements net.minecraft.network.chat.numbers.NumberFormat {
+  private final net.minecraft.network.chat.Style style;
+  public static final net.minecraft.network.chat.numbers.NumberFormatType<net.minecraft.network.chat.numbers.StyledFormat> TYPE;
+  public static final net.minecraft.network.chat.numbers.StyledFormat NO_STYLE;
+  public static final net.minecraft.network.chat.numbers.StyledFormat SIDEBAR_DEFAULT;
+  public static final net.minecraft.network.chat.numbers.StyledFormat PLAYER_LIST_DEFAULT;
+  public net.minecraft.network.chat.numbers.StyledFormat(net.minecraft.network.chat.Style);
+  public net.minecraft.network.chat.MutableComponent format(int);
+  public net.minecraft.network.chat.numbers.NumberFormatType<net.minecraft.network.chat.numbers.StyledFormat> type();
+  public final java.lang.String toString();
+  public final int hashCode();
+  public final boolean equals(java.lang.Object);
+  public net.minecraft.network.chat.Style style();
+  static {};
+}

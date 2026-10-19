@@ -1,0 +1,18 @@
+Compiled from "PlayerScoreEntry.java"
+public final class net.minecraft.world.scores.PlayerScoreEntry extends java.lang.Record {
+  private final java.lang.String owner;
+  private final int value;
+  private final net.minecraft.network.chat.Component display;
+  private final net.minecraft.network.chat.numbers.NumberFormat numberFormatOverride;
+  public net.minecraft.world.scores.PlayerScoreEntry(java.lang.String, int, net.minecraft.network.chat.Component, net.minecraft.network.chat.numbers.NumberFormat);
+  public boolean isHidden();
+  public net.minecraft.network.chat.Component ownerName();
+  public net.minecraft.network.chat.MutableComponent formatValue(net.minecraft.network.chat.numbers.NumberFormat);
+  public final java.lang.String toString();
+  public final int hashCode();
+  public final boolean equals(java.lang.Object);
+  public java.lang.String owner();
+  public int value();
+  public net.minecraft.network.chat.Component display();
+  public net.minecraft.network.chat.numbers.NumberFormat numberFormatOverride();
+}

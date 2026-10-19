@@ -1,0 +1,22 @@
+Compiled from "MusicManager.java"
+public class net.minecraft.client.sounds.MusicManager {
+  private static final int STARTING_DELAY;
+  private final net.minecraft.util.RandomSource random;
+  private final net.minecraft.client.Minecraft minecraft;
+  private net.minecraft.client.resources.sounds.SoundInstance currentMusic;
+  private net.minecraft.client.sounds.MusicManager$MusicFrequency gameMusicFrequency;
+  private float currentGain;
+  private int nextSongDelay;
+  private boolean toastShown;
+  public net.minecraft.client.sounds.MusicManager(net.minecraft.client.Minecraft);
+  public void tick();
+  private static boolean canReplace(net.minecraft.sounds.Music, net.minecraft.client.resources.sounds.SoundInstance);
+  public void startPlaying(net.minecraft.sounds.Music);
+  public void showNowPlayingToastIfNeeded();
+  public void stopPlaying(net.minecraft.sounds.Music);
+  public void stopPlaying();
+  private boolean fadePlaying(float);
+  public boolean isPlayingMusic(net.minecraft.sounds.Music);
+  public java.lang.String getCurrentMusicTranslationKey();
+  public void setMinutesBetweenSongs(net.minecraft.client.sounds.MusicManager$MusicFrequency);
+}

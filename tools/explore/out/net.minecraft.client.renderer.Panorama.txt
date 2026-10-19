@@ -1,0 +1,8 @@
+Compiled from "Panorama.java"
+public class net.minecraft.client.renderer.Panorama {
+  public static final net.minecraft.resources.Identifier PANORAMA_OVERLAY;
+  private float spin;
+  public net.minecraft.client.renderer.Panorama();
+  public void extractRenderState(net.minecraft.client.gui.GuiGraphicsExtractor, int, int, boolean);
+  static {};
+}

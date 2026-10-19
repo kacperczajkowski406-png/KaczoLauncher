@@ -1,0 +1,7 @@
+Compiled from "AbstractTickableSoundInstance.java"
+public abstract class net.minecraft.client.resources.sounds.AbstractTickableSoundInstance extends net.minecraft.client.resources.sounds.AbstractSoundInstance implements net.minecraft.client.resources.sounds.TickableSoundInstance {
+  private boolean stopped;
+  protected net.minecraft.client.resources.sounds.AbstractTickableSoundInstance(net.minecraft.sounds.SoundEvent, net.minecraft.sounds.SoundSource, net.minecraft.util.RandomSource);
+  public boolean isStopped();
+  protected final void stop();
+}

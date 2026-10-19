@@ -1,0 +1,1 @@
+MCJAR=/tmp/gh-home/caches/fabric-loom/26.1/minecraft-merged.jar

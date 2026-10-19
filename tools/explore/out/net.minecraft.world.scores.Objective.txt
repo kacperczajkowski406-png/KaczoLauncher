@@ -1,0 +1,28 @@
+Compiled from "Objective.java"
+public class net.minecraft.world.scores.Objective {
+  private final net.minecraft.world.scores.Scoreboard scoreboard;
+  private final java.lang.String name;
+  private final net.minecraft.world.scores.criteria.ObjectiveCriteria criteria;
+  private net.minecraft.network.chat.Component displayName;
+  private net.minecraft.network.chat.Component formattedDisplayName;
+  private net.minecraft.world.scores.criteria.ObjectiveCriteria$RenderType renderType;
+  private boolean displayAutoUpdate;
+  private net.minecraft.network.chat.numbers.NumberFormat numberFormat;
+  public net.minecraft.world.scores.Objective(net.minecraft.world.scores.Scoreboard, java.lang.String, net.minecraft.world.scores.criteria.ObjectiveCriteria, net.minecraft.network.chat.Component, net.minecraft.world.scores.criteria.ObjectiveCriteria$RenderType, boolean, net.minecraft.network.chat.numbers.NumberFormat);
+  public net.minecraft.world.scores.Objective$Packed pack();
+  public net.minecraft.world.scores.Scoreboard getScoreboard();
+  public java.lang.String getName();
+  public net.minecraft.world.scores.criteria.ObjectiveCriteria getCriteria();
+  public net.minecraft.network.chat.Component getDisplayName();
+  public boolean displayAutoUpdate();
+  public net.minecraft.network.chat.numbers.NumberFormat numberFormat();
+  public net.minecraft.network.chat.numbers.NumberFormat numberFormatOrDefault(net.minecraft.network.chat.numbers.NumberFormat);
+  private net.minecraft.network.chat.Component createFormattedDisplayName();
+  public net.minecraft.network.chat.Component getFormattedDisplayName();
+  public void setDisplayName(net.minecraft.network.chat.Component);
+  public net.minecraft.world.scores.criteria.ObjectiveCriteria$RenderType getRenderType();
+  public void setRenderType(net.minecraft.world.scores.criteria.ObjectiveCriteria$RenderType);
+  public void setDisplayAutoUpdate(boolean);
+  public void setNumberFormat(net.minecraft.network.chat.numbers.NumberFormat);
+  private net.minecraft.network.chat.Style lambda$createFormattedDisplayName$0(net.minecraft.network.chat.Style);
+}
