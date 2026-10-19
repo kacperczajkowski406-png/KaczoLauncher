@@ -93,7 +93,20 @@ function handleLyrics() {
         const f = path.join(dir, path.basename(n));
         if (fs.existsSync(f)) return { ok: true, data: { text: fs.readFileSync(f, 'utf8'), dir } };
       }
-      return { ok: true, data: { text: '', dir } };
+      // brak lokalnego pliku → publiczna baza LRCLIB (zsynchronizowane teksty), wynik zapisujemy w cache
+      const https = require('https');
+      const url = `https://lrclib.net/api/get?artist_name=${encodeURIComponent(artist || '')}&track_name=${encodeURIComponent(title || '')}`;
+      const body = await new Promise((res) => {
+        const rq = https.get(url, { headers: { 'User-Agent': 'KaczoClient (https://github.com/kacperczajkowski406-png/KaczoLauncher)' }, timeout: 6000 }, (r) => {
+          if (r.statusCode !== 200) { r.resume(); return res(''); }
+          let d = ''; r.setEncoding('utf8'); r.on('data', (c) => { d += c; }); r.on('end', () => res(d));
+        });
+        rq.on('timeout', () => { rq.destroy(); res(''); }); rq.on('error', () => res(''));
+      });
+      let text = '';
+      try { text = JSON.parse(body).syncedLyrics || ''; } catch { /* brak */ }
+      if (text) { try { fs.writeFileSync(path.join(dir, path.basename(`${clean(artist)} - ${clean(title)}.lrc`)), text); } catch { /* */ } }
+      return { ok: true, data: { text, dir } };
     } catch (e) { return { ok: false, error: String(e.message || e) }; }
   });
 }
