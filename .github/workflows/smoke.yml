@@ -1,0 +1,16 @@
+name: Smoke launcher
+on: workflow_dispatch
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci --no-audit --no-fund
+      - name: Start Electron under xvfb
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libgbm1 libasound2t64 >/dev/null || true
+          (timeout 25 xvfb-run -a npx electron . --no-sandbox --enable-logging=stderr > smoke.log 2>&1; echo "exit=$?" >> smoke.log) || true
+          cat smoke.log | head -80
+          grep -iE "error|uncaught|cannot find|exception" smoke.log | head -20 | while read l; do echo "::error::$l"; done
