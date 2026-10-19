@@ -46,7 +46,7 @@ jobs:
           EOF
           gradle build printCp --no-daemon 2>&1 | tail -30 || true
       - name: Zrzut API
-        run: bash tools/explore/dump.sh
+        run: bash -x tools/explore/dump.sh > /tmp/dump.log 2>&1; tail -5 /tmp/dump.log; ls tools/explore/out | wc -l
       - name: Wypchnij wyniki
         run: |
           git config user.name github-actions; git config user.email actions@github.com

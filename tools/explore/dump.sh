@@ -33,3 +33,4 @@ for c in net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback net.fabri
   CPX=$(ls /tmp/fapi/META-INF/jars/*.jar | tr '\n' ':')
   javap -p -cp "$CPX$MCJAR" $c > $OUT/fabric.$c.txt 2>&1
 done
+exit 0
