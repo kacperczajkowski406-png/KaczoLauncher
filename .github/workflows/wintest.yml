@@ -1,0 +1,33 @@
+name: Windows install test
+on: workflow_dispatch
+jobs:
+  t:
+    runs-on: windows-latest
+    steps:
+      - name: Install latest release silently and run
+        shell: pwsh
+        run: |
+          $out = @()
+          $rel = Invoke-RestMethod "https://api.github.com/repos/${{ github.repository }}/releases/latest"
+          $a = $rel.assets | Where-Object { $_.name -like '*Setup*.exe' } | Select-Object -First 1
+          $out += "release: $($rel.tag_name) $($a.name)"
+          Invoke-WebRequest $a.browser_download_url -OutFile "$env:TEMP\setup.exe"
+          $p = Start-Process "$env:TEMP\setup.exe" -ArgumentList '/S' -PassThru -Wait
+          $out += "installer exit: $($p.ExitCode)"
+          Start-Sleep 8
+          $dir = "$env:LOCALAPPDATA\Programs\Kaczo Client"
+          $out += "dir exists: $(Test-Path $dir)"
+          if (Test-Path $dir) { $out += (Get-ChildItem $dir | Select-Object -First 12 | ForEach-Object { "  " + $_.Name + " " + $_.Length }) }
+          $out += "exe exists: $(Test-Path "$dir\Kaczo Client.exe")"
+          $out += "desktop lnk: $(Test-Path "$env:USERPROFILE\Desktop\Kaczo Client.lnk") / public: $(Test-Path "$env:PUBLIC\Desktop\Kaczo Client.lnk")"
+          if (Test-Path "$dir\Kaczo Client.exe") {
+            $g = Start-Process "$dir\Kaczo Client.exe" -PassThru
+            Start-Sleep 20
+            $out += "app running after 20s: $(-not $g.HasExited)"
+            $out += "exe exists after run: $(Test-Path "$dir\Kaczo Client.exe")"
+            Get-Process | Where-Object { $_.Name -like 'Kaczo*' -or $_.Name -eq 'powershell' } | ForEach-Object { $out += "proc: $($_.Name)" }
+          }
+          try { $t = Get-MpThreatDetection | Select-Object -First 5 | ForEach-Object { "defender: " + $_.ThreatID + " " + $_.Resources }; $out += $t } catch { $out += "defender: n/a" }
+          $m = ($out -join "%0A")
+          Write-Host "::error title=wintest::$m"
+          exit 1
