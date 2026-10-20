@@ -76,58 +76,12 @@ public final class Sky {
         double fov = Math.max(30, mc.options.getFov().getValue());
         double half = Math.tan(Math.toRadians(fov / 2));
         int horizon = (int) Math.round(h / 2.0 + Math.tan(Math.toRadians(pitch)) * (h / 2.0) / half);
-        horizon = Math.max(0, Math.min(h, horizon));
-        if (horizon <= 4) return;
 
         int style = m.num("style");
-        int strength = m.num("intensity");               // 0..100
-        float speed = m.num("speed") / 50f;              // 1.0 = normalnie
-        float t = (System.nanoTime() / 1_000_000_000f) * speed;
-        int base = Math.round(strength / 100f * 150);    // maks. alfa tła
-        boolean follow = m.bool("follow");
-        float px = follow ? yaw * 6f : 0f, py = follow ? -pitch * 1.5f : 0f;
-        int tint = m.color("tint");
-        boolean tinted = (tint >>> 24) > 0 && (tint & 0xFFFFFF) != 0xFFFFFF;
-
-        // tło: dla stylów gradientowych; „fade” zmiękcza dolną krawędź (ukrywa ostrą granicę horyzontu)
-        switch (style) {
-            case 0 -> vgrad(ctx, w, 0, horizon, 0x6EC6FF, 0xFFF3B0, base);
-            case 1 -> vgrad(ctx, w, 0, horizon, 0x050B26, 0x0B3B4A, base);
-            case 2 -> vgrad(ctx, w, 0, horizon, 0x02030F, 0x1B1650, base);
-            case 3 -> vgrad(ctx, w, 0, horizon, 0x2B1A5E, 0xFF8A3D, base);
-            case 4 -> vgrad(ctx, w, 0, horizon, 0xFFB3E6, 0xB3E6FF, base);
-            case 5 -> vgrad(ctx, w, 0, horizon, 0x000A00, 0x021A06, base);
-            case 7 -> vgrad(ctx, w, 0, horizon, 0x1E1030, 0x8A5A9C, base);
-            default -> vgrad(ctx, w, 0, horizon, 0x6A5CFF, 0xFF7AA8, base);
-        }
-        if (tinted) ctx.fill(0, 0, w, horizon, argb(Math.min(110, (tint >>> 24) * base / 255), tint));
-
-        switch (style) {
-            case 1 -> aurora(ctx, w, horizon, t, px, strength);
-            case 2 -> stars(ctx, w, horizon, t, px, py, m.num("density"), strength);
-            case 3 -> sun(ctx, w, horizon, t, px, strength);
-            case 4 -> clouds(ctx, w, horizon, t, px, strength);
-            case 5 -> matrix(ctx, w, horizon, t, m.num("density"), strength);
-            case 6 -> rainbow(ctx, w, horizon, t, px, strength);
-            case 7 -> storm(ctx, w, horizon, t, px, strength);
-            default -> { }
-        }
-        if (m.bool("rays")) rays(ctx, w, horizon, t, px, style, strength);
-        if (style == 7) { lightning(ctx, w, horizon, t, px, strength); rain(ctx, w, horizon, t, m.num("density"), strength); }
-        if (style == 2) shooting(ctx, w, horizon, t, px, strength);
-        if (m.bool("glow")) orbs(ctx, w, horizon, t, px, py, style, m.num("density"), strength, m.num("size"));
-        if (m.bool("bloom")) horizonGlow(ctx, w, horizon, style, strength, t);
-        if (style == 0 || m.bool("ducks")) ducks(ctx, w, horizon, t, px, py, m.num("count"), m.num("size"), strength, style == 0);
-
-        if (m.bool("grade")) grade(ctx, w, h, style, strength, m.num("vignette"));
-
-        // miękkie dociemnienie przy horyzoncie – szkło zamiast ostrej linii
-        if (m.bool("fade")) {
-            for (int i = 0; i < 10; i++) {
-                int a = Math.round(base * 0.32f * (1 - i / 10f));
-                ctx.fill(0, Math.max(0, horizon - i * 2 - 2), w, Math.max(0, horizon - i * 2), argb(a, 0x000000));
-            }
-        }
+        float t = (System.nanoTime() / 1_000_000_000f) * (m.num("speed") / 50f);
+        SkyWorld.render(ctx, mc, m, t);
+        // lekka korekcja kolorów i winieta (klimat shaderów) – jedyna część „na ekranie”
+        if (m.bool("grade")) grade(ctx, w, h, style, m.num("intensity"), m.num("vignette"));
     }
 
     private static void ducks(DrawContext ctx, int w, int horizon, float t, float px, float py, int count, int size, int strength, boolean main) {

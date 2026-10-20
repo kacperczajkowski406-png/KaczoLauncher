@@ -29,7 +29,7 @@ public class WorldLyrics {
     private static int lastAge = -1;
     private static long tickNs = 0;
 
-    private static Vec3d eye(MinecraftClient mc) {
+    static Vec3d eye(MinecraftClient mc) {
         Vec3d e = mc.player.getEyePos();
         long now = System.nanoTime();
         if (mc.player.age != lastAge) { lastAge = mc.player.age; prevEye = curEye == Vec3d.ZERO ? e : curEye; curEye = e; tickNs = now; }
