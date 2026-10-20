@@ -8,13 +8,15 @@ jobs:
         shell: pwsh
         run: |
           $out = @()
-          $rel = Invoke-RestMethod "https://api.github.com/repos/${{ github.repository }}/releases/latest"
-          $a = $rel.assets | Where-Object { $_.name -like '*Setup*.exe' } | Select-Object -First 1
-          $out += "release: $($rel.tag_name) $($a.name)"
-          Invoke-WebRequest $a.browser_download_url -OutFile "$env:TEMP\setup.exe"
-          $p = Start-Process "$env:TEMP\setup.exe" -ArgumentList '/S' -PassThru -Wait
-          $out += "installer exit: $($p.ExitCode)"
-          Start-Sleep 8
+          $rels = Invoke-RestMethod "https://api.github.com/repos/${{ github.repository }}/releases?per_page=30"
+          $old = $rels | Where-Object { $_.tag_name -eq 'v1.2.36' } | Select-Object -First 1
+          $new = $rels[0]
+          function Inst($r) { $a = $r.assets | Where-Object { $_.name -like '*Setup*.exe' } | Select-Object -First 1; Invoke-WebRequest $a.browser_download_url -OutFile "$env:TEMP\setup.exe"; $p = Start-Process "$env:TEMP\setup.exe" -ArgumentList '/S' -PassThru -Wait; return "$($r.tag_name) exit $($p.ExitCode)" }
+          $out += "old: " + (Inst $old)
+          Start-Sleep 5
+          $out += "after old: " + ((Get-ChildItem "$env:LOCALAPPDATA\Programs" -ErrorAction SilentlyContinue | ForEach-Object Name) -join ", ")
+          $out += "new: " + (Inst $new)
+          Start-Sleep 10
           $ws = New-Object -ComObject WScript.Shell
           $lnk = $ws.CreateShortcut("$env:USERPROFILE\Desktop\Kaczo Client.lnk")
           $out += "lnk target: $($lnk.TargetPath)"
