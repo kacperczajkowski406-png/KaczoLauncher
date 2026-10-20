@@ -11,7 +11,9 @@
     "EntityLookMixin",
     "BossBarMixin",
     "GameRendererMixin",
-    "OverlayMixin"
+    "OverlayMixin",
+    "SkyColorVecMixin",
+    "SkyColorIntMixin"
   ],
   "injectors": {
     "defaultRequire": 0

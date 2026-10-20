@@ -67,7 +67,7 @@ function createWindow() {
 
 app.whenReady().then(() => {
   if (process.platform !== 'darwin') Menu.setApplicationMenu(null);
-  try { if (store.load().settings.mediaCapture === true) nowplaying.start((ch, p) => { try { emit(ch, p); } catch { /* okno zamknięte */ } }); } catch { /* opcjonalne */ }
+  try { if (store.load().settings.mediaCapture !== false) nowplaying.start((ch, p) => { try { emit(ch, p); } catch { /* okno zamknięte */ } }); } catch { /* opcjonalne */ }
   app.on('before-quit', () => nowplaying.stop());
   app.on('will-quit', () => nowplaying.stop());
   updater.init(app, (ch, p) => emit(ch, p), () => !game.isRunning(), () => nowplaying.stop());
@@ -364,7 +364,7 @@ handle('settings:save', (input) => {
   if (javaPath && !fs.existsSync(javaPath)) throw new Error(T('settings.javaMissing'));
   const lang = input.lang === 'en' ? 'en' : 'pl';
   d.settings = { ...d.settings, ramMb, javaPath, minimizeOnLaunch: !!input.minimizeOnLaunch, lang,
-    menuStyle: 'vanilla', discord: input.discord !== false, mediaCapture: !!input.mediaCapture,
+    menuStyle: 'vanilla', discord: input.discord !== false, mediaCapture: input.mediaCapture !== false,
     theme: ['glass', 'neon', 'mc'].includes(input.theme) ? input.theme : 'glass' };
   store.save();
   try { if (d.settings.mediaCapture) nowplaying.start((ch, p) => { try { emit(ch, p); } catch { /* */ } }); else nowplaying.stop(); } catch { /* */ }

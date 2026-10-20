@@ -180,6 +180,7 @@ public class Modules {
                 .add(Setting.choice("style", "Style", 0, Sky.STYLES))
                 .add(Setting.num("intensity", "Intensity", 5, 100, 60).unit("%"))
                 .add(Setting.num("speed", "Speed", 10, 200, 50).unit("%"))
+                .add(Setting.bool("world", "Replace real sky color", true))
                 .add(Setting.header("Ducks"))
                 .add(Setting.bool("ducks", "Ducks on any style", false))
                 .add(Setting.num("count", "Duck count", 1, 80, 22))
