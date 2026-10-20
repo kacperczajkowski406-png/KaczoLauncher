@@ -155,6 +155,7 @@ public class Modules {
                 .size(NowPlayingCard::size).draw(150, 36, NowPlayingCard::draw)
                 .add(Setting.bool("cover", "Show cover", true))
                 .add(Setting.bool("lyrics", "Show lyrics", true))
+                .add(Setting.bool("world", "Lyrics in the world (anchored)", true))
                 .add(Setting.num("width", "Min width", 100, 320, 130))
                 .add(Setting.bool("hide", "Hide when nothing plays", true)));
 

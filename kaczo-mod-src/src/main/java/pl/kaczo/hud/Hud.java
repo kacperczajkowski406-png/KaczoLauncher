@@ -45,6 +45,7 @@ public class Hud {
         if (mc.options.hudHidden || mc.player == null) return;
         try { Sky.render(ctx, mc); } catch (Throwable ignored) { }
         try { Sb.render(ctx, mc); } catch (Throwable ignored) { }
+        try { WorldLyrics.render(ctx, mc); } catch (Throwable ignored) { }
         boolean anim = Modules.GENERAL.bool("hudanim");
         long since = Modules.sinceJoin();
         int idx = 0;
