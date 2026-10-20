@@ -20,6 +20,7 @@ public final class Compat {
     public static void push(DrawContext ctx) { ctx.getMatrices().push(); }
     public static void pop(DrawContext ctx) { ctx.getMatrices().pop(); }
     public static void translate(DrawContext ctx, float x, float y) { ctx.getMatrices().translate(x, y, 0f); }
+    public static void rotate(DrawContext ctx, float rad) { ctx.getMatrices().multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotation(rad)); }
     public static void scale(DrawContext ctx, float x, float y) { ctx.getMatrices().scale(x, y, 1f); }
     /** Dorysowuje zebrane elementy (potrzebne, by przezroczystość nie objęła wcześniejszych). */
     public static void flush(DrawContext ctx) { ctx.draw(); }

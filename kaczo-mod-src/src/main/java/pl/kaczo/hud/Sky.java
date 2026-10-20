@@ -80,8 +80,6 @@ public final class Sky {
         int style = m.num("style");
         float t = (System.nanoTime() / 1_000_000_000f) * (m.num("speed") / 50f);
         SkyWorld.render(ctx, mc, m, t);
-        // lekka korekcja kolorów i winieta (klimat shaderów) – jedyna część „na ekranie”
-        if (m.bool("grade")) grade(ctx, w, h, style, m.num("intensity"), m.num("vignette"));
     }
 
     private static void ducks(DrawContext ctx, int w, int horizon, float t, float px, float py, int count, int size, int strength, boolean main) {

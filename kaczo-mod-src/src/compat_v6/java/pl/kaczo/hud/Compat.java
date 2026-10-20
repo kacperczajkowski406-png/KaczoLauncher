@@ -20,6 +20,7 @@ public final class Compat {
     public static void push(DrawContext ctx) { ctx.getMatrices().pushMatrix(); }
     public static void pop(DrawContext ctx) { ctx.getMatrices().popMatrix(); }
     public static void translate(DrawContext ctx, float x, float y) { ctx.getMatrices().translate(x, y); }
+    public static void rotate(DrawContext ctx, float rad) { ctx.getMatrices().rotate(rad); }
     public static void scale(DrawContext ctx, float x, float y) { ctx.getMatrices().scale(x, y); }
     public static void flush(DrawContext ctx) { }
     public static void alpha(float a) { }
