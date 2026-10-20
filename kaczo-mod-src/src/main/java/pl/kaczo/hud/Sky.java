@@ -112,6 +112,11 @@ public final class Sky {
             case 7 -> storm(ctx, w, horizon, t, px, strength);
             default -> { }
         }
+        if (m.bool("rays")) rays(ctx, w, horizon, t, px, style, strength);
+        if (style == 7) { lightning(ctx, w, horizon, t, px, strength); rain(ctx, w, horizon, t, m.num("density"), strength); }
+        if (style == 2) shooting(ctx, w, horizon, t, px, strength);
+        if (m.bool("glow")) orbs(ctx, w, horizon, t, px, py, style, m.num("density"), strength, m.num("size"));
+        if (m.bool("bloom")) horizonGlow(ctx, w, horizon, style, strength, t);
         if (style == 0 || m.bool("ducks")) ducks(ctx, w, horizon, t, px, py, m.num("count"), m.num("size"), strength, style == 0);
 
         if (m.bool("grade")) grade(ctx, w, h, style, strength, m.num("vignette"));
@@ -269,6 +274,120 @@ public final class Sky {
     }
 
     /** Burzowe, fioletowe niebo z ciężkimi chmurami i rzadkimi rozbłyskami. */
+
+    // ───────── „shaderowe” efekty: bloom, świecące cząsteczki, promienie, błyskawice, deszcz ─────────
+    private static final int[] ACCENT = {0xFFE27A, 0x6CFFD2, 0xA9B4FF, 0xFFB070, 0xFF9AD8, 0x5CFF8A, 0xFFB0F0, 0xD9A8FF};
+
+    /** Wypełniony krąg (linie poziome) – podstawa poświaty. */
+    private static void disc(DrawContext ctx, int cx, int cy, int r, int color) {
+        for (int dy = -r; dy <= r; dy++) {
+            int half = (int) Math.round(Math.sqrt((double) r * r - (double) dy * dy));
+            if (half > 0) ctx.fill(cx - half, cy + dy, cx + half, cy + dy + 1, color);
+        }
+    }
+
+    /** Bloom: kilka nałożonych kręgów o rosnącej jasności ku środkowi + biały rdzeń. */
+    private static void glow(DrawContext ctx, int cx, int cy, int r, int rgb, int a) {
+        disc(ctx, cx, cy, r, argb(a / 7, rgb));
+        disc(ctx, cx, cy, Math.max(1, r * 2 / 3), argb(a / 4, rgb));
+        disc(ctx, cx, cy, Math.max(1, r / 3), argb(a / 2, lerp(rgb, 0xFFFFFF, 0.5f)));
+        if (r >= 3) disc(ctx, cx, cy, Math.max(1, r / 6), argb(a, 0xFFFFFF));
+    }
+
+    /** Dryfujące, migoczące świetliki z bloomem; głębia = paralaksa przy obrocie kamery. */
+    private static void orbs(DrawContext ctx, int w, int horizon, float t, float px, float py, int style, int density, int strength, int size) {
+        int n = Math.max(4, Math.min(70, density));
+        int acc = ACCENT[Math.max(0, Math.min(ACCENT.length - 1, style))];
+        int sec = lerp(acc, 0xFFFFFF, 0.55f);
+        for (int i = 0; i < n; i++) {
+            float depth = 0.3f + hash(i * 5 + 3) * 0.7f;
+            float sp = 4f + 10f * hash(i * 9 + 1);
+            float x = ((hash(i * 3 + 7) * w + (float) Math.sin(t * 0.4f + i) * 18f + px * depth * 0.6f) % w + w) % w;
+            float y = (((hash(i * 13 + 2) * horizon) - t * sp * depth + py * depth * 0.4f) % horizon + horizon) % horizon;
+            float tw = 0.55f + 0.45f * (float) Math.sin(t * (1.2f + 2f * hash(i * 17)) + i * 1.7f);
+            int r = Math.max(2, Math.round((2 + 5 * depth) * (0.6f + 0.4f * size)));
+            int a = Math.round(strength / 100f * 200 * tw * (0.5f + 0.5f * depth));
+            glow(ctx, (int) x, (int) y, r, (i % 3 == 0) ? sec : acc, a);
+        }
+    }
+
+    /** Smugi światła (god rays) ześlizgujące się z góry – delikatne, szerokie pasy. */
+    private static void rays(DrawContext ctx, int w, int horizon, float t, float px, int style, int strength) {
+        int acc = ACCENT[Math.max(0, Math.min(ACCENT.length - 1, style))];
+        for (int i = 0; i < 6; i++) {
+            float baseX = hash(i * 23 + 5) * (w + 200) - 100 + (float) Math.sin(t * 0.25f + i * 2f) * 40f - px * 0.4f;
+            int wid = 22 + (int) (hash(i * 31 + 1) * 50);
+            float slope = 0.45f + 0.25f * hash(i * 41 + 9);
+            float pulse = 0.55f + 0.45f * (float) Math.sin(t * 0.5f + i * 1.3f);
+            int a = Math.round(strength / 100f * 20 * pulse);
+            if (a < 2) continue;
+            for (int y = 0; y < horizon; y += 3) {
+                float k = 1f - y / (float) horizon;
+                int x = (int) (baseX + y * slope);
+                ctx.fill(x, y, x + (int) (wid * (0.6f + 0.6f * (1 - k))), y + 3, argb(Math.round(a * (0.35f + 0.65f * k)), acc));
+            }
+        }
+    }
+
+    /** Błyskawica: zygzak z poświatą, pojawia się losowo. */
+    private static void lightning(DrawContext ctx, int w, int horizon, float t, float px, int strength) {
+        int slot = (int) (t * 0.6f);
+        float local = t * 0.6f - slot;
+        if (hash(slot * 7 + 3) < 0.45f || local > 0.28f) return;          // nie każdy slot ma błysk, błysk trwa chwilę
+        float fade = 1f - local / 0.28f;
+        int x = (int) (hash(slot * 11 + 5) * w * 0.8f + w * 0.1f - px * 0.3f);
+        int y = 0, step = Math.max(6, horizon / 14);
+        int a = Math.round(strength / 100f * 255 * fade);
+        int seg = 0;
+        while (y < horizon * 0.85f && seg < 30) {
+            int nx = x + Math.round((hash(slot * 97 + seg * 13) - 0.5f) * 26);
+            int ny = y + step;
+            int x0 = Math.min(x, nx) - 1, x1 = Math.max(x, nx) + 2;
+            ctx.fill(x0 - 3, y, x1 + 3, ny, argb(a / 6, 0xB69CFF));      // poświata
+            ctx.fill(x0, y, x1, ny, argb(a, 0xFFFFFF));                    // rdzeń
+            x = nx; y = ny; seg++;
+        }
+        ctx.fill(0, 0, w, horizon, argb(Math.round(a * 0.18f), 0xD8C8FF));
+    }
+
+    /** Ukośny deszcz (smugi) – głębia przez różną długość i jasność. */
+    private static void rain(DrawContext ctx, int w, int horizon, float t, int density, int strength) {
+        int n = Math.max(20, density * 3);
+        for (int i = 0; i < n; i++) {
+            float depth = 0.4f + hash(i * 7 + 1) * 0.6f;
+            float x = hash(i * 3 + 2) * (w + 60) + t * 40f * depth;
+            float y = ((hash(i * 11 + 4) * horizon + t * 220f * depth) % horizon + horizon) % horizon;
+            int xi = (int) (x % (w + 60)) - 30;
+            int len = (int) (4 + 9 * depth);
+            ctx.fill(xi, (int) y, xi + 1, (int) y + len, argb(Math.round(strength / 100f * 70 * depth), 0xC8D4FF));
+        }
+    }
+
+    /** Spadające gwiazdy. */
+    private static void shooting(DrawContext ctx, int w, int horizon, float t, float px, int strength) {
+        int slot = (int) (t * 0.5f);
+        float local = t * 0.5f - slot;
+        if (hash(slot * 5 + 1) < 0.35f || local > 0.5f) return;
+        float k = local / 0.5f;
+        float sx = hash(slot * 13 + 2) * w * 0.7f - px * 0.2f, sy = hash(slot * 17 + 3) * horizon * 0.4f;
+        for (int i = 0; i < 14; i++) {
+            float f = k - i * 0.02f;
+            if (f < 0) break;
+            int x = (int) (sx + f * w * 0.35f), y = (int) (sy + f * horizon * 0.35f);
+            glow(ctx, x, y, i == 0 ? 3 : 2, 0xFFFFFF, Math.round(strength / 100f * 220 * (1 - i / 14f)));
+        }
+    }
+
+    /** Ciepła poświata przy horyzoncie (bloom na linii nieba). */
+    private static void horizonGlow(DrawContext ctx, int w, int horizon, int style, int strength, float t) {
+        int acc = ACCENT[Math.max(0, Math.min(ACCENT.length - 1, style))];
+        float pulse = 0.8f + 0.2f * (float) Math.sin(t * 0.4f);
+        for (int i = 0; i < 14; i++) {
+            int a = Math.round(strength / 100f * 52 * pulse * (1 - i / 14f) * (1 - i / 14f));
+            ctx.fill(0, Math.max(0, horizon - 4 - i * 4), w, Math.max(0, horizon - i * 4), argb(a, acc));
+        }
+    }
+
     private static void storm(DrawContext ctx, int w, int horizon, float t, float px, int strength) {
         int a = Math.round(strength / 100f * 120);
         for (int i = 0; i < 12; i++) {
