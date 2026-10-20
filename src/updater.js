@@ -51,8 +51,11 @@ async function check() {
 function install() {
   if (!updater || state.status !== 'ready') throw new Error('Brak aktualizacji');
   // bezpieczna ścieżka: otwieramy stronę z instalatorem zamiast cichego nadpisywania działającej aplikacji
-  const pub = (require('../package.json').build.publish || [])[0] || {};
-  const url = pub.owner && pub.repo ? `https://github.com/${pub.owner}/${pub.repo}/releases/latest` : 'https://github.com/kacperczajkowski406-png/KaczoLauncher/releases/latest';
+  let url = 'https://github.com/kacperczajkowski406-png/KaczoLauncher/releases/latest';
+  try {
+    const pub = ((require('../package.json').build || {}).publish || [])[0] || {};
+    if (pub.owner && pub.repo) url = `https://github.com/${pub.owner}/${pub.repo}/releases/latest`;
+  } catch { /* w spakowanej aplikacji brak sekcji build – zostaje adres domyślny */ }
   require('electron').shell.openExternal(url);
 }
 

@@ -198,6 +198,8 @@ public class Modules {
                 .add(Setting.bool("grade", "Color grading", true))
                 .add(Setting.num("vignette", "Vignette", 0, 100, 35).unit("%"))
                 .add(Setting.color("tint", "Tint", "255,255,255,0,0")));
+        reg(new Module("theme", "HUD Color", "One color for the whole HUD: all elements and their accents switch to it.", "Visual", "COLOR").fresh()
+                .add(Setting.color("color", "Theme color", "255,60,60,255,0")));
         reg(new Module("nofire", "No Fire Overlay", "Hides the fire on your screen when you are burning.", "Visual", "FIRE").fresh());
         reg(new Module("nowater", "Clear Water", "Removes the blue overlay when you are underwater.", "Visual", "H2O").fresh());
         reg(new Module("hitbox", "Hitboxes", "Shows entity hitboxes (like F3 + B).", "Visual", "BOX").fresh());

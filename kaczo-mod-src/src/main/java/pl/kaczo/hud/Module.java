@@ -72,6 +72,23 @@ public class Module {
     public int num(String key) { try { return (int) Double.parseDouble(raw(key)); } catch (Exception e) { return 0; } }
     /** Kolor ARGB (z obsługą trybu tęczowego). Stary zapis (numer z palety) też działa. */
     public int color(String key) {
+        int base = colorRaw(key);
+        if (id.equals("theme") || !(key.equals("color") || key.equals("accent") || key.equals("bgc") || key.equals("tcolor"))) return base;
+        try {
+            Module t = Modules.byId("theme");
+            if (t == null || !t.enabled()) return base;
+            int tc = t.colorRaw("color");
+            int a = base >>> 24;
+            if (key.equals("bgc")) {                      // tło: ciemna wersja koloru motywu, zachowuje przezroczystość
+                int r = (int) (((tc >> 16) & 255) * 0.22f), g = (int) (((tc >> 8) & 255) * 0.22f), b = (int) ((tc & 255) * 0.22f);
+                return (a << 24) | (r << 16) | (g << 8) | b;
+            }
+            return (a << 24) | (tc & 0xFFFFFF);
+        } catch (Throwable e) { return base; }
+    }
+
+    /** Kolor z ustawienia bez motywu globalnego. */
+    public int colorRaw(String key) {
         String r = raw(key);
         int R = 255, G = 255, B = 255, A = 255; boolean rainbow = false;
         try {
