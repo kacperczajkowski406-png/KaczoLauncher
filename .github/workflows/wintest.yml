@@ -8,6 +8,7 @@ jobs:
         shell: pwsh
         run: |
           $out = @()
+          try {
           $rels = Invoke-RestMethod "https://api.github.com/repos/${{ github.repository }}/releases?per_page=30"
           $old = $rels | Where-Object { $_.tag_name -eq 'v1.2.36' } | Select-Object -First 1
           $new = $rels[0]
@@ -35,6 +36,7 @@ jobs:
             $out += "exe exists after run: $(Test-Path "$dir\Kaczo Client.exe")"
             Get-Process | Where-Object { $_.Name -like 'Kaczo*' -or $_.Name -eq 'powershell' } | ForEach-Object { $out += "proc: $($_.Name)" }
           }
+          } catch { $out += "ERR: $($_ | Out-String)" }
           try { $t = Get-MpThreatDetection | Select-Object -First 5 | ForEach-Object { "defender: " + $_.ThreatID + " " + $_.Resources }; $out += $t } catch { $out += "defender: n/a" }
           $m = ($out -join "%0A")
           Write-Host "::error title=wintest::$m"
