@@ -58,7 +58,7 @@ final class SkyWorld {
         return proj(ex + Math.sin(az) * ce * DOME, ey + Math.sin(el) * DOME, ez + Math.cos(az) * ce * DOME, o);
     }
     private static float pxPerRad() { return (float) ((H / 2.0) / tanHalf); }
-    private static double mcAz() { return Math.toRadians(180 + yawDeg) - Math.PI; }   // azymut kierunku patrzenia na kopule
+    private static double mcAz() { return -Math.toRadians(yawDeg); }   // azymut kierunku patrzenia na kopule (kierunek (sin az, cos az))
 
     // ── zasłanianie terenu ──
     private static final boolean[] blockedC = new boolean[1024];
