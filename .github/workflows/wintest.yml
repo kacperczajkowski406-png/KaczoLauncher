@@ -15,7 +15,13 @@ jobs:
           $p = Start-Process "$env:TEMP\setup.exe" -ArgumentList '/S' -PassThru -Wait
           $out += "installer exit: $($p.ExitCode)"
           Start-Sleep 8
-          $dir = "$env:LOCALAPPDATA\Programs\Kaczo Client"
+          $ws = New-Object -ComObject WScript.Shell
+          $lnk = $ws.CreateShortcut("$env:USERPROFILE\Desktop\Kaczo Client.lnk")
+          $out += "lnk target: $($lnk.TargetPath)"
+          $out += "Programs: " + ((Get-ChildItem "$env:LOCALAPPDATA\Programs" -ErrorAction SilentlyContinue | ForEach-Object Name) -join ", ")
+          $found = Get-ChildItem "$env:LOCALAPPDATA" -Recurse -Filter "Kaczo*.exe" -ErrorAction SilentlyContinue | Select-Object -First 5 | ForEach-Object FullName
+          $out += "found exe: " + ($found -join " | ")
+          $dir = Split-Path $lnk.TargetPath
           $out += "dir exists: $(Test-Path $dir)"
           if (Test-Path $dir) { $out += (Get-ChildItem $dir | Select-Object -First 12 | ForEach-Object { "  " + $_.Name + " " + $_.Length }) }
           $out += "exe exists: $(Test-Path "$dir\Kaczo Client.exe")"
