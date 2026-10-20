@@ -44,9 +44,10 @@ let proc = null;
 
 function start(emit) {
   if (process.platform !== 'win32' || proc) return;
-  const enc = Buffer.from(PS, 'utf16le').toString('base64');
+  const file = require('path').join(require('os').tmpdir(), 'kaczo-media.ps1');
+  require('fs').writeFileSync(file, '\ufeff' + PS, 'utf8');
   try {
-  proc = spawn('powershell.exe', ['-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden', '-EncodedCommand', enc], { windowsHide: true, cwd: require('os').tmpdir(), stdio: ['ignore', 'pipe', 'pipe'] });
+  proc = spawn('powershell.exe', ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', file], { windowsHide: true, cwd: require('os').tmpdir(), stdio: ['ignore', 'pipe', 'pipe'] });
   let buf = '';
   proc.stdout.setEncoding('utf8');
   proc.stdout.on('data', (d) => {
