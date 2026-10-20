@@ -100,12 +100,21 @@ public class WorldLyrics {
             int a = (int) Math.round(255 * alpha);
             if (a < 8) continue;
             int rows = l.rows.size(), lh = 11;
+            // pisanie liter w tempie muzyki (tylko dla aktualnej linijki; odchodzące są pełne)
+            int total = l.text.length();
+            int shown = l.died == 0 ? (int) Math.ceil(Lyrics.lineProgress() * total) : total;
+            int left = Math.max(0, Math.min(total, shown));
             Compat.push(ctx);
             Compat.translate(ctx, sx, sy);
             Compat.scale(ctx, scale, scale);
             for (int k = 0; k < rows; k++) {
-                String s = l.rows.get(k);
-                int tw = mc.textRenderer.getWidth(s);
+                String full = l.rows.get(k);
+                int tw = mc.textRenderer.getWidth(full);                // układ liczony z pełnego tekstu – nic nie skacze
+                int take = Math.min(full.length(), left);
+                left -= take;
+                String s = full.substring(0, take);
+                if (l.died == 0 && left == 0 && take < full.length() + 1 && take > 0 && shown < total && (ms / 300) % 2 == 0) s = s + "_";
+                if (s.isEmpty()) continue;
                 int x = -tw / 2, y = (int) ((k - rows / 2.0) * lh);
                 int glow = (Math.max(8, a / 4) << 24) | (accent & 0xFFFFFF);
                 ctx.drawText(mc.textRenderer, s, x - 1, y, glow, false);

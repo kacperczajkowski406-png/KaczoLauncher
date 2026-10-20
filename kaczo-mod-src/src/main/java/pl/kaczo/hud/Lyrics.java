@@ -105,4 +105,19 @@ public class Lyrics {
         for (int i = 0; i < ts.size() && i < ls.size(); i++) if (ts.get(i)[0] <= pos) idx = i; else break;
         return idx < 0 ? "" : ls.get(idx);
     }
+
+    /** Jak daleko jesteśmy w aktualnej linijce (0..1): do pisania liter w tempie muzyki. 1 gdy brak synchronizacji. */
+    public static double lineProgress() {
+        List<double[]> ts = times;
+        if (ts.isEmpty()) return 1;
+        double pos = NowPlaying.position() + LEAD;
+        int idx = -1;
+        for (int i = 0; i < ts.size(); i++) if (ts.get(i)[0] <= pos) idx = i; else break;
+        if (idx < 0) return 0;
+        double start = ts.get(idx)[0];
+        double end = idx + 1 < ts.size() ? ts.get(idx + 1)[0] : start + 4;
+        double len = Math.max(0.6, Math.min(8, end - start));
+        // pisanie kończy się na ~80% czasu linijki, reszta to chwila z pełnym tekstem
+        return Math.max(0, Math.min(1, (pos - start) / (len * 0.8)));
+    }
 }
