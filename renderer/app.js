@@ -604,7 +604,6 @@ function renderSettings(view) {
       el('div', { class: 'segmented' }, themeBtn('glass', t('set.themeGlass')), themeBtn('neon', t('set.themeNeon')), themeBtn('mc', t('set.themeMc')))),
     el('p', { class: 'small muted hint' }, t('set.menuModHint')),
     el('label', { class: 'check' }, el('input', { type: 'checkbox', checked: f.discord !== false, onchange: (e) => { f.discord = e.target.checked; } }), t('set.discord')),
-    el('label', { class: 'check' }, el('input', { type: 'checkbox', checked: f.mediaCapture !== false, onchange: (e) => { f.mediaCapture = e.target.checked; } }), 'Pokazuj aktualnie odtwarzaną muzykę i tekst (Spotify itp.)'),
     el('label', { class: 'check' }, el('input', { type: 'checkbox', checked: f.minimizeOnLaunch, onchange: (e) => { f.minimizeOnLaunch = e.target.checked; } }), t('set.minimize')),
     el('div', { class: 'row actions' },
       el('button', { class: 'btn primary', onclick: async () => { if (await actState('settings:save', f)) toast(t('set.saved'), 'ok'); } }, t('set.save')),

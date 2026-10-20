@@ -25,10 +25,10 @@ function init(app, emit, canInstall = () => true, onBeforeInstall = () => {}) {
     return;
   }
   state.supported = true;
-  updater.autoDownload = true;
+  updater.autoDownload = false; // nic nie pobieramy ani nie instalujemy w tle – tylko informujemy
   updater.autoInstallOnAppQuit = false; // instalacja tylko na kliknięcie (bezpieczniej)
   updater.on('checking-for-update', () => set({ status: 'checking', error: '' }));
-  updater.on('update-available', (info) => set({ status: 'downloading', version: info.version, percent: 0 }));
+  updater.on('update-available', (info) => set({ status: 'ready', version: info.version, percent: 100 }));
   updater.on('update-not-available', () => set({ status: 'none' }));
   updater.on('download-progress', (p) => set({ status: 'downloading', percent: Math.round(p.percent || 0) }));
   updater.on('update-downloaded', (info) => {
@@ -49,9 +49,11 @@ async function check() {
 }
 
 function install() {
-  if (!updater || state.status !== 'ready') throw new Error('Brak pobranej aktualizacji');
-  try { beforeInstall(); } catch { /* */ }
-  updater.quitAndInstall(false, true);
+  if (!updater || state.status !== 'ready') throw new Error('Brak aktualizacji');
+  // bezpieczna ścieżka: otwieramy stronę z instalatorem zamiast cichego nadpisywania działającej aplikacji
+  const pub = (require('../package.json').build.publish || [])[0] || {};
+  const url = pub.owner && pub.repo ? `https://github.com/${pub.owner}/${pub.repo}/releases/latest` : 'https://github.com/kacperczajkowski406-png/KaczoLauncher/releases/latest';
+  require('electron').shell.openExternal(url);
 }
 
 module.exports = { init, check, install, get: () => ({ ...state }) };
