@@ -3,12 +3,14 @@ package pl.kaczo.hud;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Identifier;
 
@@ -51,7 +53,7 @@ public final class Glass {
             if (screen instanceof TitleScreen) {
                 long now = System.currentTimeMillis();
                 try {
-                    for (ClickableWidget b : Screens.getButtons(screen)) if (glassKind(b) != 0) SEEN.put(b, now);   // bez mignięcia oryginału w 1. klatce
+                    for (ClickableWidget b : Screens.getButtons(screen)) if (pillKind(b) != 0 || glassKind(b) >= 2) SEEN.put(b, now);   // bez mignięcia oryginału w 1. klatce
                 } catch (Throwable ignored) { }
                 ScreenEvents.beforeRender(screen).register((s, ctx, mx, my, delta) -> {
                     try { if (titleBgOn()) Visual.aurora(ctx, s.width, s.height, 1f); } catch (Throwable ignored) { }
@@ -102,39 +104,157 @@ public final class Glass {
         lastFrame = now;
         if (!(screen instanceof TitleScreen)) return;          // szkło tylko w lobby gry – reszta menu zostaje standardowa
         float p = intro();
-        if (logoOn()) logo(mc, screen, ctx, p);
+        if (logoOn()) smallLogo(ctx, screen, ease(p / 0.6f));
         if (!buttonsOn()) return;
-        List<ClickableWidget> btns = Screens.getButtons(screen);
-        int i = 0;
-        for (ClickableWidget b : btns) {
-            int kind = glassKind(b);
-            if (kind == 0) continue;
+        lock(mc, screen, ctx, mx, my, p, dt);
+    }
+
+    // ───────────── ekran blokady: data, zegar i szklana pigułka z ikonami (jak na wzorze) ─────────────
+
+    /** Rodzaj ikony dla znanych przycisków menu głównego (0 = nie ruszamy). Kolejność = kolejność w pigułce. */
+    private static int pillKind(ClickableWidget b) {
+        if (!(b instanceof ButtonWidget) || !b.visible) return 0;
+        try {
+            if (b.getMessage().getContent() instanceof TranslatableTextContent t) {
+                String k = t.getKey();
+                if (k.equals("menu.singleplayer")) return 1;
+                if (k.equals("menu.multiplayer")) return 2;
+                if (k.equals("menu.online")) return 3;
+                if (k.contains("modmenu")) return 4;
+                if (k.equals("menu.options")) return 5;
+                if (k.equals("menu.quit")) return 6;
+            }
+        } catch (Throwable ignored) { }
+        return 0;
+    }
+
+    private static final int CELL = 26;
+
+    private static List<ClickableWidget> pillButtons(Screen screen) {
+        List<ClickableWidget> out = new java.util.ArrayList<>();
+        for (ClickableWidget b : Screens.getButtons(screen)) if (pillKind(b) != 0) out.add(b);
+        out.sort(java.util.Comparator.comparingInt(Glass::pillKind));
+        return out;
+    }
+
+    private static void lock(MinecraftClient mc, Screen screen, DrawContext ctx, int mx, int my, float p, float dt) {
+        long now = System.currentTimeMillis();
+        int w = screen.width, h = screen.height;
+        float k = ease((p - 0.1f) / 0.6f);
+        // data i zegar
+        java.time.LocalDateTime dtm = java.time.LocalDateTime.now();
+        java.util.Locale loc = L.pl() ? java.util.Locale.forLanguageTag("pl") : java.util.Locale.ENGLISH;
+        String date = dtm.format(java.time.format.DateTimeFormatter.ofPattern(L.pl() ? "EEEE, d MMMM" : "EEEE, MMMM d", loc));
+        date = date.substring(0, 1).toUpperCase(loc) + date.substring(1);
+        String clock = dtm.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
+        TextRenderer tr = mc.textRenderer;
+        float rise = (1 - k) * 8;
+        Compat.flush(ctx);
+        float ds = Math.max(1f, h / 300f);
+        int dw = tr.getWidth(date);
+        Compat.push(ctx);
+        Compat.translate(ctx, w / 2f - dw * ds / 2f, h * 0.115f + rise);
+        Compat.scale(ctx, ds, ds);
+        ctx.drawText(tr, date, 0, 0, fade(0xFFF4F7FF, k), false);
+        Compat.pop(ctx);
+        float cs = Math.max(2f, h * 0.115f / 9f);
+        Text ct = Text.literal(clock).formatted(Formatting.BOLD);
+        int cw = tr.getWidth(ct);
+        Compat.push(ctx);
+        Compat.translate(ctx, w / 2f - cw * cs / 2f, h * 0.15f + rise);
+        Compat.scale(ctx, cs, cs);
+        ctx.drawText(tr, ct, 0, 0, fade(0xFFFFFFFF, k), false);
+        Compat.pop(ctx);
+        for (ClickableWidget b : Screens.getButtons(screen)) {
+            int kd = glassKind(b);
+            if (kd < 2) continue;
             SEEN.put(b, now);
-            float k = ease((p - 0.25f - i * 0.07f) / 0.5f);
-            i++;
-            if (k <= 0) continue;
-            int w = b.getWidth(), h = b.getHeight();
-            boolean hover = b.active && Ui.in(mx, my, b.getX(), b.getY(), w, h);
+            boolean hv = b.active && Ui.in(mx, my, b.getX(), b.getY(), b.getWidth(), b.getHeight());
+            Ui.glass(ctx, b.getX(), b.getY(), b.getWidth(), b.getHeight(), b.getHeight() / 2, fade(hv ? 0x50FFFFFF : 0x30FFFFFF, k));
+            icon(ctx, kd, b.getX() + b.getWidth() / 2.0, b.getY() + b.getHeight() / 2.0, Math.min(b.getWidth(), b.getHeight()), fade(0xFFFFFFFF, k));
+        }
+        // pigułka
+        List<ClickableWidget> bs = pillButtons(screen);
+        if (bs.isEmpty()) return;
+        int n = bs.size(), pw = n * CELL + 10, ph = 26;
+        int px0 = (w - pw) / 2, cy = Math.round(h * 0.52f + (1 - k) * 8);
+        Ui.glass(ctx, px0, cy - ph / 2, pw, ph, ph / 2, fade(0x30FFFFFF, k));
+        String hoverLabel = null; int hoverX = 0;
+        int i = 0;
+        for (ClickableWidget b : bs) {
+            SEEN.put(b, now);
+            b.setX(px0 + 5 + i * CELL);
+            b.setY(cy - 10);
+            b.setWidth(CELL);
+            int kind = pillKind(b);
+            double cx = b.getX() + CELL / 2.0;
+            boolean hover = b.active && Ui.in(mx, my, b.getX(), cy - 13, CELL, 26);
             float t = HOVER.getOrDefault(b, 0f);
-            t += (hover ? 1 : -1) * dt * 7f;
-            t = Math.max(0f, Math.min(1f, t));
+            t = Math.max(0f, Math.min(1f, t + (hover ? 1 : -1) * dt * 8f));
             HOVER.put(b, t);
             float te = t * t * (3 - 2 * t);
-            int y = b.getY() + Math.round((1 - k) * 10) - Math.round(te);   // przy najechaniu lekko unosi się
-            int grow = Math.round(te * 1.5f);
-            int alpha = !b.active ? 0x1E : 0x3A + Math.round(te * 0x2C);
-            int fill = (alpha << 24) | (hover || te > 0.5f ? 0xFFF4D0 : 0xFFFFFF);
-            int rad = kind == 1 ? h / 2 : h / 2;
-            Ui.glass(ctx, b.getX() - grow, y - grow, w + 2 * grow, h + 2 * grow, rad, fade(fill, k));
-            int tc = b.active ? (te > 0.5f ? 0xFFFFF2B0 : 0xFFFFFFFF) : 0xFF9AA3B5;
-            if (kind == 1) {
-                Text msg = b.getMessage();
-                int tw = mc.textRenderer.getWidth(msg);
-                ctx.drawTextWithShadow(mc.textRenderer, msg, b.getX() + (w - tw) / 2, y + (h - 8) / 2, fade(tc, k));
-            } else {
-                icon(ctx, kind, b.getX() + w / 2.0, y + h / 2.0, Math.min(w, h), fade(tc, k));
-            }
+            if (te > 0.01f) Ui.rrectD(ctx, cx - 11, cy - 11, 22, 22, 11, fade(0x38FFFFFF, te * k));
+            int col = kind == 6 ? 0xFFFF5A68 : 0xFFFFFFFF;
+            col = Ui.mix(Ui.fade(col, 0.85f) , col, te);
+            iconPill(ctx, kind, cx, cy, fade(col, k));
+            if (hover) { hoverLabel = b.getMessage().getString(); hoverX = (int) cx; }
+            i++;
         }
+        if (hoverLabel != null) {
+            int lw = tr.getWidth(hoverLabel);
+            ctx.drawText(tr, hoverLabel, hoverX - lw / 2, cy + ph / 2 + 6, 0xE0F4F7FF, false);
+        }
+    }
+
+    private static void dot(DrawContext ctx, double cx, double cy, double r, int col) { Ui.rrectD(ctx, cx - r, cy - r, 2 * r, 2 * r, r, col); }
+
+    private static void person(DrawContext ctx, double cx, double cy, double s, int col) {
+        dot(ctx, cx, cy - s * 0.42, s * 0.34, col);
+        Ui.rrectD(ctx, cx - s * 0.6, cy + s * 0.06, s * 1.2, s * 0.62, s * 0.3, col);
+    }
+
+    private static void iconPill(DrawContext ctx, int kind, double cx, double cy, int col) {
+        double s = 7;
+        switch (kind) {
+            case 1 -> person(ctx, cx, cy, s, col);
+            case 2 -> { person(ctx, cx - 3.2, cy, s * 0.82, col); person(ctx, cx + 3.2, cy, s * 0.82, col); }
+            case 3 -> icon(ctx, 2, cx, cy, 24, col);
+            case 4 -> {
+                Ui.rrectD(ctx, cx - s * 0.95, cy - s * 0.65, s * 1.9, s * 1.3, s * 0.22, col);
+                Ui.rrectD(ctx, cx - s * 0.78, cy - s * 0.5, s * 1.56, s * 1.0, s * 0.14, (0xB0 << 24) | 0x0A0C12);
+                dot(ctx, cx - s * 0.42, cy - s * 0.12, s * 0.2, col);
+                Ui.rrectD(ctx, cx - s * 0.62, cy + s * 0.12, s * 0.4, s * 0.2, s * 0.08, col);
+                Ui.rrectD(ctx, cx + s * 0.02, cy - s * 0.22, s * 0.6, s * 0.1, s * 0.05, col);
+                Ui.rrectD(ctx, cx + s * 0.02, cy + s * 0.02, s * 0.6, s * 0.1, s * 0.05, col);
+            }
+            case 5 -> {
+                double R = s * 0.62, th = s * 0.34;
+                for (int j = 0; j < 8; j++) { double a = j * Math.PI / 4; dot(ctx, cx + Math.cos(a) * R * 1.12, cy + Math.sin(a) * R * 1.12, s * 0.2, col); }
+                Ui.ringT(ctx, cx - R, cy - R, 2 * R, 2 * R, R, th, col);
+            }
+            case 6 -> {
+                double R = s * 0.82, th = s * 0.2;
+                for (int j = 0; j <= 44; j++) {
+                    double a = Math.toRadians(40 + j * (280.0 / 44));
+                    dot(ctx, cx + Math.sin(a) * R, cy - Math.cos(a) * R, th / 2, col);
+                }
+                Ui.rrectD(ctx, cx - th / 2, cy - R - s * 0.2, th, s * 0.85, th / 2, col);
+            }
+            default -> { }
+        }
+    }
+
+    private static void smallLogo(DrawContext ctx, Screen screen, float k) {
+        int size = 22;
+        Compat.flush(ctx);
+        Compat.alpha(0.8f * k);
+        Compat.push(ctx);
+        Compat.translate(ctx, screen.width / 2f - size / 2f, screen.height - size - 10);
+        Compat.scale(ctx, size / 64f, size / 64f);
+        Compat.tex(ctx, LOGO, 64, 64);
+        Compat.pop(ctx);
+        Compat.flush(ctx);
+        Compat.alpha(1f);
     }
 
     /** Ikony narysowane z gładkich kształtów (kula ziemska i człowieczek ułatwień dostępu). */
