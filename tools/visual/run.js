@@ -45,7 +45,7 @@ const shot = (name) => { try { execSync(`import -window root ${path.join(OUT, na
     version: { number: MC, type: 'release', custom: id },
     memory: { max: '2G', min: '512M' },
     overrides: { gameDirectory: GAME },
-    customArgs: process.env.WORLD === '1' ? ['--quickPlaySingleplayer', 'KaczoTest'] : [],
+    customLaunchArgs: process.env.WORLD === '1' ? ['--quickPlaySingleplayer', 'KaczoTest'] : [],
   });
   if (!proc) { console.log('launch zwrócił null'); process.exit(1); }
   const t0 = Date.now();
