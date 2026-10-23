@@ -37,6 +37,19 @@ public final class Visual {
         return splashLogo;
     }
 
+    private static Identifier titleTex;
+    private static Identifier titleTexture(MinecraftClient mc) {
+        if (titleTex == null) {
+            try (InputStream in = Visual.class.getResourceAsStream("/assets/kaczohud/textures/gui/title.png")) {
+                NativeImage ni = NativeImage.read(in);
+                Identifier id = Identifier.of("kaczohud", "splash_title");
+                mc.getTextureManager().registerTexture(id, Compat.newTexture(ni));
+                titleTex = id;
+            } catch (Throwable t) { titleTex = logoTexture(mc); }
+        }
+        return titleTex;
+    }
+
     private static float ease(float t) { t = Math.max(0, Math.min(1, t)); float u = 1 - t; return 1 - u * u * u; }
 
     private static Object curOverlay;
@@ -63,22 +76,22 @@ public final class Visual {
 
         long now = System.currentTimeMillis() - T0;
         float k = ease(now / 700f);
-        net.minecraft.client.font.TextRenderer tr = mc.textRenderer;
         int cx = w / 2, cy = h / 2;
-        // duży, czysty napis jak zegar na ekranie blokady
-        String title = "Kaczo Client";
-        float ts = Math.max(2f, Math.min(5f, h / 120f));
-        int tw = tr.getWidth(title);
+        // duży napis jak zegar na ekranie blokady – jako gotowa tekstura (bez czcionki i shaderów tekstu, których podczas ładowania jeszcze nie ma)
+        float ts = Math.max(0.5f, Math.min(1.1f, h / 560f));
+        float tw2 = 1024 * ts * 0.5f, th2 = 256 * ts * 0.5f;
+        Compat.flush(ctx);
+        Compat.alpha(a * k);
         Compat.push(ctx);
-        Compat.translate(ctx, cx - tw * ts / 2f, cy - 5 * ts - 6 + (1 - k) * 10);
-        Compat.scale(ctx, ts, ts);
-        ctx.drawText(tr, title, 0, 0, Ui.fade(0xFFFFFFFF, a * k), false);
+        Compat.translate(ctx, cx - tw2 / 2f, cy - th2 / 2f - 6 + (1 - k) * 10);
+        Compat.scale(ctx, ts * 0.5f, ts * 0.5f);
+        Compat.tex(ctx, titleTexture(mc), 1024, 256);
         Compat.pop(ctx);
-        String sub = Math.round(Math.max(0.04f, Math.min(1f, progress)) * 100) + "%";
-        ctx.drawText(tr, sub, cx - tr.getWidth(sub) / 2, cy + (int) (6 * ts) + 2, Ui.fade(0xFFB9BECB, a * k), false);
+        Compat.flush(ctx);
+        Compat.alpha(1f);
 
         // cienki, szklany pasek postępu
-        int bw = Math.min(170, w / 2), bh = 3, bx = cx - bw / 2, by = cy + (int) (6 * ts) + 18;
+        int bw = Math.min(170, w / 2), bh = 3, bx = cx - bw / 2, by = cy + (int) (th2 / 2) + 14;
         Ui.glass(ctx, bx - 1, by - 1, bw + 2, bh + 2, (bh + 2) / 2, Ui.fade(0x30FFFFFF, a));
         float pr = Math.max(0.04f, Math.min(1f, progress));
         int fw = Math.max(bh, Math.round(bw * pr));
