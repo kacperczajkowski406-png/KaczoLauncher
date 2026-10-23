@@ -87,22 +87,22 @@ public class EditScreen extends KScreen {
             boolean hv = hit(m, mx, my) && popupCovers(mx, my) == false;
             boolean sel = m == dragging || m == popup;
             float t = Ui.tween("eh" + m.id, hv || sel ? 1f : 0f);
-            int col = sel ? 0xFFFFC21A : Ui.mix(0x88FFE14A, 0xFFFFFFFF, t);
-            if (m == flash) { col = Ui.mix(0xFFFFC21A, 0xFFFFFFFF, (float) (0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 140.0))); }
+            int col = sel ? 0xFFE6ECFF : Ui.mix(0x88F4F7FF, 0xFFFFFFFF, t);
+            if (m == flash) { col = Ui.mix(0xFFE6ECFF, 0xFFFFFFFF, (float) (0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 140.0))); }
             Ui.ringT(ctx, m.x() - 3, m.y() - 3, w(m) + 6, h(m) + 6, 4, sel ? 1.2 : 0.8, f(col));
             if (hv || sel) {
                 String name = L.t(m.name);
                 int tw = tr.getWidth(name) + 10;
                 int ty = m.y() - 16 < 2 ? m.y() + h(m) + 6 : m.y() - 17;
                 Ui.rrectD(ctx, m.x() - 3, ty, tw, 12, 6, f(0xE0141B2C));
-                ctx.drawText(tr, name, m.x() + 2, ty + 2, f(0xFFFFE14A), false);
+                ctx.drawText(tr, name, m.x() + 2, ty + 2, f(0xFFF4F7FF), false);
             }
         }
         if (Modules.SCOREBOARD.enabled()) {
             int[] r = sbRect();
             Ui.rrectD(ctx, r[0], r[1], r[2], r[3], 5, f(0x66000000));
             boolean sel = dragSb || popup == Modules.SCOREBOARD;
-            Ui.ringT(ctx, r[0], r[1], r[2], r[3], 5, sel ? 1.2 : 0.8, f(sel ? 0xFFFFC21A : 0x88FFE14A));
+            Ui.ringT(ctx, r[0], r[1], r[2], r[3], 5, sel ? 1.2 : 0.8, f(sel ? 0xFFE6ECFF : 0x88F4F7FF));
             Ui.centered(ctx, client, L.t("Scoreboard"), r[0] + r[2] / 2, r[1] + r[3] / 2 - 4, f(0xFFFFFFFF));
         }
         for (int[] g : guides) {
@@ -118,7 +118,7 @@ public class EditScreen extends KScreen {
             int[] r = tbRect(k);
             boolean hv = Ui.in(mx, my, r[0], r[1] + 2, r[2], r[3]) && !popupCovers(mx, my);
             boolean on = (k == 0 && listOpen) || (k == 1 && snap);
-            int fill = k == 3 ? 0xFFFFC21A : (on ? 0x55FFC21A : (hv ? 0x40FFFFFF : 0x22FFFFFF));
+            int fill = k == 3 ? 0xFFE6ECFF : (on ? 0x55E6ECFF : (hv ? 0x40FFFFFF : 0x22FFFFFF));
             Ui.rrectD(ctx, r[0], r[1] + 2, r[2], r[3], 9, f(fill));
             ctx.drawText(tr, tbLabel(k), r[0] + 10, r[1] + 7, f(k == 3 ? 0xFF1A1400 : 0xFFFFFFFF), false);
         }
@@ -148,7 +148,7 @@ public class EditScreen extends KScreen {
     private void drawList(DrawContext ctx, TextRenderer tr, int mx, int my) {
         int x = 8, y = 36, w = 176, h = listH();
         Ui.glass(ctx, x, y, w, h, 9, f(0xF0141B2C));
-        ctx.drawText(tr, L.t("Elements").toUpperCase(), x + 10, y + 8, f(0xFFFFC21A), false);
+        ctx.drawText(tr, L.t("Elements").toUpperCase(), x + 10, y + 8, f(0xFFE6ECFF), false);
         List<Module> list = hudModules();
         int top = y + 22, vh = h - 28;
         double max = Math.max(0, list.size() * 20 - vh);

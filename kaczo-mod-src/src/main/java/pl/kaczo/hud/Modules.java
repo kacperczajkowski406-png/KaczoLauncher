@@ -178,7 +178,7 @@ public class Modules {
                 .text(Extras::waypointText));
         reg(new Module("freelook", "Perspective (Freelook)", "Hold Left Alt to look around without turning.", "Visual", "LOOK").fresh().on());
         reg(new Module("sky", "Kaczo Sky", "Decorative sky overlay: duck rain, aurora, stars, sunset and more.", "Visual", "SKY").fresh()
-                .add(Setting.choice("style", "Style", 0, Sky.STYLES))
+                .add(Setting.choice("style", "Style", 8, Sky.STYLES))
                 .add(Setting.num("intensity", "Intensity", 5, 100, 60).unit("%"))
                 .add(Setting.num("speed", "Speed", 10, 200, 50).unit("%"))
                 .add(Setting.bool("world", "Replace real sky color", true))

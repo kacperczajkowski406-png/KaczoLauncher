@@ -20,7 +20,7 @@ public class L {
             {"Settings", "Ustawienia"}, {"ON", "WŁ"}, {"OFF", "WYŁ"},
             {"Size %", "Rozmiar %"}, {"Background", "Tło"}, {"Background color", "Kolor tła"}, {"Text color", "Kolor tekstu"},
             {"Color", "Kolor"}, {"Style", "Styl"}, {"Size", "Rozmiar"}, {"Gap", "Odstęp"}, {"Width", "Szerokość"},
-            {"Rainbow", "Tęcza"}, {"Storm", "Burza"}, {"Red", "Czerwony"}, {"Green", "Zielony"}, {"Blue", "Niebieski"}, {"Alpha", "Przezroczystość"},
+            {"Rainbow", "Tęcza"}, {"Storm", "Burza"}, {"Liquid glass", "Płynne szkło"}, {"Star trails", "Smugi gwiazd"}, {"Red", "Czerwony"}, {"Green", "Zielony"}, {"Blue", "Niebieski"}, {"Alpha", "Przezroczystość"},
             {"Presets", "Gotowe kolory"}, {"Preview", "Podgląd"},
             {"FPS", "FPS"}, {"Frames per second.", "Klatki na sekundę."},
             {"Ping", "Ping"}, {"Latency to the server.", "Opóźnienie do serwera."},

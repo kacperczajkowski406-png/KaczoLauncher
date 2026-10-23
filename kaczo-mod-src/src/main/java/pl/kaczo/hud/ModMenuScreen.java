@@ -105,7 +105,7 @@ public class ModMenuScreen extends KScreen {
         Compat.tex(ctx, Modules.logo(), 64, 64);
         Compat.pop(ctx);
         if (expanded()) {
-            ctx.drawText(tr, "KACZO", wx + 38, wy + 13, f(0xFFFFE14A), true);
+            ctx.drawText(tr, "KACZO", wx + 38, wy + 13, f(0xFFF4F7FF), true);
             ctx.drawText(tr, "CLIENT", wx + 38, wy + 23, f(0xFFA9B2C6), false);
         }
         int y = wy + 44;
@@ -115,10 +115,10 @@ public class ModMenuScreen extends KScreen {
             boolean on = i == page && i != 2;
             float hv = Ui.tween("nav" + i, hover ? 1f : 0f);
             float sv = Ui.tween("navs" + i, on ? 1f : 0f);
-            if (sv > 0.01f) Ui.rrectD(ctx, ix, y, iw, 22, 7, f((int) (0x40 * sv) << 24 | 0xFFC21A));
+            if (sv > 0.01f) Ui.rrectD(ctx, ix, y, iw, 22, 7, f((int) (0x40 * sv) << 24 | 0xE6ECFF));
             if (hv > 0.01f && !on) Ui.rrectD(ctx, ix, y, iw, 22, 7, f((int) (0x1C * hv) << 24 | 0xFFFFFF));
-            if (sv > 0.01f) Ui.rrectD(ctx, ix + 1, y + 6, 2, 10, 1, f((int) (255 * sv) << 24 | 0xFFC21A));
-            int col = on ? 0xFFFFE14A : (hover ? 0xFFFFFFFF : 0xFFB8C0D4);
+            if (sv > 0.01f) Ui.rrectD(ctx, ix + 1, y + 6, 2, 10, 1, f((int) (255 * sv) << 24 | 0xE6ECFF));
+            int col = on ? 0xFFF4F7FF : (hover ? 0xFFFFFFFF : 0xFFB8C0D4);
             navIcon(ctx, i, ix + 12, y + 11, f(col));
             if (expanded()) ctx.drawText(tr, L.t(NAV[i]), ix + 24, y + 7, f(col), false);
             y += 25;
@@ -175,13 +175,13 @@ public class ModMenuScreen extends KScreen {
     private void drawSearch(DrawContext ctx, TextRenderer tr, int mx, int my) {
         int sw = searchW(), sx = wx + ww - sw - 12, sy = wy + 12;
         boolean hover = Ui.in(mx, my, sx, sy, sw, 16);
-        Ui.card(ctx, sx, sy, sw, 16, 8, f(searchFocus ? 0x30FFFFFF : (hover ? 0x26FFFFFF : 0x18FFFFFF)), f(searchFocus ? 0x88FFC21A : 0x22FFFFFF));
+        Ui.card(ctx, sx, sy, sw, 16, 8, f(searchFocus ? 0x30FFFFFF : (hover ? 0x26FFFFFF : 0x18FFFFFF)), f(searchFocus ? 0x88E6ECFF : 0x22FFFFFF));
         String shownText = query.isEmpty() && !searchFocus ? L.t("Search") : query;
         int col = query.isEmpty() ? 0xFF7F88A0 : 0xFFFFFFFF;
         String t = tr.trimToWidth(shownText, sw - 18);
         ctx.drawText(tr, t, sx + 9, sy + 4, f(col), false);
         if (searchFocus && (System.currentTimeMillis() / 500) % 2 == 0)
-            ctx.fill(sx + 9 + tr.getWidth(t), sy + 3, sx + 10 + tr.getWidth(t), sy + 13, f(0xFFFFE14A));
+            ctx.fill(sx + 9 + tr.getWidth(t), sy + 3, sx + 10 + tr.getWidth(t), sy + 13, f(0xFFF4F7FF));
     }
 
     private void drawModules(DrawContext ctx, TextRenderer tr, int mx, int my) {
@@ -197,7 +197,7 @@ public class ModMenuScreen extends KScreen {
             if (x + w > wx + ww - 10) break;
             boolean sel = t.equals(tab), hover = Ui.in(mx, my, x, y, w, 14);
             float sv = Ui.tween("tab" + t, sel ? 1f : 0f);
-            int fill = Ui.mix(hover ? 0x2CFFFFFF : 0x16FFFFFF, 0xFFFFC21A, sv);
+            int fill = Ui.mix(hover ? 0x2CFFFFFF : 0x16FFFFFF, 0xFFE6ECFF, sv);
             Ui.rrectD(ctx, x, y, w, 14, 7, f(fill));
             ctx.drawText(tr, L.t(t), x + 7, y + 3, f(sel ? 0xFF1A1400 : (hover ? 0xFFFFFFFF : 0xFFB8C0D4)), false);
             x += w + 4;
@@ -234,8 +234,8 @@ public class ModMenuScreen extends KScreen {
         float hv = Ui.tween("row" + m.id, hover ? 1f : 0f, 18f);
         float ov = Ui.tween("on" + m.id, on ? 1f : 0f);
         int fill = Ui.mix(0x1CFFFFFF, 0x34FFFFFF, hv);
-        fill = Ui.mix(fill, 0x30FFC21A, ov * 0.55f);
-        Ui.card(ctx, x, y, w, RH, 8, f(fill), f(Ui.mix(0x1AFFFFFF, 0x55FFC21A, ov)));
+        fill = Ui.mix(fill, 0x30E6ECFF, ov * 0.55f);
+        Ui.card(ctx, x, y, w, RH, 8, f(fill), f(Ui.mix(0x1AFFFFFF, 0x55E6ECFF, ov)));
         // ikona
         int tc = tint(m.category);
         Ui.rrectD(ctx, x + 6, y + 6, 22, 22, 7, f(Ui.mix(0x38000000 | tc, 0xA0000000 | tc, ov)));
@@ -251,7 +251,7 @@ public class ModMenuScreen extends KScreen {
         ctx.drawText(tr, name, x + 34, y + 7, f(on ? 0xFFFFFFFF : 0xFFD0D6E6), false);
         if (m.isNew) {
             int nx = x + 34 + tr.getWidth(name) + 4;
-            Ui.rrectD(ctx, nx, y + 7, 18, 9, 4.5, f(0xFFFFC21A));
+            Ui.rrectD(ctx, nx, y + 7, 18, 9, 4.5, f(0xFFE6ECFF));
             Compat.push(ctx);
             Compat.scale(ctx, 0.65f, 0.65f);
             ctx.drawText(tr, L.t("NEW"), Math.round((nx + 9 - tr.getWidth(L.t("NEW")) * 0.325f) / 0.65f), Math.round((y + 8.6f) / 0.65f), f(0xFF1A1400), false);

@@ -146,7 +146,7 @@ final class SkyWorld {
     // ── model kaczki 3D z neonowych linii ──
     private static final class Poly { int col; boolean closed; double[][] p; }
     private static final List<Poly> DUCK = new ArrayList<>();
-    private static final int CYAN = 0x35F0FF, PINK = 0xFF4FD8, YELLOW = 0xFFE14A, LIME = 0x7CFF6B;
+    private static final int CYAN = 0x35F0FF, PINK = 0xFF4FD8, YELLOW = 0xF4F7FF, LIME = 0x7CFF6B;
 
     private static Poly poly(int col, boolean closed, double[]... pts) { Poly q = new Poly(); q.col = col; q.closed = closed; q.p = pts; return q; }
     private static double[] pt(double x, double y, double z) { return new double[]{x, y, z}; }
@@ -192,9 +192,9 @@ final class SkyWorld {
     private static int pstyle = -9, pcount = -1, pglow = -1, pDens = -1;
     private static boolean pDucks;
     private static long lastNs;
-    private static final int DUCK_K = 0, GLOW_K = 1, RAIN_K = 2, GLYPH_K = 3, PETAL_K = 4;
+    private static final int DUCK_K = 0, GLOW_K = 1, RAIN_K = 2, GLYPH_K = 3, PETAL_K = 4, SPARK_K = 5;
     private static final String GL = "01ｱｲｳｴｵｶｷｸ";
-    private static final int[] ACCENT = {0xFFE27A, 0x6CFFD2, 0xA9B4FF, 0xFFB070, 0xFF9AD8, 0x5CFF8A, 0xFFB0F0, 0xD9A8FF};
+    private static final int[] ACCENT = {0xFFE27A, 0x8FD0FF, 0xDCE8FF, 0xFFB070, 0xFF9AD8, 0x5CFF8A, 0xFFB0F0, 0xD9A8FF, 0xFFFFFF, 0xC8F08A};
 
     private static Pt spawn(int kind, boolean fresh) {
         Pt p = new Pt();
@@ -207,6 +207,7 @@ final class SkyWorld {
             case GLOW_K -> { p.y = ey - 2 + RNG.nextDouble() * 7; p.vy = 0.1f + RNG.nextFloat() * 0.25f; p.vx = (RNG.nextFloat() - .5f) * .5f; p.vz = (RNG.nextFloat() - .5f) * .5f; }
             case RAIN_K -> { p.y = ey + (fresh ? 16 * RNG.nextDouble() - 4 : 14 + 4 * RNG.nextDouble()); p.vy = -(15f + RNG.nextFloat() * 6f); p.vx = -2.2f; }
             case GLYPH_K -> { p.y = ey + (fresh ? 14 * RNG.nextDouble() - 3 : 12 + 4 * RNG.nextDouble()); p.vy = -(2.5f + RNG.nextFloat() * 3f); }
+            case SPARK_K -> { p.y = ey - 1 + RNG.nextDouble() * 16; p.vy = (RNG.nextFloat() - .5f) * .25f; p.vx = (RNG.nextFloat() - .5f) * .25f; p.vz = (RNG.nextFloat() - .5f) * .25f; }
             default -> { p.y = ey + (fresh ? 14 * RNG.nextDouble() - 3 : 12 + 4 * RNG.nextDouble()); p.vy = -(0.7f + RNG.nextFloat() * 0.8f); p.vx = (RNG.nextFloat() - .5f) * .8f; p.col = new int[]{0xFF8AD8, 0x8AD8FF, 0xFFF08A, 0xB88AFF}[RNG.nextInt(4)]; }
         }
         return p;
@@ -218,6 +219,7 @@ final class SkyWorld {
         if (style == 7) for (int i = 0; i < Math.max(30, Math.min(200, density * 3)); i++) pts.add(spawn(RAIN_K, true));
         if (style == 5) for (int i = 0; i < Math.max(20, Math.min(140, density * 2)); i++) pts.add(spawn(GLYPH_K, true));
         if (style == 4) for (int i = 0; i < Math.max(20, Math.min(100, density * 2)); i++) pts.add(spawn(PETAL_K, true));
+        if (style == 2) for (int i = 0; i < Math.max(60, Math.min(260, density * 5)); i++) pts.add(spawn(SPARK_K, true));
         if (glowOn) for (int i = 0; i < Math.max(4, Math.min(60, density)); i++) pts.add(spawn(GLOW_K, true));
     }
 
@@ -268,7 +270,7 @@ final class SkyWorld {
         float k = pxPerRad();
         draws.clear();
         float[] o = new float[3];
-        int acc = ACCENT[Math.max(0, Math.min(7, style))];
+        int acc = ACCENT[Math.max(0, Math.min(ACCENT.length - 1, style))];
         for (Pt p : pts) {
             p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
             if (p.kind == DUCK_K || p.kind == PETAL_K) { p.x += Math.sin(t * 0.8 + p.ph) * 0.6 * dt; p.z += Math.cos(t * 0.7 + p.ph) * 0.5 * dt; }
@@ -315,6 +317,15 @@ final class SkyWorld {
                     ctx.drawText(mc.textRenderer, ch, 0, 0, argb(a, 0x35FF70), false);
                     Compat.pop(ctx);
                 }
+                case SPARK_K -> {
+                    float tw = 0.4f + 0.6f * (float) Math.abs(Math.sin(t * (0.8 + p.sz) + p.ph));
+                    int sz = Math.max(1, Math.round(0.035f * p.sz * pxBlock));
+                    Compat.push(ctx);
+                    Compat.translate(ctx, d.x, d.y);
+                    Compat.rotate(ctx, 0.785f + p.ph);
+                    ctx.fill(-sz, -sz, sz, sz, argb(Math.round(a * tw), 0xFFFFFF));
+                    Compat.pop(ctx);
+                }
                 default -> {
                     int sz = Math.max(2, Math.round(0.16f * p.sz * pxBlock));
                     Compat.push(ctx);
@@ -338,14 +349,16 @@ final class SkyWorld {
             double elB = Math.toRadians(16 + 6 * wave), elT = Math.toRadians(46 + 14 * Math.sin(az * 2 + t * 0.3));
             if (domeBlocked(az, elB)) continue;
             if (!dome(az, elB, b0) || !dome(az, elT, t0) || !dome(az + Math.toRadians(1.5), elB, b1)) continue;
-            int col = lerp(0x35FFA0, 0xB45CFF, (float) (0.5 + 0.5 * Math.sin(az * 2 + t * 0.3)));
+            int col = lerp(0x4FA8FF, 0xEAF6FF, (float) (0.5 + 0.5 * Math.sin(az * 2 + t * 0.3)));
             int x0 = Math.round(b0[0]), x1 = Math.round(b1[0]) + 1, yb = Math.round(b0[1]), yt = Math.round(t0[1]);
             int bands = 14;
             for (int j = 0; j < bands; j++) {
                 float f0 = j / (float) bands, f1 = (j + 1) / (float) bands;
                 int ya = Math.round(yb + (yt - yb) * f0), yb2 = Math.round(yb + (yt - yb) * f1);
                 float al = (float) Math.pow(Math.sin(Math.PI * (f0 + f1) / 2), 1.4);
-                ctx.fill(x0, Math.min(ya, yb2), x1, Math.max(ya, yb2) + 1, argb(Math.round(a * al * 0.5f), col));
+                int yy0 = Math.min(ya, yb2), yy1 = Math.max(ya, yb2) + 1;
+                ctx.fill(x0 - 7, yy0, x1 + 7, yy1, argb(Math.round(a * al * 0.16f), col));      // miękka otoczka (rozmycie)
+                ctx.fill(x0, yy0, x1, yy1, argb(Math.round(a * al * 0.5f), col));
             }
         }
     }
@@ -465,8 +478,74 @@ final class SkyWorld {
         ctx.fill(0, 0, W, H, argb(Math.round(a * 0.12f), 0xD8C8FF));
     }
 
+    /** „Liquid glass”: czarne niebo i płynne, szklane wstęgi światła na kopule. */
+    private static void liquid(DrawContext ctx, float t, int strength, float[] o) {
+        double az0 = mcAz();
+        float a = strength / 100f;
+        float[] p = new float[3];
+        for (int r = 0; r < 4; r++) {
+            double e0 = 12 + r * 11;
+            float[] px = new float[7], py = new float[7];
+            boolean[] has = new boolean[7];
+            for (int i = -34; i <= 34; i++) {
+                double az = az0 + Math.toRadians(i * 1.8);
+                double spread = 1.1 * (1 + 1.5 * Math.sin(az * 2.7 + t * 0.2 + r * 2.1));
+                double cy = e0 + 8 * Math.sin(az * 2 + t * 0.25 + r) + 4.5 * Math.sin(az * 3.4 - t * 0.2 + r * 1.3);
+                for (int k = 0; k < 7; k++) {
+                    double el = Math.toRadians(cy + (k - 3) * spread);
+                    if (el < Math.toRadians(1.5) || !dome(az, el, p) || domeBlocked(az, el)) { has[k] = false; continue; }
+                    if (has[k]) {
+                        float al = (k == 0 || k == 6) ? 0.9f : (k == 1 || k == 5) ? 0.5f : 0.24f;
+                        seg(ctx, px[k], py[k], p[0], p[1], 1 + (k == 0 || k == 6 ? 1 : 0), argb(Math.round(255 * a * al), 0xFFFFFF));
+                        if (k == 3) {
+                            seg(ctx, px[k], py[k], p[0], p[1], Math.max(8, H / 50), argb(Math.round(14 * a), 0xFFFFFF));
+                            seg(ctx, px[k], py[k], p[0], p[1], Math.max(3, H / 140), argb(Math.round(26 * a), 0xFFFFFF));
+                        }
+                    }
+                    px[k] = p[0]; py[k] = p[1]; has[k] = true;
+                }
+            }
+        }
+    }
+
+    /** Smugi gwiazd: długie, zakrzywione łuki światła wokół bieguna nieba + duże, świecące słońce/księżyc. */
+    private static void trails(DrawContext ctx, float t, int strength, float[] o) {
+        double pAz = Math.toRadians(35), pEl = Math.toRadians(42);
+        double[] P = {Math.sin(pAz) * Math.cos(pEl), Math.sin(pEl), Math.cos(pAz) * Math.cos(pEl)};
+        double[] Ax = {P[2], 0, -P[0]};
+        double l = Math.sqrt(Ax[0] * Ax[0] + Ax[2] * Ax[2]); Ax[0] /= l; Ax[2] /= l;
+        double[] Bx = {P[1] * Ax[2] - P[2] * Ax[1], P[2] * Ax[0] - P[0] * Ax[2], P[0] * Ax[1] - P[1] * Ax[0]};
+        float a = strength / 100f;
+        for (int i = 0; i < 26; i++) {
+            double rho = Math.toRadians(8 + hash(i * 7 + 1) * 74);
+            double th0 = hash(i * 13 + 5) * Math.PI * 2 + t * 0.03 * (0.5 + hash(i * 3));
+            double len = Math.toRadians(14 + hash(i * 19 + 2) * 60);
+            float[] pv = new float[3]; boolean has = false;
+            int n = 26;
+            for (int j = 0; j < n; j++) {
+                double th = th0 + len * j / n;
+                double cr = Math.cos(rho), sr = Math.sin(rho), ct = Math.cos(th), st = Math.sin(th);
+                double vx = P[0] * cr + (Ax[0] * ct + Bx[0] * st) * sr, vy = P[1] * cr + (Ax[1] * ct + Bx[1] * st) * sr, vz = P[2] * cr + (Ax[2] * ct + Bx[2] * st) * sr;
+                if (vy < 0.03 || !proj(ex + vx * DOME, ey + vy * DOME, ez + vz * DOME, o)) { has = false; continue; }
+                if (has) {
+                    float f = j / (float) n;                                         // ogon rozjaśnia się ku „głowie”
+                    int col = lerp(0x9BE05A, 0xFFF29A, f);
+                    neon(ctx, pv[0], pv[1], o[0], o[1], 1.2f + 1.6f * f * hash(i * 5), col, Math.round(255 * a * f * 0.85f), f > 0.5f);
+                }
+                pv[0] = o[0]; pv[1] = o[1]; has = true;
+            }
+        }
+        double az = Math.toRadians(-18), el = Math.toRadians(27 + 1.5 * Math.sin(t * 0.1));
+        if (dome(az, el, o) && !domeBlocked(az, el)) {
+            int cx = Math.round(o[0]), cy = Math.round(o[1]), q = Math.max(6, Math.round(0.035f * pxPerRad()));
+            glow(ctx, cx, cy, q * 5, 0xFFE27A, Math.round(a * 230));
+            ctx.fill(cx - q, cy - q, cx + q, cy + q, argb(Math.round(a * 255), 0xFFF2A0));
+            ctx.fill(cx - q + 2, cy - q + 2, cx + q - 2, cy + q - 2, argb(Math.round(a * 255), 0xFFFBD0));
+        }
+    }
+
     private static void horizonBloom(DrawContext ctx, int style, int strength, float t, float[] o) {
-        int acc = ACCENT[Math.max(0, Math.min(7, style))];
+        int acc = ACCENT[Math.max(0, Math.min(ACCENT.length - 1, style))];
         double az0 = mcAz();
         float[] t0 = new float[3], n1 = new float[3];
         for (int i = -45; i <= 45; i++) {
@@ -481,8 +560,8 @@ final class SkyWorld {
     }
 
     private static void grade(DrawContext ctx, int style, int strength, int vignette) {
-        int[] tints = {0xFFE9B0, 0x66FFD0, 0x8F9CFF, 0xFF9A5C, 0xFFB8E8, 0x30FF70, 0xC0A8FF, 0xB48CD8};
-        ctx.fill(0, 0, W, H, argb(Math.round(strength / 100f * 18), tints[Math.max(0, Math.min(7, style))]));
+        int[] tints = {0xFFE9B0, 0x9FD0FF, 0x8FB0FF, 0xFF9A5C, 0xFFB8E8, 0x30FF70, 0xC0A8FF, 0xB48CD8, 0xFFFFFF, 0xC8F08A};
+        ctx.fill(0, 0, W, H, argb(Math.round(strength / 100f * 18), tints[Math.max(0, Math.min(ACCENT.length - 1, style))]));
         int v = Math.round(vignette / 100f * 130);
         if (v <= 0) return;
         int layers = 40, th = Math.max(2, Math.min(W, H) / 70);
@@ -524,10 +603,12 @@ final class SkyWorld {
                 case 4 -> clouds(ctx, t, strength, style, o);
                 case 6 -> { clouds(ctx, t, strength, style, o); rainbow(ctx, strength, o); }
                 case 7 -> { clouds(ctx, t, strength, style, o); lightning(ctx, t, strength, o); }
+                case 8 -> liquid(ctx, t, strength, o);
+                case 9 -> trails(ctx, t, strength, o);
                 default -> { if (style == 0) clouds(ctx, t, strength / 2, 99, o); }
             }
             if (m.bool("rays") && style != 3) {
-                int acc = ACCENT[Math.max(0, Math.min(7, style))];
+                int acc = ACCENT[Math.max(0, Math.min(ACCENT.length - 1, style))];
                 float[] b = new float[3];
                 for (int i = 0; i < 5; i++) {
                     double az = hash(i * 23 + 5) * Math.PI * 2 + Math.sin(t * 0.2 + i) * 0.05;

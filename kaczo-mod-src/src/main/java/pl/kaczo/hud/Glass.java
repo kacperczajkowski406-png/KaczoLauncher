@@ -173,7 +173,7 @@ public final class Glass {
         double pulse = 0.5 + 0.5 * Math.sin(now / 700.0);
         int ga = (int) ((16 + 14 * pulse) * k);
         int gs = size + 16;
-        Ui.rrect(ctx, cx - gs / 2, cy - gs / 2, gs, gs, gs / 2, (ga << 24) | 0xFFE14A);   // poświata
+        Ui.rrect(ctx, cx - gs / 2, cy - gs / 2, gs, gs, gs / 2, (ga << 24) | 0xF4F7FF);   // poświata
         float s = size / 64f * (0.4f + 0.6f * k);
         float px = cx - 32 * s, py = cy - 32 * s;
         Compat.push(ctx);

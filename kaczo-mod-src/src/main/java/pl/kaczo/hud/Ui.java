@@ -6,8 +6,8 @@ import net.minecraft.client.gui.DrawContext;
 /** Wspólne kolory i elementy w stylu „liquid glass”: zaokrąglone, półprzezroczyste, z jasną krawędzią. */
 public class Ui {
     public static final int DIM = 0x99050810, PANEL = 0xD0121826, CARD = 0x55FFFFFF, CARD_OFF = 0x26FFFFFF,
-            BTN = 0x38FFFFFF, BTN_HOVER = 0x62FFFFFF, ORANGE = 0xFFFFC21A, GREEN = 0xE03DBE6A, GREEN_HOVER = 0xF050D47C,
-            WHITE = 0xFFFFFFFF, GRAY = 0xFFA9B2C6, RED = 0xFFFF5C63, YELLOW = 0xFFFFE14A;
+            BTN = 0x38FFFFFF, BTN_HOVER = 0x62FFFFFF, ORANGE = 0xFFE6ECFF, GREEN = 0xE03DBE6A, GREEN_HOVER = 0xF050D47C,
+            WHITE = 0xFFFFFFFF, GRAY = 0xFFA9B2C6, RED = 0xFFFF5C63, YELLOW = 0xFFF4F7FF;
 
     public static boolean in(double mx, double my, int x, int y, int w, int h) {
         return mx >= x && mx < x + w && my >= y && my < y + h;

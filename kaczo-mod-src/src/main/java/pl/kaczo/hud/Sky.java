@@ -11,7 +11,7 @@ import net.minecraft.client.gui.DrawContext;
 public final class Sky {
     private Sky() { }
 
-    public static final String[] STYLES = {"Duck rain", "Aurora", "Starfield", "Sunset", "Candy", "Matrix", "Rainbow", "Storm"};
+    public static final String[] STYLES = {"Duck rain", "Aurora", "Starfield", "Sunset", "Candy", "Matrix", "Rainbow", "Storm", "Liquid glass", "Star trails"};
 
     // 9x8 pikseli: y = żółty, o = dziób, e = oko, w = jasny połysk
     private static final String[] DUCK = {
@@ -56,13 +56,13 @@ public final class Sky {
             Module m = Modules.byId("sky");
             if (!m.enabled() || !m.bool("world")) return rgb;
             int style = m.num("style");
-            int[][] pal = { {0x6EC6FF,0xFFF3B0},{0x0B3B4A,0x1FD6A0},{0x1B1650,0x050B26},{0xFF8A3D,0x2B1A5E},{0xFFB3E6,0xB3E6FF},{0x021A06,0x00A030},{0x6A5CFF,0xFF7AA8},{0x3A1F5E,0x8A5A9C} };
+            int[][] pal = { {0x6EC6FF,0xFFF3B0},{0x0A1A33,0x1B4A7A},{0x0B1A33,0x1D3A5C},{0xFF8A3D,0x2B1A5E},{0xFFB3E6,0xB3E6FF},{0x021A06,0x00A030},{0x6A5CFF,0xFF7AA8},{0x3A1F5E,0x8A5A9C},{0x000000,0x0A0A10},{0x03060A,0x0A130E} };
             int[] p = pal[Math.max(0, Math.min(pal.length - 1, style))];
             float t = (System.nanoTime() / 1_000_000_000f) * (m.num("speed") / 50f) * 0.15f;
             float wave = 0.5f + 0.5f * (float) Math.sin(t);
             int target = lerp(p[0], p[1], wave);
             float lum = (((rgb >> 16) & 255) * 0.3f + ((rgb >> 8) & 255) * 0.59f + (rgb & 255) * 0.11f) / 255f;
-            float bright = Math.max(0.12f, Math.min(1f, lum / 0.55f));       // zachowaj cykl dzień/noc
+            float bright = style >= 8 ? 1f : Math.max(0.12f, Math.min(1f, lum / 0.55f));       // zachowaj cykl dzień/noc (czarne style są zawsze ciemne)
             int tr = (int) (((target >> 16) & 255) * bright), tg = (int) (((target >> 8) & 255) * bright), tb = (int) ((target & 255) * bright);
             return lerp(rgb & 0xFFFFFF, (tr << 16) | (tg << 8) | tb, Math.min(1f, m.num("intensity") / 100f * 0.95f));
         } catch (Throwable e) { return rgb; }

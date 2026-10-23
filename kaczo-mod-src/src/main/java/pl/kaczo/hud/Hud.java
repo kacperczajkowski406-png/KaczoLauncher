@@ -86,7 +86,7 @@ public class Hud {
         Compat.scale(ctx, 14 / 64f, 14 / 64f);
         Compat.tex(ctx, Modules.logo(), 64, 64);
         Compat.pop(ctx);
-        ctx.drawTextWithShadow(mc.textRenderer, a, x + 24, y + (hint ? 5 : 6), 0xFFFFE14A);
+        ctx.drawTextWithShadow(mc.textRenderer, a, x + 24, y + (hint ? 5 : 6), 0xFFF4F7FF);
         if (hint) ctx.drawText(mc.textRenderer, b, x + 24, y + 15, 0xFFA9B2C6, false);
     }
 
