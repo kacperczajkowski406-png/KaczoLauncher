@@ -1,0 +1,106 @@
+gen ok
+kaczo-mod-26/gen/java/pl/kaczo/hud/WorldLyrics.java:64: error: incompatible types: double cannot be converted to Vec3
+kaczo-mod-26/gen/java/pl/kaczo/hud/Modules.java:73: error: cannot find symbol
+  symbol:   variable level
+  location: class Modules
+  symbol:   variable Compat
+  location: variable mc of type Minecraft
+kaczo-mod-26/gen/java/pl/kaczo/hud/Modules.java:77: error: cannot find symbol
+  symbol:   variable world
+kaczo-mod-26/gen/java/pl/kaczo/hud/SettingsPanel.java:105: error: incompatible types: String cannot be converted to FormattedText
+kaczo-mod-26/gen/java/pl/kaczo/hud/SettingsPanel.java:112: error: incompatible types: String cannot be converted to FormattedText
+kaczo-mod-26/gen/java/pl/kaczo/hud/SettingsPanel.java:135: error: incompatible types: String cannot be converted to FormattedText
+kaczo-mod-26/gen/java/pl/kaczo/hud/SettingsPanel.java:137: error: incompatible types: String cannot be converted to FormattedText
+kaczo-mod-26/gen/java/pl/kaczo/hud/SettingsPanel.java:142: error: incompatible types: String cannot be converted to FormattedText
+kaczo-mod-26/gen/java/pl/kaczo/hud/Music.java:19: error: cannot find symbol
+  symbol:   method fromNamespaceAndPath(Identifier)
+  location: class SoundEvent
+kaczo-mod-26/gen/java/pl/kaczo/hud/Music.java:33: error: cannot find symbol
+  symbol: variable repeat
+kaczo-mod-26/gen/java/pl/kaczo/hud/Music.java:34: error: cannot find symbol
+  symbol: variable repeatDelay
+kaczo-mod-26/gen/java/pl/kaczo/hud/Music.java:37: error: cannot find symbol
+  symbol: variable attenuationType
+kaczo-mod-26/gen/java/pl/kaczo/hud/EditScreen.java:163: error: incompatible types: String cannot be converted to FormattedText
+kaczo-mod-26/gen/java/pl/kaczo/hud/EditScreen.java:186: error: incompatible types: String cannot be converted to FormattedText
+kaczo-mod-26/gen/java/pl/kaczo/hud/Ribbons.java:15: error: cannot find symbol
+  symbol:   method rotate(GuiGraphicsExtractor,float)
+  location: class Compat
+kaczo-mod-26/gen/java/pl/kaczo/hud/Sb.java:70: error: cannot find symbol
+  symbol:   variable name
+  location: class Sb
+kaczo-mod-26/gen/java/pl/kaczo/hud/ModMenuScreen.java:181: error: incompatible types: String cannot be converted to FormattedText
+kaczo-mod-26/gen/java/pl/kaczo/hud/ModMenuScreen.java:250: error: incompatible types: String cannot be converted to FormattedText
+kaczo-mod-26/gen/java/pl/kaczo/hud/ModMenuScreen.java:260: error: incompatible types: String cannot be converted to FormattedText
+kaczo-mod-26/gen/java/pl/kaczo/hud/ModMenuScreen.java:311: error: incompatible types: String cannot be converted to FormattedText
+kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java:76: error: cannot find symbol
+  symbol:   variable ShapeType
+  location: class ClipContext
+  symbol:   variable FluidHandling
+kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java:109: error: cannot find symbol
+kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java:284: error: cannot find symbol
+  symbol:   variable Type
+  location: class Heightmap
+kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java:325: error: cannot find symbol
+kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java:333: error: cannot find symbol
+kaczo-mod-26/gen/java/pl/kaczo/hud/Glass.java:64: error: method onPress in class Button cannot be applied to given types;
+kaczo-mod-26/gen/java/pl/kaczo/hud/Glass.java:185: error: cannot find symbol
+  symbol:   method clockText(String)
+  kaczo-mod-26/gen/java/pl/kaczo/hud/Glass.java:64: error: method onPress in class Button cannot be applied to given types;
+  kaczo-mod-26/gen/java/pl/kaczo/hud/WorldLyrics.java:64: error: incompatible types: double cannot be converted to Vec3
+  kaczo-mod-26/gen/java/pl/kaczo/hud/SettingsPanel.java:105: error: incompatible types: String cannot be converted to FormattedText
+  kaczo-mod-26/gen/java/pl/kaczo/hud/SettingsPanel.java:112: error: incompatible types: String cannot be converted to FormattedText
+  kaczo-mod-26/gen/java/pl/kaczo/hud/SettingsPanel.java:135: error: incompatible types: String cannot be converted to FormattedText
+  kaczo-mod-26/gen/java/pl/kaczo/hud/SettingsPanel.java:137: error: incompatible types: String cannot be converted to FormattedText
+  kaczo-mod-26/gen/java/pl/kaczo/hud/SettingsPanel.java:142: error: incompatible types: String cannot be converted to FormattedText
+  kaczo-mod-26/gen/java/pl/kaczo/hud/EditScreen.java:163: error: incompatible types: String cannot be converted to FormattedText
+  kaczo-mod-26/gen/java/pl/kaczo/hud/EditScreen.java:186: error: incompatible types: String cannot be converted to FormattedText
+  kaczo-mod-26/gen/java/pl/kaczo/hud/ModMenuScreen.java:181: error: incompatible types: String cannot be converted to FormattedText
+  kaczo-mod-26/gen/java/pl/kaczo/hud/ModMenuScreen.java:250: error: incompatible types: String cannot be converted to FormattedText
+  kaczo-mod-26/gen/java/pl/kaczo/hud/ModMenuScreen.java:260: error: incompatible types: String cannot be converted to FormattedText
+  kaczo-mod-26/gen/java/pl/kaczo/hud/ModMenuScreen.java:311: error: incompatible types: String cannot be converted to FormattedText
+  kaczo-mod-26/gen/java/pl/kaczo/hud/Modules.java:73: error: cannot find symbol
+    symbol:   variable level
+    location: class Modules
+    symbol:   variable Compat
+    location: variable mc of type Minecraft
+  kaczo-mod-26/gen/java/pl/kaczo/hud/Modules.java:77: error: cannot find symbol
+    symbol:   variable world
+  kaczo-mod-26/gen/java/pl/kaczo/hud/Sb.java:70: error: cannot find symbol
+    symbol:   variable name
+    location: class Sb
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Modules.java', '73', 'variable level', 'class Modules')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Modules.java', '73', 'variable Compat', 'variable mc of type Minecraft')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Modules.java', '77', 'variable world', 'class Modules')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Modules.java', '77', 'variable Compat', 'variable mc of type Minecraft')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Music.java', '19', 'method fromNamespaceAndPath(Identifier)', 'class SoundEvent')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Music.java', '33', 'variable repeatDelay', None)
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Music.java', '34', 'variable attenuationType', None)
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Music.java', '37', 'variable attenuationType', None)
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Ribbons.java', '15', 'method rotate(GuiGraphicsExtractor,float)', 'class Compat')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Sb.java', '70', 'variable name', 'class Sb')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java', '76', 'variable ShapeType', 'class ClipContext')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java', '76', 'variable FluidHandling', 'class ClipContext')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java', '109', 'method rotate(GuiGraphicsExtractor,float)', 'class Compat')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java', '284', 'variable Type', 'class Heightmap')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java', '325', 'method rotate(GuiGraphicsExtractor,float)', 'class Compat')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java', '333', 'method rotate(GuiGraphicsExtractor,float)', 'class Compat')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Glass.java', '185', 'method clockText(String)', 'class Compat')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Modules.java', '73', 'variable level', 'class Modules')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Modules.java', '73', 'variable Compat', 'variable mc of type Minecraft')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Modules.java', '77', 'variable world', 'class Modules')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Modules.java', '77', 'variable Compat', 'variable mc of type Minecraft')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Sb.java', '70', 'variable name', 'class Sb')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java', '76', 'variable ShapeType', 'class ClipContext')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java', '76', 'variable FluidHandling', 'class ClipContext')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java', '284', 'variable Type', 'class Heightmap')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Music.java', '33', 'variable repeatDelay', None)
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Music.java', '34', 'variable attenuationType', None)
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Music.java', '37', 'method fromNamespaceAndPath(Identifier)', None)
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Music.java', '19', 'method fromNamespaceAndPath(Identifier)', 'class SoundEvent')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Ribbons.java', '15', 'method rotate(GuiGraphicsExtractor,float)', 'class Compat')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java', '109', 'method rotate(GuiGraphicsExtractor,float)', 'class Compat')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java', '325', 'method rotate(GuiGraphicsExtractor,float)', 'class Compat')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java', '333', 'method rotate(GuiGraphicsExtractor,float)', 'class Compat')
+NIEROZWIĄZANE: ('/home/runner/work/KaczoLauncher/KaczoLauncher/kaczo-mod-26/gen/java/pl/kaczo/hud/Glass.java', '185', 'method clockText(String)', 'class Compat')
+poprawek: 0, nierozwiązanych: 34
