@@ -44,8 +44,30 @@ public final class Glass {
         return t != null && System.currentTimeMillis() - t < 400;
     }
 
+    private static boolean autoDone;
+    /** Tylko do testów w CI (zmienna KACZO_AUTOWORLD): sam tworzy świat, żeby można było obejrzeć niebo. */
+    private static void autoWorld(MinecraftClient client, Screen screen) {
+        if (autoDone || System.getenv("KACZO_AUTOWORLD") == null) return;
+        try {
+            if (screen instanceof TitleScreen) {
+                for (java.lang.reflect.Method m : Class.forName("net.minecraft.client.gui.screen.world.CreateWorldScreen").getMethods())
+                    if (m.getName().equals("show") && m.getParameterCount() == 2) { m.invoke(null, client, screen); return; }
+            } else if (screen.getClass().getSimpleName().contains("CreateWorld")) {
+                autoDone = true;
+                new Thread(() -> {
+                    try { Thread.sleep(4000); } catch (Throwable ignored) { }
+                    client.execute(() -> {
+                        for (ClickableWidget b : Screens.getButtons(client.currentScreen))
+                            if (b instanceof ButtonWidget bw && bw.getMessage().getContent() instanceof TranslatableTextContent t && t.getKey().equals("selectWorld.create")) bw.onPress();
+                    });
+                }).start();
+            }
+        } catch (Throwable ignored) { }
+    }
+
     public static void init() {
         ScreenEvents.AFTER_INIT.register((client, screen, w, h) -> {
+            autoWorld(client, screen);
             if (screen instanceof TitleScreen && !introPlayed && Modules.GENERAL.bool("intro")) {
                 introStart = System.currentTimeMillis();
                 introPlayed = true;
@@ -153,15 +175,15 @@ public final class Glass {
         float ds = Math.max(1f, h / 270f);
         int dw = tr.getWidth(date);
         Compat.push(ctx);
-        Compat.translate(ctx, w / 2f - dw * ds / 2f, h * 0.125f - 4f * ds + rise);
+        Compat.translate(ctx, w / 2f - dw * ds / 2f, h * 0.105f - 4f * ds + rise);
         Compat.scale(ctx, ds, ds);
         ctx.drawText(tr, date, 0, 0, fade(0xFFE8ECF4, k), false);
         Compat.pop(ctx);
-        float cs = Math.max(1.2f, h * 0.094f / 24f);
+        float cs = Math.max(1.2f, h * 0.125f / 24f);
         Text ct = Compat.clockText(clock);
         int cw = tr.getWidth(ct);
         Compat.push(ctx);
-        Compat.translate(ctx, w / 2f - cw * cs / 2f, h * 0.20f - 12f * cs + rise);
+        Compat.translate(ctx, w / 2f - cw * cs / 2f, h * 0.215f + 4.5f * cs + rise);
         Compat.scale(ctx, cs, cs);
         ctx.drawText(tr, ct, 0, 0, fade(0xFFFFFFFF, k), false);
         Compat.pop(ctx);
@@ -249,7 +271,7 @@ public final class Glass {
         Compat.flush(ctx);
         Compat.alpha(0.8f * k);
         Compat.push(ctx);
-        Compat.translate(ctx, screen.width / 2f - size / 2f, screen.height - size - 10);
+        Compat.translate(ctx, screen.width / 2f - size / 2f, screen.height * 0.66f);
         Compat.scale(ctx, size / 64f, size / 64f);
         Compat.tex(ctx, LOGO, 64, 64);
         Compat.pop(ctx);
