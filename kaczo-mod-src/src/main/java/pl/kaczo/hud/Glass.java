@@ -51,7 +51,10 @@ public final class Glass {
         try {
             if (screen instanceof TitleScreen) {
                 for (java.lang.reflect.Method m : Class.forName("net.minecraft.client.gui.screen.world.CreateWorldScreen").getMethods())
-                    if (m.getName().equals("show") && m.getParameterCount() == 2) { m.invoke(null, client, screen); return; }
+                    if (m.getName().equals("show") && m.getParameterCount() == 2) {
+                        Object arg = m.getParameterTypes()[1] == Runnable.class ? (Runnable) () -> client.setScreen(screen) : screen;
+                        m.invoke(null, client, arg); return;
+                    }
             } else if (screen.getClass().getSimpleName().contains("CreateWorld")) {
                 autoDone = true;
                 new Thread(() -> {
@@ -126,7 +129,6 @@ public final class Glass {
         lastFrame = now;
         if (!(screen instanceof TitleScreen)) return;          // szkło tylko w lobby gry – reszta menu zostaje standardowa
         float p = intro();
-        if (logoOn()) smallLogo(ctx, screen, ease(p / 0.6f));
         if (!buttonsOn()) return;
         lock(mc, screen, ctx, mx, my, p, dt);
     }
