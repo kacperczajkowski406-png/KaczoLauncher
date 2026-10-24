@@ -478,31 +478,51 @@ final class SkyWorld {
         ctx.fill(0, 0, W, H, argb(Math.round(a * 0.12f), 0xD8C8FF));
     }
 
-    /** „Liquid glass”: czarne niebo i płynne, szklane wstęgi światła na kopule. */
+    private static double sg(double x) { return 1.0 / (1.0 + Math.exp(-x)); }
+    private static double st(double x, double c, double w) { return sg((x - c) / w); }
+
+    /** Krzywe wstęg „liquid glass” (te same co w tle menu): [górna krawędź v, grubość, jasność, krawędź, ciało]. */
+    private static double[] ribbonAt(int i, double u) {
+        switch (i) {
+            case 0: return new double[]{0.90 - 0.78 * st(u, 1.05, 0.34) + 0.025 * Math.sin(u * 2.4), 0.16 + 0.10 * st(u, 1.2, 0.4), 1.0, 1.0, 1.2};
+            case 1: return new double[]{0.83 - 0.74 * st(u, 1.14, 0.30) + 0.02 * Math.sin(u * 2.2), 0.035, 0.8, 0.9, 0.5};
+            case 2: return new double[]{0.77 - 0.74 * st(u, 1.20, 0.30) + 0.02 * Math.sin(u * 2.2 + 1), 0.035, 0.65, 0.9, 0.5};
+            case 3: return new double[]{0.71 - 0.74 * st(u, 1.25, 0.30) + 0.02 * Math.sin(u * 2.2 + 2), 0.035, 0.5, 0.9, 0.5};
+            case 4: return new double[]{0.62 - 0.60 * st(u, 1.55, 0.20), 0.20, 0.9, 1.0, 0.9};
+            case 5: return new double[]{0.98 - 0.30 * st(u, 0.9, 0.5) + 0.04 * Math.sin(u * 2), 0.10, 0.9, 1.0, 0.8};
+            default: return new double[]{1.10 - 0.30 * st(u, 0.95, 0.5), 0.06, 0.6, 0.8, 0.5};
+        }
+    }
+
+    /** „Liquid glass”: czarne niebo i gładkie, srebrne wstęgi jedwabiu zakotwiczone w świecie (jak tło menu). */
     private static void liquid(DrawContext ctx, float t, int strength, float[] o) {
-        double az0 = mcAz();
         float a = strength / 100f;
+        double drift = t * 0.012;
         float[] p = new float[3];
-        for (int r = 0; r < 4; r++) {
-            double e0 = 12 + r * 11;
-            float[] px = new float[7], py = new float[7];
-            boolean[] has = new boolean[7];
-            for (int i = -34; i <= 34; i++) {
-                double az = az0 + Math.toRadians(i * 1.8);
-                double spread = 1.1 * (1 + 1.5 * Math.sin(az * 2.7 + t * 0.2 + r * 2.1));
-                double cy = e0 + 8 * Math.sin(az * 2 + t * 0.25 + r) + 4.5 * Math.sin(az * 3.4 - t * 0.2 + r * 1.3);
-                for (int k = 0; k < 7; k++) {
-                    double el = Math.toRadians(cy + (k - 3) * spread);
-                    if (el < Math.toRadians(1.5) || !dome(az, el, p) || domeBlocked(az, el)) { has[k] = false; continue; }
+        for (int r = 0; r < 7; r++) {
+            float[][] pos = new float[6][2];
+            boolean[] has = new boolean[6];
+            for (int i = -48; i <= 48; i++) {
+                double az = Math.toRadians(i * 2.0) + mcAz();
+                double deg = Math.toDegrees(az) + t * 0.6;
+                double ph = ((deg / 73.0) % 3.56 + 3.56) % 3.56;
+                double u = ph > 1.78 ? 3.56 - ph : ph;                      // lustrzane powielanie, żeby nie było szwu
+                double[] c = ribbonAt(r, u + 0.0 * drift);
+                for (int k = 0; k < 6; k++) {
+                    double v = k == 0 ? c[0] : k == 5 ? c[0] + c[1] : c[0] + c[1] * (k / 5.0);
+                    double el = Math.toRadians(2 + (1 - v) * 58);
+                    if (el < Math.toRadians(1.2) || el > Math.toRadians(80) || !dome(az, el, p) || domeBlocked(az, el)) { has[k] = false; continue; }
                     if (has[k]) {
-                        float al = (k == 0 || k == 6) ? 0.9f : (k == 1 || k == 5) ? 0.5f : 0.24f;
-                        seg(ctx, px[k], py[k], p[0], p[1], 1 + (k == 0 || k == 6 ? 1 : 0), argb(Math.round(255 * a * al), 0xFFFFFF));
-                        if (k == 3) {
-                            seg(ctx, px[k], py[k], p[0], p[1], Math.max(8, H / 50), argb(Math.round(14 * a), 0xFFFFFF));
-                            seg(ctx, px[k], py[k], p[0], p[1], Math.max(3, H / 140), argb(Math.round(26 * a), 0xFFFFFF));
-                        }
+                        double xk = k / 5.0;
+                        float al;
+                        int th = 1;
+                        if (k == 0) { al = (float) (0.95 * c[2] * c[3]); th = 2; }
+                        else if (k == 5) { al = (float) (0.5 * c[2] * c[3]); }
+                        else { al = (float) (0.16 * c[2] * c[4] * Math.pow(1 - xk, 1.6)); th = Math.max(2, (int) (H / 90 * c[1] * 4)); }
+                        seg(ctx, pos[k][0], pos[k][1], p[0], p[1], th, argb(Math.round(255 * a * Math.min(1f, al)), 0xFFFFFF));
+                        if (k == 0) seg(ctx, pos[k][0], pos[k][1], p[0], p[1], Math.max(6, H / 70), argb(Math.round(18 * a * c[2]), 0xFFFFFF));
                     }
-                    px[k] = p[0]; py[k] = p[1]; has[k] = true;
+                    pos[k][0] = p[0]; pos[k][1] = p[1]; has[k] = true;
                 }
             }
         }

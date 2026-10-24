@@ -15,11 +15,37 @@ public final class Visual {
     private static Identifier splashLogo;
     private static final long T0 = System.currentTimeMillis();
 
-    /** Tło w stylu „liquid glass”: czerń i płynne, białe, szklane wstęgi. */
+    private static Identifier bgTex;
+    private static Identifier bgTexture(MinecraftClient mc) {
+        if (bgTex == null) {
+            try (InputStream in = Visual.class.getResourceAsStream("/assets/kaczohud/textures/gui/glass_bg.png")) {
+                NativeImage ni = NativeImage.read(in);
+                Identifier id = Identifier.of("kaczohud", "glass_bg");
+                mc.getTextureManager().registerTexture(id, Compat.newTexture(ni));
+                bgTex = id;
+            } catch (Throwable t) { return null; }
+        }
+        return bgTex;
+    }
+
+    /** Tło w stylu „liquid glass”: czerń i gładkie, srebrne wstęgi jedwabiu (gotowa tekstura, leciutko pływająca). */
     public static void aurora(DrawContext ctx, int w, int h, float a) {
         float t = (System.currentTimeMillis() - T0) / 1000f;
-        ctx.fillGradient(0, 0, w, h, Ui.fade(0xFF000000, a), Ui.fade(0xFF090A0E, a));
-        Ribbons.draw(ctx, w, h, t, a * 0.9f, 3);
+        ctx.fillGradient(0, 0, w, h, Ui.fade(0xFF000000, a), Ui.fade(0xFF000000, a));
+        Identifier id = bgTexture(MinecraftClient.getInstance());
+        if (id == null) { Ribbons.draw(ctx, w, h, t, a * 0.9f, 3); return; }
+        float s = Math.max(w / 1920f, h / 1080f) * (1.07f + 0.015f * (float) Math.sin(t * 0.25));
+        float ox = (w - 1920 * s) / 2f + (float) Math.sin(t * 0.21) * w * 0.012f;
+        float oy = (h - 1080 * s) / 2f + (float) Math.cos(t * 0.17) * h * 0.012f;
+        Compat.flush(ctx);
+        Compat.alpha(a);
+        Compat.push(ctx);
+        Compat.translate(ctx, ox, oy);
+        Compat.scale(ctx, s, s);
+        Compat.tex(ctx, id, 1920, 1080);
+        Compat.pop(ctx);
+        Compat.flush(ctx);
+        Compat.alpha(1f);
     }
 
     private static Identifier logoTexture(MinecraftClient mc) {

@@ -36,4 +36,7 @@ public final class Compat {
         mc.getEntityRenderDispatcher().setRenderHitboxes(on);
     }
     public static void border(net.minecraft.client.gui.DrawContext ctx, int x, int y, int w, int h, int col) { ctx.drawBorder(x, y, w, h, col); }
+    public static net.minecraft.text.Text clockText(String s) {
+        return net.minecraft.text.Text.literal(s).setStyle(net.minecraft.text.Style.EMPTY.withFont(Identifier.of("kaczohud", "clock")));
+    }
 }
