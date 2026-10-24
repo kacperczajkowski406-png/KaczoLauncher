@@ -520,7 +520,7 @@ final class SkyWorld {
                         else if (k == 5) { al = (float) (0.5 * c[2] * c[3]); }
                         else { al = (float) (0.16 * c[2] * c[4] * Math.pow(1 - xk, 1.6)); th = Math.max(2, (int) (H / 90 * c[1] * 4)); }
                         seg(ctx, pos[k][0], pos[k][1], p[0], p[1], th, argb(Math.round(255 * a * Math.min(1f, al)), 0xFFFFFF));
-                        if (k == 0) seg(ctx, pos[k][0], pos[k][1], p[0], p[1], Math.max(6, H / 70), argb(Math.round(18 * a * c[2]), 0xFFFFFF));
+                        if (k == 0) seg(ctx, pos[k][0], pos[k][1], p[0], p[1], Math.max(6, H / 70), argb(Math.round(18 * a * (float) c[2]), 0xFFFFFF));
                     }
                     pos[k][0] = p[0]; pos[k][1] = p[1]; has[k] = true;
                 }
