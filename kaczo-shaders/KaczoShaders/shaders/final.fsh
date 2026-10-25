@@ -77,9 +77,10 @@ void main() {
 #if STYLE == 1
     // Noir Glass: czarno-białe szkło, mocny kontrast, zimny odcień
     vec3 g = vec3(l);
-    col = mix(g, col, 0.10);
-    col = pow(max(col, 0.0), vec3(1.18));
-    col *= vec3(0.97, 0.99, 1.03) * 1.12;
+    col = mix(g, col, 0.06);
+    col = pow(max(col, 0.0), vec3(1.5)) * 1.35;
+    col = mix(col, col * col * (3.0 - 2.0 * col), 0.6);
+    col *= vec3(0.96, 0.985, 1.04);
 #elif STYLE == 2
     // Dream: miękkie, pastelowe, podniesione cienie
     col = mix(vec3(l), col, 1.22);
