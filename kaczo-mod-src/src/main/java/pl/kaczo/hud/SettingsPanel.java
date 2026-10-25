@@ -97,7 +97,7 @@ public class SettingsPanel {
         String label = L.t(s.label);
         switch (s.type) {
             case HEADER: {
-                ctx.drawText(tr, label.toUpperCase(), x + PAD, ry + 9, f(0xFFE6ECFF), false);
+                ctx.drawText(tr, label.toUpperCase(), x + PAD, ry + 9, f(0xFFFFFFFF), false);
                 Ui.rrectD(ctx, x + PAD, ry + 18, w - 2 * PAD, 0.6, 0.3, f(0x22FFFFFF));
                 break;
             }
@@ -110,9 +110,9 @@ public class SettingsPanel {
             case INT: {
                 String val = m.num(s.key) + s.unit;
                 ctx.drawText(tr, tr.trimToWidth(label, w - 2 * PAD - tr.getWidth(val) - 6), x + PAD, ry + 3, f(0xFFFFFFFF), false);
-                ctx.drawText(tr, val, x + w - PAD - tr.getWidth(val), ry + 3, f(0xFFF4F7FF), false);
+                ctx.drawText(tr, val, x + w - PAD - tr.getWidth(val), ry + 3, f(0xFFFFFFFF), false);
                 float fr = (float) ((m.num(s.key) - s.min) / (s.max - s.min));
-                Ui.slider(ctx, x + PAD, ry + 16, w - 2 * PAD, Ui.clamp01(Ui.tween("s." + key, fr, 30f)), f(0xFFE6ECFF), dragS == s);
+                Ui.slider(ctx, x + PAD, ry + 16, w - 2 * PAD, Ui.clamp01(Ui.tween("s." + key, fr, 30f)), f(0xFFFFFFFF), dragS == s);
                 break;
             }
             case ENUM: {
@@ -123,25 +123,25 @@ public class SettingsPanel {
                     Ui.rrectD(ctx, bx, by, bw, 14, 7, f(0x30FFFFFF));
                     double sw = bw / (double) s.opts.length;
                     double px = Ui.tween("e." + key, cur, 16f);
-                    Ui.rrectD(ctx, bx + 1 + px * sw, by + 1, sw - 2, 12, 6, f(0xFFE6ECFF));
+                    Ui.rrectD(ctx, bx + 1 + px * sw, by + 1, sw - 2, 12, 6, f(0xFFFFFFFF));
                     for (int i = 0; i < s.opts.length; i++) {
                         String o = L.t(s.opts[i]);
                         int tw = tr.getWidth(o);
-                        ctx.drawText(tr, o, (int) (bx + sw * i + (sw - tw) / 2), by + 3, f(i == cur ? 0xFF1A1400 : 0xFFD6DCEA), false);
+                        ctx.drawText(tr, o, (int) (bx + sw * i + (sw - tw) / 2), by + 3, f(i == cur ? 0xFF1A1400 : 0xFFD8D8D8), false);
                     }
                 } else {
                     String o = L.t(s.opts[cur]);
                     int rw = Math.min(w / 2, tr.getWidth(o) + 16);
                     ctx.drawText(tr, tr.trimToWidth(label, w - 2 * PAD - rw - 6), x + PAD, ry + 6, f(0xFFFFFFFF), false);
                     Ui.rrectD(ctx, x + w - PAD - rw, ry + 3, rw, 14, 7, f(0x38FFFFFF));
-                    ctx.drawText(tr, tr.trimToWidth(o, rw - 8), x + w - PAD - rw + 8, ry + 6, f(0xFFF4F7FF), false);
+                    ctx.drawText(tr, tr.trimToWidth(o, rw - 8), x + w - PAD - rw + 8, ry + 6, f(0xFFFFFFFF), false);
                 }
                 break;
             }
             default: {
                 ctx.drawText(tr, tr.trimToWidth(label, w - 2 * PAD - 40), x + PAD, ry + 6, f(0xFFFFFFFF), false);
                 int col = m.color(s.key);
-                Ui.rrectD(ctx, x + w - PAD - 32, ry + 3, 32, 14, 7, f(0xFF2A2F3C));
+                Ui.rrectD(ctx, x + w - PAD - 32, ry + 3, 32, 14, 7, f(0xFF2C2C2C));
                 Ui.rrectD(ctx, x + w - PAD - 31, ry + 4, 30, 12, 6, f(col | 0xFF000000));
                 Ui.ringT(ctx, x + w - PAD - 32, ry + 3, 32, 14, 7, 0.5, f(0x66FFFFFF));
                 if (open.contains(s.key)) drawColorEditor(ctx, tr, s, ry + 22, mx, my);
@@ -184,12 +184,12 @@ public class SettingsPanel {
         }
         for (int i = 0; i < 4; i++) {
             int by = top + 20 + i * 13;
-            ctx.drawText(tr, CH[i], x + PAD, by, f(0xFFA9B2C6), false);
+            ctx.drawText(tr, CH[i], x + PAD, by, f(0xFFA8A8A8), false);
             Ui.rrectD(ctx, barX(), by + 3, barW(), 3, 1.5, f(0x40FFFFFF));
             int fw = Math.max(2, (int) (barW() * c[i] / 255.0));
             Ui.rrectD(ctx, barX(), by + 3, fw, 3, 1.5, f(BAR[i]));
             Ui.rrectD(ctx, barX() + fw - 3.5, by + 1.5, 7, 7, 3.5, f(0xFFFFFFFF));
-            ctx.drawText(tr, String.valueOf(c[i]), barX() + barW() + 5, by, f(0xFFA9B2C6), false);
+            ctx.drawText(tr, String.valueOf(c[i]), barX() + barW() + 5, by, f(0xFFA8A8A8), false);
         }
         int ry = top + 20 + 4 * 13 + 2;
         ctx.drawText(tr, L.t("Rainbow"), x + PAD, ry + 2, f(0xFFFFFFFF), false);

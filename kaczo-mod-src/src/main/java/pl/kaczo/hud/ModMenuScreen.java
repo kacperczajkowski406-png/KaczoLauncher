@@ -97,7 +97,7 @@ public class ModMenuScreen extends KScreen {
     }
 
     private void drawSidebar(DrawContext ctx, TextRenderer tr, int mx, int my) {
-        Ui.card(ctx, wx + 6, wy + 6, sb - 8, wh - 12, 8, f(0x1AFFFFFF), f(0x1CFFFFFF));
+        Ui.glass(ctx, wx + 6, wy + 6, sb - 8, wh - 12, expanded() ? 14 : (sb - 8) / 2, f(0x26FFFFFF));
         // marka
         Compat.push(ctx);
         Compat.translate(ctx, wx + 13, wy + 13);
@@ -105,8 +105,8 @@ public class ModMenuScreen extends KScreen {
         Compat.tex(ctx, Modules.logo(), 64, 64);
         Compat.pop(ctx);
         if (expanded()) {
-            ctx.drawText(tr, "KACZO", wx + 38, wy + 13, f(0xFFF4F7FF), true);
-            ctx.drawText(tr, "CLIENT", wx + 38, wy + 23, f(0xFFA9B2C6), false);
+            ctx.drawText(tr, "KACZO", wx + 38, wy + 13, f(0xFFFFFFFF), true);
+            ctx.drawText(tr, "CLIENT", wx + 38, wy + 23, f(0xFFA8A8A8), false);
         }
         int y = wy + 44;
         for (int i = 0; i < NAV.length; i++) {
@@ -115,18 +115,17 @@ public class ModMenuScreen extends KScreen {
             boolean on = i == page && i != 2;
             float hv = Ui.tween("nav" + i, hover ? 1f : 0f);
             float sv = Ui.tween("navs" + i, on ? 1f : 0f);
-            if (sv > 0.01f) Ui.rrectD(ctx, ix, y, iw, 22, 7, f((int) (0x40 * sv) << 24 | 0xE6ECFF));
-            if (hv > 0.01f && !on) Ui.rrectD(ctx, ix, y, iw, 22, 7, f((int) (0x1C * hv) << 24 | 0xFFFFFF));
-            if (sv > 0.01f) Ui.rrectD(ctx, ix + 1, y + 6, 2, 10, 1, f((int) (255 * sv) << 24 | 0xE6ECFF));
-            int col = on ? 0xFFF4F7FF : (hover ? 0xFFFFFFFF : 0xFFB8C0D4);
+            if (sv > 0.01f) Ui.rrectD(ctx, ix, y, iw, 22, 11, f((int) (0x48 * sv) << 24 | 0xFFFFFF));
+            if (hv > 0.01f && !on) Ui.rrectD(ctx, ix, y, iw, 22, 11, f((int) (0x24 * hv) << 24 | 0xFFFFFF));
+            int col = on ? 0xFFFFFFFF : (hover ? 0xFFFFFFFF : 0xFFC4C4C4);
             navIcon(ctx, i, ix + 12, y + 11, f(col));
             if (expanded()) ctx.drawText(tr, L.t(NAV[i]), ix + 24, y + 7, f(col), false);
             y += 25;
         }
         if (expanded()) {
             String v = version();
-            ctx.drawText(tr, "v" + v, wx + 14, wy + wh - 24, f(0xFF6F7890), false);
-            ctx.drawText(tr, L.t("Esc = close"), wx + 14, wy + wh - 15, f(0xFF6F7890), false);
+            ctx.drawText(tr, "v" + v, wx + 14, wy + wh - 24, f(0xFF707070), false);
+            ctx.drawText(tr, L.t("Esc = close"), wx + 14, wy + wh - 15, f(0xFF707070), false);
         }
     }
 
@@ -167,7 +166,7 @@ public class ModMenuScreen extends KScreen {
         Compat.scale(ctx, 1.3f, 1.3f);
         ctx.drawText(tr, title, 0, 0, f(0xFFFFFFFF), true);
         Compat.pop(ctx);
-        ctx.drawText(tr, sub, cx0 + 12, wy + 25, f(0xFF8B94AA), false);
+        ctx.drawText(tr, sub, cx0 + 12, wy + 25, f(0xFF8A8A8A), false);
     }
 
     private int searchW() { return Math.min(150, cw / 3); }
@@ -175,13 +174,13 @@ public class ModMenuScreen extends KScreen {
     private void drawSearch(DrawContext ctx, TextRenderer tr, int mx, int my) {
         int sw = searchW(), sx = wx + ww - sw - 12, sy = wy + 12;
         boolean hover = Ui.in(mx, my, sx, sy, sw, 16);
-        Ui.card(ctx, sx, sy, sw, 16, 8, f(searchFocus ? 0x30FFFFFF : (hover ? 0x26FFFFFF : 0x18FFFFFF)), f(searchFocus ? 0x88E6ECFF : 0x22FFFFFF));
+        Ui.card(ctx, sx, sy, sw, 16, 8, f(searchFocus ? 0x30FFFFFF : (hover ? 0x26FFFFFF : 0x18FFFFFF)), f(searchFocus ? 0x88FFFFFF : 0x22FFFFFF));
         String shownText = query.isEmpty() && !searchFocus ? L.t("Search") : query;
-        int col = query.isEmpty() ? 0xFF7F88A0 : 0xFFFFFFFF;
+        int col = query.isEmpty() ? 0xFF808080 : 0xFFFFFFFF;
         String t = tr.trimToWidth(shownText, sw - 18);
         ctx.drawText(tr, t, sx + 9, sy + 4, f(col), false);
         if (searchFocus && (System.currentTimeMillis() / 500) % 2 == 0)
-            ctx.fill(sx + 9 + tr.getWidth(t), sy + 3, sx + 10 + tr.getWidth(t), sy + 13, f(0xFFF4F7FF));
+            ctx.fill(sx + 9 + tr.getWidth(t), sy + 3, sx + 10 + tr.getWidth(t), sy + 13, f(0xFFFFFFFF));
     }
 
     private void drawModules(DrawContext ctx, TextRenderer tr, int mx, int my) {
@@ -192,15 +191,22 @@ public class ModMenuScreen extends KScreen {
         drawSearch(ctx, tr, mx, my);
         // zakładki
         int x = cx0 + 12, y = wy + 40;
+        int totalW = 0;
+        for (String t : TABS) {
+            int w = tr.getWidth(L.t(t)) + 14;
+            if (x + totalW + w > wx + ww - 10) break;
+            totalW += w + 2;
+        }
+        Ui.glass(ctx, x - 3, y - 3, totalW + 4, 20, 10, f(0x26FFFFFF));
         for (String t : TABS) {
             int w = tr.getWidth(L.t(t)) + 14;
             if (x + w > wx + ww - 10) break;
             boolean sel = t.equals(tab), hover = Ui.in(mx, my, x, y, w, 14);
             float sv = Ui.tween("tab" + t, sel ? 1f : 0f);
-            int fill = Ui.mix(hover ? 0x2CFFFFFF : 0x16FFFFFF, 0xFFE6ECFF, sv);
-            Ui.rrectD(ctx, x, y, w, 14, 7, f(fill));
-            ctx.drawText(tr, L.t(t), x + 7, y + 3, f(sel ? 0xFF1A1400 : (hover ? 0xFFFFFFFF : 0xFFB8C0D4)), false);
-            x += w + 4;
+            int fill = Ui.mix(hover ? 0x26FFFFFF : 0x00FFFFFF, 0x52FFFFFF, sv);
+            Ui.rrectD(ctx, x, y - 1, w, 16, 8, f(fill));
+            ctx.drawText(tr, L.t(t), x + 7, y + 3, f(sel || hover ? 0xFFFFFFFF : 0xFFC4C4C4), false);
+            x += w + 2;
         }
         scroll = Math.max(0, Math.min(maxScroll(), scroll));
         ctx.enableScissor(listX - 2, listY - 1, listX + listW + 2, listY + listH + 1);
@@ -211,7 +217,7 @@ public class ModMenuScreen extends KScreen {
             drawRow(ctx, tr, shown.get(i), rowX(i), ry, rowW(), drawerOpen ? -1 : mx, drawerOpen ? -1 : my);
         }
         ctx.disableScissor();
-        if (shown.isEmpty()) Ui.centered(ctx, client, L.t("No modules found"), listX + listW / 2, listY + 30, f(0xFF8B94AA));
+        if (shown.isEmpty()) Ui.centered(ctx, client, L.t("No modules found"), listX + listW / 2, listY + 30, f(0xFF8A8A8A));
         int ms = maxScroll();
         if (ms > 0) {
             int bh = Math.max(18, listH * listH / (listH + ms));
@@ -234,8 +240,8 @@ public class ModMenuScreen extends KScreen {
         float hv = Ui.tween("row" + m.id, hover ? 1f : 0f, 18f);
         float ov = Ui.tween("on" + m.id, on ? 1f : 0f);
         int fill = Ui.mix(0x1CFFFFFF, 0x34FFFFFF, hv);
-        fill = Ui.mix(fill, 0x30E6ECFF, ov * 0.55f);
-        Ui.card(ctx, x, y, w, RH, 8, f(fill), f(Ui.mix(0x1AFFFFFF, 0x55E6ECFF, ov)));
+        fill = Ui.mix(fill, 0x30FFFFFF, ov * 0.55f);
+        Ui.card(ctx, x, y, w, RH, 8, f(fill), f(Ui.mix(0x1AFFFFFF, 0x55FFFFFF, ov)));
         // ikona
         int tc = tint(m.category);
         Ui.rrectD(ctx, x + 6, y + 6, 22, 22, 7, f(Ui.mix(0x22FFFFFF, 0x40FFFFFF, ov)));
@@ -243,19 +249,19 @@ public class ModMenuScreen extends KScreen {
         // opisy
         int textW = w - 40 - 58;
         String name = tr.trimToWidth(L.t(m.name), textW - (m.isNew ? 24 : 0));
-        ctx.drawText(tr, name, x + 34, y + 7, f(on ? 0xFFFFFFFF : 0xFFD0D6E6), false);
+        ctx.drawText(tr, name, x + 34, y + 7, f(on ? 0xFFFFFFFF : 0xFFD0D0D0), false);
         if (m.isNew) {
             int nx = x + 34 + tr.getWidth(name) + 4;
-            Ui.rrectD(ctx, nx, y + 7, 18, 9, 4.5, f(0xFFE6ECFF));
+            Ui.rrectD(ctx, nx, y + 7, 18, 9, 4.5, f(0xFFFFFFFF));
             Compat.push(ctx);
             Compat.scale(ctx, 0.65f, 0.65f);
             ctx.drawText(tr, L.t("NEW"), Math.round((nx + 9 - tr.getWidth(L.t("NEW")) * 0.325f) / 0.65f), Math.round((y + 8.6f) / 0.65f), f(0xFF1A1400), false);
             Compat.pop(ctx);
         }
-        ctx.drawText(tr, tr.trimToWidth(L.t(m.desc), textW), x + 34, y + 19, f(0xFF8B94AA), false);
+        ctx.drawText(tr, tr.trimToWidth(L.t(m.desc), textW), x + 34, y + 19, f(0xFF8A8A8A), false);
         // serce + przełącznik
         boolean hh = Ui.in(mx, my, x + w - 52, y + 10, 14, 14);
-        ctx.drawText(tr, "♥", x + w - 49, y + 13, f(m.fav() ? 0xFFFF5C63 : (hh ? 0xFFFFFFFF : 0xFF3F4760)), false);
+        ctx.drawText(tr, "♥", x + w - 49, y + 13, f(m.fav() ? 0xFFFF5C63 : (hh ? 0xFFFFFFFF : 0xFF444444)), false);
         Ui.toggle(ctx, x + w - 34, y + 11, 26, 13, ov, f(0xFF3DBE6A));
     }
 
@@ -278,7 +284,7 @@ public class ModMenuScreen extends KScreen {
         int y = wy + 50;
         for (String s : lines) {
             for (OrderedText ot : tr.wrapLines(Text.literal(s), cw - 36)) {
-                ctx.drawText(tr, ot, cx0 + 14, y, f(0xFFC4CBDD), false);
+                ctx.drawText(tr, ot, cx0 + 14, y, f(0xFFC8C8C8), false);
                 y += 11;
             }
             y += 5;
@@ -294,7 +300,7 @@ public class ModMenuScreen extends KScreen {
         ctx.fill(cx0, wy + 6, wx + ww - 6, wy + wh - 6, f((int) (0x70 * d) << 24 | 0x050810));
         if (sel == null && drawer == null) return;
         Module m = sel != null ? sel : drawer.module();
-        Ui.glass(ctx, dx, dy, dw, dh, 9, f(0xF0141B2C));
+        Ui.glass(ctx, dx, dy, dw, dh, 9, f(0xF0101010));
         // nagłówek
         int tc = tint(m.category);
         Ui.rrectD(ctx, dx + 8, dy + 8, 18, 18, 6, f(0x30FFFFFF));
@@ -308,7 +314,7 @@ public class ModMenuScreen extends KScreen {
         int lines = 0;
         for (OrderedText ot : tr.wrapLines(Text.literal(L.t(m.desc)), dw - 20)) {
             if (lines++ >= 2) break;
-            ctx.drawText(tr, ot, dx + 10, ty, f(0xFF8B94AA), false);
+            ctx.drawText(tr, ot, dx + 10, ty, f(0xFF8A8A8A), false);
             ty += 10;
         }
         Ui.rrectD(ctx, dx + 10, ty + 2, dw - 20, 0.6, 0.3, f(0x22FFFFFF));
@@ -378,7 +384,7 @@ public class ModMenuScreen extends KScreen {
                 int w = client.textRenderer.getWidth(L.t(t)) + 14;
                 if (x + w > wx + ww - 10) break;
                 if (Ui.in(mx, my, x, ty, w, 14)) { tab = t; scroll = 0; return true; }
-                x += w + 4;
+                x += w + 2;
             }
             if (Ui.in(mx, my, listX, listY, listW, listH)) {
                 for (int i = 0; i < shown.size(); i++) {
