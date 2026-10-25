@@ -1,9 +1,9 @@
 #version 330 compatibility
 #include "/lib/settings.glsl"
-const int colortex0Format = RGBA16F;
-const int colortex1Format = RGBA16F;
-const int colortex2Format = RGBA16F;
-const int colortex3Format = RGBA16F;
+/* const int colortex0Format = RGBA16F; */
+/* const int colortex1Format = RGBA16F; */
+/* const int colortex2Format = RGBA16F; */
+/* const int colortex3Format = RGBA16F; */
 uniform sampler2D colortex0;
 uniform sampler2D depthtex0;
 uniform float viewWidth, viewHeight, near, far;

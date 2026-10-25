@@ -1,6 +1,6 @@
 #version 330 compatibility
 #include "/lib/settings.glsl"
-const int colortex2Format = RGBA16F;
+/* const int colortex2Format = RGBA16F; */
 uniform sampler2D colortex1;
 uniform sampler2D colortex2;
 uniform float viewWidth, viewHeight;
