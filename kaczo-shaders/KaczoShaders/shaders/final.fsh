@@ -29,7 +29,7 @@ void main() {
     float bloomK = float(BLOOM) / 100.0;
     float streakK = 0.0;
 #if STYLE == 1
-    bloomK *= 1.25; streakK = 0.9;
+    bloomK *= 0.95; streakK = 0.8;
 #elif STYLE == 2
     bloomK *= 1.6; streakK = 0.35;
 #else
@@ -78,7 +78,7 @@ void main() {
     // Noir Glass: czarno-białe szkło, mocny kontrast, zimny odcień
     vec3 g = vec3(l);
     col = mix(g, col, 0.06);
-    col = pow(max(col, 0.0), vec3(1.5)) * 1.35;
+    col = pow(max(col, 0.0), vec3(1.7)) * 1.05;
     col = mix(col, col * col * (3.0 - 2.0 * col), 0.6);
     col *= vec3(0.96, 0.985, 1.04);
 #elif STYLE == 2
