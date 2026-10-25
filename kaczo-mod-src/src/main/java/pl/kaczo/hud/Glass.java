@@ -90,6 +90,12 @@ public final class Glass {
                 introStart = System.currentTimeMillis();
                 introPlayed = true;
             }
+            if (screen instanceof TitleScreen && buttonsOn()) {
+                try {
+                    kaczoBtn = ButtonWidget.builder(Text.literal("Kaczo HUD"), bt -> client.setScreen(new ModMenuScreen())).dimensions(0, 0, CELL, 20).build();
+                    Screens.getButtons(screen).add(kaczoBtn);
+                } catch (Throwable ignored) { kaczoBtn = null; }
+            }
             if (screen instanceof TitleScreen) {
                 long now = System.currentTimeMillis();
                 try {
@@ -151,17 +157,19 @@ public final class Glass {
     // ───────────── ekran blokady: data, zegar i szklana pigułka z ikonami (jak na wzorze) ─────────────
 
     /** Rodzaj ikony dla znanych przycisków menu głównego (0 = nie ruszamy). Kolejność = kolejność w pigułce. */
+    private static ClickableWidget kaczoBtn;
+
     private static int pillKind(ClickableWidget b) {
         if (!(b instanceof ButtonWidget) || !b.visible) return 0;
+        if (b == kaczoBtn) return 4;
         try {
             if (b.getMessage().getContent() instanceof TranslatableTextContent t) {
                 String k = t.getKey();
                 if (k.equals("menu.singleplayer")) return 1;
                 if (k.equals("menu.multiplayer")) return 2;
-                if (k.equals("menu.online")) return 3;
-                if (k.contains("modmenu")) return 4;
-                if (k.equals("menu.options")) return 5;
-                if (k.equals("menu.quit")) return 6;
+                if (k.equals("menu.options")) return 3;
+                if (k.equals("menu.quit")) return 5;
+                if (k.equals("menu.online") || k.contains("modmenu")) b.visible = false;     // nie ma ich we wzorze – zostaje 5 ikon
             }
         } catch (Throwable ignored) { }
         return 0;
@@ -217,7 +225,7 @@ public final class Glass {
         if (bs.isEmpty()) return;
         int n = bs.size(), pw = n * CELL + 10, ph = 26;
         int px0 = (w - pw) / 2, cy = Math.round(h * 0.52f + (1 - k) * 8);
-        Ui.glass(ctx, px0, cy - ph / 2, pw, ph, ph / 2, fade(0x30FFFFFF, k));
+        Ui.glass(ctx, px0, cy - ph / 2, pw, ph, ph / 2, fade(0x26FFFFFF, k));
         String hoverLabel = null; int hoverX = 0;
         int i = 0;
         for (ClickableWidget b : bs) {
@@ -233,7 +241,7 @@ public final class Glass {
             HOVER.put(b, t);
             float te = t * t * (3 - 2 * t);
             if (te > 0.01f) Ui.rrectD(ctx, cx - 11, cy - 11, 22, 22, 11, fade(0x38FFFFFF, te * k));
-            int col = kind == 6 ? 0xFFFF5A68 : 0xFFFFFFFF;
+            int col = kind == 5 ? 0xFFFF5A68 : 0xFFFFFFFF;
             col = Ui.mix(Ui.fade(col, 0.85f) , col, te);
             iconPill(ctx, kind, cx, cy, fade(col, k));
             if (hover) { hoverLabel = b.getMessage().getString(); hoverX = (int) cx; }
@@ -256,23 +264,28 @@ public final class Glass {
         double s = 7;
         switch (kind) {
             case 1 -> person(ctx, cx, cy, s, col);
-            case 2 -> { person(ctx, cx - 3.2, cy, s * 0.82, col); person(ctx, cx + 3.2, cy, s * 0.82, col); }
-            case 3 -> icon(ctx, 2, cx, cy, 24, col);
-            case 4 -> {
-                Ui.rrectD(ctx, cx - s * 0.95, cy - s * 0.65, s * 1.9, s * 1.3, s * 0.22, col);
-                Ui.rrectD(ctx, cx - s * 0.78, cy - s * 0.5, s * 1.56, s * 1.0, s * 0.14, (0xB0 << 24) | 0x0A0C12);
-                dot(ctx, cx - s * 0.42, cy - s * 0.12, s * 0.2, col);
-                Ui.rrectD(ctx, cx - s * 0.62, cy + s * 0.12, s * 0.4, s * 0.2, s * 0.08, col);
-                Ui.rrectD(ctx, cx + s * 0.02, cy - s * 0.22, s * 0.6, s * 0.1, s * 0.05, col);
-                Ui.rrectD(ctx, cx + s * 0.02, cy + s * 0.02, s * 0.6, s * 0.1, s * 0.05, col);
+            case 2 -> { person(ctx, cx - 3.4, cy, s * 0.8, col); person(ctx, cx + 3.4, cy, s * 0.8, col); }
+            case 3 -> {                                                        // zębatka: pierścień + 8 zębów
+                double R = s * 0.58, th = s * 0.36;
+                for (int j = 0; j < 8; j++) {
+                    Compat.push(ctx);
+                    Compat.translate(ctx, (float) cx, (float) cy);
+                    Compat.rotate(ctx, (float) (j * Math.PI / 4));
+                    Ui.rrectD(ctx, -s * 0.17, -s * 1.0, s * 0.34, s * 0.5, s * 0.08, col);
+                    Compat.pop(ctx);
+                }
+                Ui.ringT(ctx, cx - R - th * 0.35, cy - R - th * 0.35, 2 * (R + th * 0.35), 2 * (R + th * 0.35), R + th * 0.35, th, col);
+            }
+            case 4 -> {                                                        // karta ID
+                double w = s * 2.1, h = s * 1.5;
+                Ui.ringT(ctx, cx - w / 2, cy - h / 2, w, h, s * 0.3, s * 0.17, col);
+                dot(ctx, cx - w * 0.26, cy - h * 0.14, s * 0.2, col);
+                Ui.rrectD(ctx, cx - w * 0.38, cy + h * 0.06, w * 0.24, h * 0.2, s * 0.1, col);
+                Ui.rrectD(ctx, cx + w * 0.02, cy - h * 0.2, w * 0.3, s * 0.15, s * 0.07, col);
+                Ui.rrectD(ctx, cx + w * 0.02, cy + h * 0.05, w * 0.3, s * 0.15, s * 0.07, col);
             }
             case 5 -> {
-                double R = s * 0.62, th = s * 0.34;
-                for (int j = 0; j < 8; j++) { double a = j * Math.PI / 4; dot(ctx, cx + Math.cos(a) * R * 1.12, cy + Math.sin(a) * R * 1.12, s * 0.2, col); }
-                Ui.ringT(ctx, cx - R, cy - R, 2 * R, 2 * R, R, th, col);
-            }
-            case 6 -> {
-                double R = s * 0.82, th = s * 0.2;
+                double R = s * 0.8, th = s * 0.2;
                 for (int j = 0; j <= 44; j++) {
                     double a = Math.toRadians(40 + j * (280.0 / 44));
                     dot(ctx, cx + Math.sin(a) * R, cy - Math.cos(a) * R, th / 2, col);
