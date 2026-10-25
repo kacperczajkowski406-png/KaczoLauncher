@@ -238,13 +238,8 @@ public class ModMenuScreen extends KScreen {
         Ui.card(ctx, x, y, w, RH, 8, f(fill), f(Ui.mix(0x1AFFFFFF, 0x55E6ECFF, ov)));
         // ikona
         int tc = tint(m.category);
-        Ui.rrectD(ctx, x + 6, y + 6, 22, 22, 7, f(Ui.mix(0x38000000 | tc, 0xA0000000 | tc, ov)));
-        float sc = Math.min(1f, 18f / Math.max(1, tr.getWidth(m.icon)));
-        sc = Math.max(0.55f, sc);
-        Compat.push(ctx);
-        Compat.scale(ctx, sc, sc);
-        ctx.drawText(tr, m.icon, Math.round((x + 17) / sc - tr.getWidth(m.icon) / 2f), Math.round((y + 17) / sc - 4), f(0xFFFFFFFF), false);
-        Compat.pop(ctx);
+        Ui.rrectD(ctx, x + 6, y + 6, 22, 22, 7, f(Ui.mix(0x22FFFFFF, 0x40FFFFFF, ov)));
+        ItemIcons.draw(ctx, m.id, x + 17, y + 17, 16);
         // opisy
         int textW = w - 40 - 58;
         String name = tr.trimToWidth(L.t(m.name), textW - (m.isNew ? 24 : 0));
@@ -302,12 +297,8 @@ public class ModMenuScreen extends KScreen {
         Ui.glass(ctx, dx, dy, dw, dh, 9, f(0xF0141B2C));
         // nagłówek
         int tc = tint(m.category);
-        Ui.rrectD(ctx, dx + 8, dy + 8, 18, 18, 6, f(0xA0000000 | tc));
-        float sc = Math.max(0.5f, Math.min(1f, 14f / Math.max(1, tr.getWidth(m.icon))));
-        Compat.push(ctx);
-        Compat.scale(ctx, sc, sc);
-        ctx.drawText(tr, m.icon, Math.round((dx + 17) / sc - tr.getWidth(m.icon) / 2f), Math.round((dy + 17) / sc - 4), f(0xFFFFFFFF), false);
-        Compat.pop(ctx);
+        Ui.rrectD(ctx, dx + 8, dy + 8, 18, 18, 6, f(0x30FFFFFF));
+        ItemIcons.draw(ctx, m.id, dx + 17, dy + 17, 14);
         ctx.drawText(tr, tr.trimToWidth(L.t(m.name), dw - 90), dx + 32, dy + 10, f(0xFFFFFFFF), true);
         boolean xh = Ui.in(mx, my, dx + dw - 22, dy + 8, 14, 14);
         Ui.rrectD(ctx, dx + dw - 22, dy + 8, 14, 14, 7, f(xh ? 0x40FFFFFF : 0x1CFFFFFF));
