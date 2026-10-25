@@ -9,7 +9,7 @@ layout(location = 0) out vec4 outColor;
 
 vec3 bright(vec3 c) {
     float l = dot(c, vec3(0.299, 0.587, 0.114));
-    float k = smoothstep(0.62, 1.0, l);
+    float k = smoothstep(0.72, 1.05, l);
     return c * k * 1.4;
 }
 void main() {

@@ -38,7 +38,7 @@ void main() {
 #ifndef STREAK
     streakK = 0.0;
 #endif
-    vec3 col = scene + texture(colortex2, uv).rgb * bloomK * 0.9 + texture(colortex3, uv).rgb * streakK * bloomK * 0.9;
+    vec3 col = scene + texture(colortex2, uv).rgb * bloomK * 0.7 + texture(colortex3, uv).rgb * streakK * bloomK * 0.8;
 
 #ifdef GODRAYS
     {
@@ -62,7 +62,7 @@ void main() {
             }
             ray /= 28.0;
             float facing = clamp(1.0 - length(sc - 0.5) * 0.9, 0.0, 1.0);
-            col += ray * (day ? 0.55 : 0.2) * facing * (1.0 - rainStrength);
+            col += ray * (day ? 0.38 : 0.15) * facing * (1.0 - rainStrength);
         }
     }
 #endif
@@ -90,7 +90,7 @@ void main() {
     vec3 shadowTint = vec3(0.90, 0.98, 1.08), highTint = vec3(1.07, 1.02, 0.93);
     col *= mix(shadowTint, highTint, smoothstep(0.1, 0.8, l));
     col = mix(vec3(luma(col)), col, 1.12);
-    col = mix(col, col * col * (3.0 - 2.0 * col), 0.35);
+    col = mix(col, col * col * (3.0 - 2.0 * col), 0.5);
 #endif
     {
         float sat = float(SAT) / 100.0;
