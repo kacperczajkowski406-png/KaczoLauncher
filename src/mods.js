@@ -283,6 +283,7 @@ function importFromInstance(inst, fromInst, onStatus) {
 
 // ───────────── prawdziwe shadery (Iris + paczka shaderów z Modrinth) ─────────────
 const SHADER_PACKS = {
+  'kaczo': 'Kaczo Shaders',
   'complementary-reimagined': 'Complementary Reimagined',
   'complementary-unbound': 'Complementary Unbound',
   'bsl-shaders': 'BSL',
@@ -303,11 +304,19 @@ function setIrisProps(gameDir, props) {
 
 /** Włącza shadery: instaluje Iris i wybraną paczkę, ustawia ją jako aktywną. */
 async function ensureShaders(inst, log = () => {}) {
-  const slug = inst.shaders;
+  const slug = inst.shaders === undefined ? 'kaczo' : inst.shaders;      // domyślnie włączone nasze shadery
   if (inst.loader !== 'fabric' || !slug || !SHADER_PACKS[slug]) return disableShaders(inst);
   try {
     const gameDir = instanceDir(inst);
     await installProject(inst, 'iris', () => {});
+    if (slug === 'kaczo') {
+      const dst = path.join(gameDir, 'shaderpacks', 'KaczoShaders');
+      fs.rmSync(dst, { recursive: true, force: true });
+      fs.cpSync(path.join(P.shaders, 'KaczoShaders'), dst, { recursive: true });
+      setIrisProps(gameDir, { enableShaders: 'true', shaderPack: 'KaczoShaders' });
+      log('Shadery: Kaczo Shaders');
+      return;
+    }
     const params = new URLSearchParams({ loaders: JSON.stringify(['iris']), game_versions: JSON.stringify([inst.mc]) });
     const versions = await getJson(`${API}/project/${encodeURIComponent(slug)}/version?${params}`);
     if (!versions.length) { log(`Shadery: brak paczki ${SHADER_PACKS[slug]} dla ${inst.mc}`); return; }

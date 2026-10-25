@@ -1,0 +1,14 @@
+screen.STYLE=Look
+option.STYLE=Look
+value.STYLE.0=Cinematic
+value.STYLE.1=Noir Glass
+value.STYLE.2=Dream
+option.BLOOM=Bloom
+option.STREAK=Light streaks
+option.GODRAYS=God rays
+option.AO=Ambient occlusion
+option.AO_STRENGTH=AO strength
+option.VIGNETTE=Vignette
+option.CHROMA=Lens fringe
+option.GRAIN=Film grain
+option.SAT=Saturation

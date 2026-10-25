@@ -180,7 +180,7 @@ function cleanInstanceInput(input) {
   const loader = input.loader === 'fabric' ? 'fabric' : 'vanilla';
   let ramMb = Number(input.ramMb) || 0; // 0 = użyj ustawienia globalnego
   if (ramMb !== 0) ramMb = Math.min(65536, Math.max(1024, Math.round(ramMb)));
-  const shaders = loader === 'fabric' && mods.SHADER_PACKS[input.shaders] ? String(input.shaders) : '';
+  const shaders = loader === 'fabric' && mods.SHADER_PACKS[input.shaders] ? String(input.shaders) : '';      // '' = wyłączone
   return { name, mc, loader, ramMb, optimize: input.optimize !== false, shaders };
 }
 

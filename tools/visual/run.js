@@ -29,6 +29,18 @@ const shot = (name) => { try { execSync(`import -window root ${path.join(OUT, na
   const file = vs[0].files.find((f) => f.primary) || vs[0].files[0];
   fs.writeFileSync(path.join(GAME, 'mods', file.filename), await get(file.url));
   fs.copyFileSync(JAR, path.join(GAME, 'mods', 'kaczo-hud.jar'));
+  if (process.env.SHADERS === '1') {
+    for (const slug of ['sodium', 'iris']) {
+      const v = JSON.parse((await get(`https://api.modrinth.com/v2/project/${slug}/version?game_versions=${q}&loaders=${l}`)).toString());
+      const f = v[0].files.find((x) => x.primary) || v[0].files[0];
+      fs.writeFileSync(path.join(GAME, 'mods', f.filename), await get(f.url));
+      console.log('mod', f.filename);
+    }
+    const dst = path.join(GAME, 'shaderpacks', 'KaczoShaders');
+    fs.cpSync(path.resolve('../../kaczo-shaders/KaczoShaders'), dst, { recursive: true });
+    fs.mkdirSync(path.join(GAME, 'config'), { recursive: true });
+    fs.writeFileSync(path.join(GAME, 'config', 'iris.properties'), `enableShaders=true\nshaderPack=KaczoShaders\n`);
+  }
   // ustawienia moda: wybrany styl nieba
   const home = process.env.HOME; fs.mkdirSync(path.join(home, '.kaczo-client'), { recursive: true });
   fs.writeFileSync(path.join(home, '.kaczo-client', 'hud-settings.json'), JSON.stringify({ mods: { sky: { enabled: true, vals: { style: STYLE } } } }));
@@ -36,6 +48,21 @@ const shot = (name) => { try { execSync(`import -window root ${path.join(OUT, na
 
   if (process.env.WORLD === '1') process.env.KACZO_AUTOWORLD = '1';
   if (process.env.WORLD === '2') process.env.KACZO_OPENMENU = '1';
+  let server = null;
+  if (process.env.WORLD === '3') {
+    const man = JSON.parse((await get('https://piston-meta.mojang.com/mc/game/version_manifest_v2.json')).toString());
+    const vj = JSON.parse((await get(man.versions.find((x) => x.id === MC).url)).toString());
+    const sdir = path.resolve('mc-server'); fs.mkdirSync(sdir, { recursive: true });
+    fs.writeFileSync(path.join(sdir, 'server.jar'), await get(vj.downloads.server.url));
+    fs.writeFileSync(path.join(sdir, 'eula.txt'), 'eula=true\n');
+    fs.writeFileSync(path.join(sdir, 'server.properties'), 'online-mode=false\nlevel-seed=1234\nview-distance=8\ngamemode=creative\ndifficulty=peaceful\nspawn-monsters=false\nspawn-protection=0\n');
+    server = spawn('java', ['-Xmx1G', '-jar', 'server.jar', 'nogui'], { cwd: sdir });
+    let ready = false;
+    server.stdout.on('data', (d) => { const t = String(d); if (t.includes('Done (')) ready = true; });
+    for (let i = 0; i < 120 && !ready; i++) await sleep(1000);
+    console.log('serwer gotowy:', ready);
+    global.srv = (c) => { try { server.stdin.write(c + '\n'); } catch { /* */ } };
+  }
   const launcher = new Client();
   const log = [];
   launcher.on('debug', (m) => { log.push(String(m)); });
@@ -47,13 +74,14 @@ const shot = (name) => { try { execSync(`import -window root ${path.join(OUT, na
     version: { number: MC, type: 'release', custom: id },
     memory: { max: '2G', min: '512M' },
     overrides: { gameDirectory: GAME },
-    customLaunchArgs: [],
+    customLaunchArgs: process.env.WORLD === '3' ? ['--quickPlayMultiplayer', 'localhost:25565'] : [],
   });
   if (!proc) { console.log('launch zwrócił null'); process.exit(1); }
   const t0 = Date.now();
   for (const s of (process.env.SHOTS || '45,75,110,150').split(',').map(Number)) {
     await sleep(Math.max(0, t0 + s * 1000 - Date.now()));
     if (process.env.PRESS && Number(process.env.PRESS.split(':')[0]) <= s) { try { require('child_process').execSync('xdotool key ' + process.env.PRESS.split(':')[1], { env: process.env }); } catch (e) { console.log('xdotool', String(e).slice(0, 100)); } await sleep(2500); }
+    if (global.srv) { global.srv('time set 1500'); global.srv('gamerule doDaylightCycle false'); global.srv('gamerule doWeatherCycle false'); global.srv('weather clear'); global.srv('execute as @a at @s run tp @s ~ ~ ~ -75 -4'); await sleep(2500); }
     shot('t' + s);
   }
   try { fs.copyFileSync(path.join(GAME, 'logs', 'latest.log'), path.join(OUT, 'latest.log')); } catch { /* */ }
@@ -61,5 +89,6 @@ const shot = (name) => { try { execSync(`import -window root ${path.join(OUT, na
   try { for (const f of fs.readdirSync(cr)) fs.copyFileSync(path.join(cr, f), path.join(OUT, f)); } catch { /* brak */ }
   fs.writeFileSync(path.join(OUT, 'launcher.log'), log.join('\n').slice(-60000));
   try { proc.kill(); } catch { /* */ }
+  try { if (server) server.kill(); } catch { /* */ }
   process.exit(0);
 })().catch((e) => { console.error(e); process.exit(1); });

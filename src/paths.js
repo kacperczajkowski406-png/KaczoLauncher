@@ -14,6 +14,7 @@ const P = {
   // zasoby dostarczane razem z launcherem
   menuPack: path.join(__dirname, '..', 'kaczo-pack'),
   hudMods: path.join(__dirname, '..', 'kaczo-mod'),
+  shaders: path.join(__dirname, '..', 'kaczo-shaders'),
 };
 
 for (const dir of [P.base, P.common, P.instances, P.runtime, P.logs]) {
