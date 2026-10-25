@@ -85,9 +85,9 @@ public class ModMenuScreen extends KScreen {
         anim = Ui.easeOut((System.currentTimeMillis() - openedAt) / 260f);
         layout();
         TextRenderer tr = client.textRenderer;
-        ctx.fill(0, 0, width, height, f(0xB0050810));
+        Visual.aurora(ctx, width, height, anim);
         int inset = Math.round((1 - anim) * 10);
-        Ui.glass(ctx, wx + inset, wy + inset, ww - 2 * inset, wh - 2 * inset, 10, f(0xE00F1523));
+        Ui.glass(ctx, wx + inset, wy + inset, ww - 2 * inset, wh - 2 * inset, 10, f(0xA6000000));
         if (anim < 0.35f) return;                     // zawartość pojawia się, gdy okno jest już prawie na miejscu
         drawSidebar(ctx, tr, mx, my);
         if (page == 0) drawModules(ctx, tr, mx, my);

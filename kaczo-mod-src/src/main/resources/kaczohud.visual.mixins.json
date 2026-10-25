@@ -8,6 +8,7 @@
     "SplashOverlayMixin",
     "PanoramaMixin",
     "SplashTextMixin",
+    "UiFontMixin",
     "CameraMixin",
     "EntityLookMixin",
     "BossBarMixin",

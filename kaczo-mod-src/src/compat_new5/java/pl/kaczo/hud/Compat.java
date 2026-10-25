@@ -40,4 +40,12 @@ public final class Compat {
     public static net.minecraft.text.Text clockText(String s) {
         return net.minecraft.text.Text.literal(s).setStyle(net.minecraft.text.Style.EMPTY.withFont(Identifier.of("kaczohud", "clock")));
     }
+    /** Tekstura z tintem rgb i przezroczystością a (0..1). */
+    public static void texA(DrawContext ctx, Identifier id, int w, int h, int rgb, float a) {
+        ctx.draw();
+        RenderSystem.setShaderColor(((rgb >> 16) & 255) / 255f, ((rgb >> 8) & 255) / 255f, (rgb & 255) / 255f, a);
+        tex(ctx, id, w, h);
+        ctx.draw();
+        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+    }
 }

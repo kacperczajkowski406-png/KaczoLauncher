@@ -39,4 +39,9 @@ public final class Compat {
     public static net.minecraft.text.Text clockText(String s) {
         return net.minecraft.text.Text.literal(s).setStyle(net.minecraft.text.Style.EMPTY.withFont(Identifier.of("kaczohud", "clock")));
     }
+    /** Tekstura z tintem rgb i przezroczystością a (0..1). */
+    public static void texA(DrawContext ctx, Identifier id, int w, int h, int rgb, float a) {
+        int al = Math.max(0, Math.min(255, Math.round(a * 255)));
+        ctx.drawTexture(RenderPipelines.GUI_TEXTURED, id, 0, 0, 0f, 0f, w, h, w, h, (al << 24) | (rgb & 0xFFFFFF));
+    }
 }

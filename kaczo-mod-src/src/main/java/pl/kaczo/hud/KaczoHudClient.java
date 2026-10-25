@@ -15,14 +15,6 @@ public class KaczoHudClient implements ClientModInitializer {
     public void onInitializeClient() {
         Config.load();
         try { Glass.init(); } catch (Throwable ignored) { }
-        // czcionka Inter jako wbudowany pakiet zasobów: włączony domyślnie, wyłączysz w Opcje → Paczki zasobów
-        try {
-            net.fabricmc.loader.api.FabricLoader.getInstance().getModContainer("kaczohud").ifPresent(c ->
-                    net.fabricmc.fabric.api.resource.ResourceManagerHelper.registerBuiltinResourcePack(
-                            net.minecraft.util.Identifier.of("kaczohud", "inter"), c,
-                            net.minecraft.text.Text.literal("Kaczo – czcionka Inter"),
-                            net.fabricmc.fabric.api.resource.ResourcePackActivationType.DEFAULT_ENABLED));
-        } catch (Throwable ignored) { }
         openKey = KeyBindingHelper.registerKeyBinding(Compat.newKey("key.kaczohud.open", GLFW.GLFW_KEY_RIGHT_SHIFT));
         freelookKey = KeyBindingHelper.registerKeyBinding(Compat.newKey("key.kaczohud.freelook", GLFW.GLFW_KEY_LEFT_ALT));
         waypointKey = KeyBindingHelper.registerKeyBinding(Compat.newKey("key.kaczohud.waypoint", GLFW.GLFW_KEY_B));

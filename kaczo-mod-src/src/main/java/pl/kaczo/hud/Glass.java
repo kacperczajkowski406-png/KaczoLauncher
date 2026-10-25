@@ -44,6 +44,13 @@ public final class Glass {
         return t != null && System.currentTimeMillis() - t < 400;
     }
 
+    public static final Identifier UI_FONT = Identifier.of("kaczohud", "ui");
+    /** Czy aktualnie rysujemy menu główne albo okno moda (tylko tam używamy czcionki Inter). */
+    public static boolean interNow() {
+        Screen s = MinecraftClient.getInstance().currentScreen;
+        return s instanceof TitleScreen || s instanceof KScreen;
+    }
+
     private static boolean autoDone;
     /** Tylko do testów w CI (zmienna KACZO_AUTOWORLD): sam tworzy świat, żeby można było obejrzeć niebo. */
     private static void autoWorld(MinecraftClient client, Screen screen) {

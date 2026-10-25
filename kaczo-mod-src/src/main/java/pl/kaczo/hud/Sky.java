@@ -54,6 +54,7 @@ public final class Sky {
     public static int worldColor(int rgb) {
         try {
             Module m = Modules.byId("sky");
+            if (true) return rgb;      // prawdziwe niebo zostaje bez zmian (stary styl nieba usunięty)
             if (!m.enabled() || !m.bool("world")) return rgb;
             int style = m.num("style");
             int[][] pal = { {0x6EC6FF,0xFFF3B0},{0x0A1A33,0x1B4A7A},{0x0B1A33,0x1D3A5C},{0xFF8A3D,0x2B1A5E},{0xFFB3E6,0xB3E6FF},{0x021A06,0x00A030},{0x6A5CFF,0xFF7AA8},{0x3A1F5E,0x8A5A9C},{0x000000,0x0A0A10},{0x03060A,0x0A130E} };
@@ -79,7 +80,7 @@ public final class Sky {
 
         int style = m.num("style");
         float t = (System.nanoTime() / 1_000_000_000f) * (m.num("speed") / 50f);
-        SkyWorld.render(ctx, mc, m, t);
+        Shader.render(ctx, mc, m, t);
     }
 
     private static void ducks(DrawContext ctx, int w, int horizon, float t, float px, float py, int count, int size, int strength, boolean main) {

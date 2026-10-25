@@ -37,15 +37,11 @@ public final class Visual {
         float s = Math.max(w / 1920f, h / 1080f) * (1.07f + 0.015f * (float) Math.sin(t * 0.25));
         float ox = (w - 1920 * s) / 2f + (float) Math.sin(t * 0.21) * w * 0.012f;
         float oy = (h - 1080 * s) / 2f + (float) Math.cos(t * 0.17) * h * 0.012f;
-        Compat.flush(ctx);
-        Compat.alpha(a);
         Compat.push(ctx);
         Compat.translate(ctx, ox, oy);
         Compat.scale(ctx, s, s);
-        Compat.tex(ctx, id, 1920, 1080);
+        Compat.texA(ctx, id, 1920, 1080, 0xFFFFFF, a);
         Compat.pop(ctx);
-        Compat.flush(ctx);
-        Compat.alpha(1f);
     }
 
     private static Identifier logoTexture(MinecraftClient mc) {
