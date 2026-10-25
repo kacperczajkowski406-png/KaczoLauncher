@@ -343,6 +343,7 @@ async function instanceModal(inst, forceLoader) {
     mc: inst ? inst.mc : '',
     ramMb: inst ? inst.ramMb : 0,
     optimize: inst ? inst.optimize !== false : true,
+    shaders: inst ? inst.shaders || '' : '',
   };
   if (!(await ensureVersions(form.loader === 'fabric'))) return;
 
@@ -359,12 +360,18 @@ async function instanceModal(inst, forceLoader) {
     el('label', { class: 'check' }, el('input', { type: 'checkbox', checked: form.optimize, onchange: (e) => { form.optimize = e.target.checked; } }), t('inst.optimize')),
     el('p', { class: 'small muted hint' }, t('inst.optimizeHint')));
 
+  const SHD = [['', t('shd.off')], ['complementary-reimagined', 'Complementary Reimagined'], ['complementary-unbound', 'Complementary Unbound'], ['bsl-shaders', 'BSL'], ['solas-shader', 'Solas']];
+  const shdSelect = el('select', { onchange: (e) => { form.shaders = e.target.value; } }, ...SHD.map(([v, n]) => el('option', { value: v }, n)));
+  shdSelect.value = form.shaders;
+  const shadersRow = el('label', { class: 'field' }, el('span', {}, t('inst.shaders')), shdSelect, el('p', { class: 'small muted hint' }, t('inst.shadersHint')));
+
   const refreshVersions = () => {
     const opts = versionOptions(form.loader, inst && inst.mc);
     verSelect.replaceChildren(...opts.map((v) => el('option', { value: v.id }, v.id)));
     form.mc = opts.some((o) => o.id === form.mc) ? form.mc : (opts[0] ? opts[0].id : '');
     verSelect.value = form.mc;
     optimizeRow.hidden = form.loader !== 'fabric';
+    shadersRow.hidden = form.loader !== 'fabric';
   };
 
   const segVanilla = el('button', { type: 'button' }, t('inst.vanilla'));
@@ -387,6 +394,7 @@ async function instanceModal(inst, forceLoader) {
     el('div', { class: 'field' }, el('span', { class: 'small muted' }, t('inst.loader')), el('div', { class: 'segmented' }, segVanilla, segFabric)),
     el('label', { class: 'field' }, el('span', {}, t('inst.version')), verSelect, el('p', { class: 'small muted hint' }, t('inst.versionHint'))),
     optimizeRow,
+    shadersRow,
     el('label', { class: 'field' }, el('span', {}, t('inst.ram'), ramLabel), ramInput),
     isEdit && el('p', { class: 'small muted' }, t('inst.editNote')));
 

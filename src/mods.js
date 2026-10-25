@@ -281,7 +281,59 @@ function importFromInstance(inst, fromInst, onStatus) {
   return importFrom(inst, modsDir(fromInst), onStatus);
 }
 
+// ───────────── prawdziwe shadery (Iris + paczka shaderów z Modrinth) ─────────────
+const SHADER_PACKS = {
+  'complementary-reimagined': 'Complementary Reimagined',
+  'complementary-unbound': 'Complementary Unbound',
+  'bsl-shaders': 'BSL',
+  'solas-shader': 'Solas',
+};
+
+function setIrisProps(gameDir, props) {
+  const file = path.join(gameDir, 'config', 'iris.properties');
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  let lines = [];
+  try { lines = fs.readFileSync(file, 'utf8').split(/\r?\n/).filter((l) => l.trim()); } catch { /* nowy plik */ }
+  for (const [k, v] of Object.entries(props)) {
+    const i = lines.findIndex((l) => l.startsWith(k + '='));
+    if (i >= 0) lines[i] = `${k}=${v}`; else lines.push(`${k}=${v}`);
+  }
+  fs.writeFileSync(file, lines.join('\n') + '\n');
+}
+
+/** Włącza shadery: instaluje Iris i wybraną paczkę, ustawia ją jako aktywną. */
+async function ensureShaders(inst, log = () => {}) {
+  const slug = inst.shaders;
+  if (inst.loader !== 'fabric' || !slug || !SHADER_PACKS[slug]) return disableShaders(inst);
+  try {
+    const gameDir = instanceDir(inst);
+    await installProject(inst, 'iris', () => {});
+    const params = new URLSearchParams({ loaders: JSON.stringify(['iris']), game_versions: JSON.stringify([inst.mc]) });
+    const versions = await getJson(`${API}/project/${encodeURIComponent(slug)}/version?${params}`);
+    if (!versions.length) { log(`Shadery: brak paczki ${SHADER_PACKS[slug]} dla ${inst.mc}`); return; }
+    const v = versions.find((x) => x.version_type === 'release') || versions[0];
+    const file = v.files.find((f) => f.primary) || v.files[0];
+    const dest = safeJoin(path.join(gameDir, 'shaderpacks'), file.filename);
+    if (!fs.existsSync(dest)) {
+      fs.mkdirSync(path.dirname(dest), { recursive: true });
+      await downloadFile(file.url, dest, { sha1: file.hashes && file.hashes.sha1 });
+    }
+    setIrisProps(gameDir, { enableShaders: 'true', shaderPack: file.filename });
+    log(`Shadery: ${SHADER_PACKS[slug]} (${file.filename})`);
+  } catch (e) {
+    log('Shadery: nie udało się ustawić – ' + (e && e.message ? e.message : e));
+  }
+}
+
+function disableShaders(inst) {
+  try {
+    const f = path.join(instanceDir(inst), 'config', 'iris.properties');
+    if (fs.existsSync(f)) setIrisProps(instanceDir(inst), { enableShaders: 'false' });
+  } catch { /* nieważne */ }
+}
+
 module.exports = {
+  ensureShaders, disableShaders, SHADER_PACKS,
   importFrom, importFromInstance,
   removeHud,
   instanceDir, modsDir, listInstalled, toggle, remove, addLocal, search, install,

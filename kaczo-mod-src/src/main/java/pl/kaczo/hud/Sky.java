@@ -70,8 +70,9 @@ public final class Sky {
     }
 
     public static void render(DrawContext ctx, MinecraftClient mc) {
+        if (true) return;      // stary nakładkowy „shader” usunięty – prawdziwe shadery instaluje launcher (Iris)
         Module m = Modules.byId("sky");
-        if (!m.enabled() || mc.player == null || mc.world == null) return;
+        if (m == null || !m.enabled() || mc.player == null || mc.world == null) return;
         int w = ctx.getScaledWindowWidth(), h = ctx.getScaledWindowHeight();
         float pitch = mc.player.getPitch(), yaw = mc.player.getYaw();
         double fov = Math.max(30, mc.options.getFov().getValue());
