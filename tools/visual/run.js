@@ -40,6 +40,7 @@ const shot = (name) => { try { execSync(`import -window root ${path.join(OUT, na
     fs.cpSync(path.resolve('../../kaczo-shaders/KaczoShaders'), dst, { recursive: true });
     fs.mkdirSync(path.join(GAME, 'config'), { recursive: true });
     fs.writeFileSync(path.join(GAME, 'config', 'iris.properties'), `enableShaders=true\nshaderPack=KaczoShaders\n`);
+    if (process.env.SHDSTYLE) fs.writeFileSync(path.join(GAME, 'shaderpacks', 'KaczoShaders.txt'), `STYLE=${process.env.SHDSTYLE}\n`);
   }
   // ustawienia moda: wybrany styl nieba
   const home = process.env.HOME; fs.mkdirSync(path.join(home, '.kaczo-client'), { recursive: true });

@@ -67,6 +67,11 @@ void main() {
     }
 #endif
 
+    // miękkie „ramię” jasności: słońce i bloom nie wypalają kolorów
+    {
+        vec3 over = max(col - 0.82, 0.0);
+        col = min(col, vec3(0.82)) + 0.18 * (1.0 - exp(-over * 4.0));
+    }
     // grading
     float l = luma(col);
 #if STYLE == 1

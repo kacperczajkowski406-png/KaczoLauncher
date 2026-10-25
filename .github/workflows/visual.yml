@@ -11,6 +11,7 @@ on:
       style:  { description: 'styl nieba', default: '8' }
       world:  { description: 'wejdź do świata (1/0)', default: '1' }
       shaders: { description: 'shadery Iris (1/0)', default: '0' }
+      shdstyle: { description: 'styl shaderow 0/1/2', default: '0' }
       press:  { description: 'sekunda:klawisz (np. 40:Shift_R)', default: '' }
       shots:  { description: 'sekundy zrzutów', default: '45,80,120,160' }
 jobs:
@@ -42,6 +43,7 @@ jobs:
           WORLD: ${{ inputs.world }}
           PRESS: ${{ inputs.press }}
           SHADERS: ${{ inputs.shaders }}
+          SHDSTYLE: ${{ inputs.shdstyle }}
           SHOTS: ${{ inputs.shots }}
           LIBGL_ALWAYS_SOFTWARE: '1'
           MESA_GL_VERSION_OVERRIDE: '4.5'
