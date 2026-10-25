@@ -56,7 +56,8 @@ vec3 shadeLit(vec3 albedo, vec3 feet, vec3 nW, vec2 lm, float emissive) {
     vec3 hor = pow(skyColor(normalize(vec3(nW.x, 0.15, nW.z) + 1e-4), sunDir, rainStrength, frameTimeCounter, false), vec3(2.2));
     float up = nW.y * 0.5 + 0.5;
     vec3 ambient = mix(hor * 0.55 + vec3(0.02, 0.018, 0.015), zen * 0.9, up) * (0.35 + 0.65 * skyL);
-    ambient = max(ambient, vec3(0.012, 0.014, 0.022));
+    ambient = mix(vec3(dot(ambient, vec3(0.333))), ambient, 0.7) * 2.1;
+    ambient = max(ambient, vec3(0.02, 0.022, 0.03));
 
     float bl = pow(clamp(lm.x, 0.0, 1.0), 3.2);
     vec3 block = vec3(1.0, 0.55, 0.24) * bl * 2.2 * (1.0 - 0.6 * skyL * sunUp);

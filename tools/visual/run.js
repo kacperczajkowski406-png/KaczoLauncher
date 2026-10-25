@@ -82,7 +82,7 @@ const shot = (name) => { try { execSync(`import -window root ${path.join(OUT, na
   for (const s of (process.env.SHOTS || '45,75,110,150').split(',').map(Number)) {
     await sleep(Math.max(0, t0 + s * 1000 - Date.now()));
     if (process.env.PRESS && Number(process.env.PRESS.split(':')[0]) <= s) { try { require('child_process').execSync('xdotool key ' + process.env.PRESS.split(':')[1], { env: process.env }); } catch (e) { console.log('xdotool', String(e).slice(0, 100)); } await sleep(2500); }
-    if (global.srv) { global.srv('time set 1500'); global.srv('gamerule doDaylightCycle false'); global.srv('gamerule doWeatherCycle false'); global.srv('weather clear'); global.srv('execute as @a at @s run tp @s ~ ~ ~ -75 -4'); await sleep(2500); }
+    if (global.srv) { global.srv('time set 1500'); global.srv('gamerule doDaylightCycle false'); global.srv('gamerule doWeatherCycle false'); global.srv('weather clear'); global.srv('execute as @a at @s run tp @s ~ ~ ~ ' + (s % 2 === 0 ? '-75 -4' : '105 -3')); await sleep(2500); }
     shot('t' + s);
   }
   try { fs.copyFileSync(path.join(GAME, 'logs', 'latest.log'), path.join(OUT, 'latest.log')); } catch { /* */ }
