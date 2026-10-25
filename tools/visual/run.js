@@ -35,6 +35,7 @@ const shot = (name) => { try { execSync(`import -window root ${path.join(OUT, na
   fs.writeFileSync(path.join(GAME, 'options.txt'), 'onboardAccessibility:false\ntutorialStep:none\nguiScale:2\nmaxFps:30\nrenderDistance:6\nlang:pl_pl\n');
 
   if (process.env.WORLD === '1') process.env.KACZO_AUTOWORLD = '1';
+  if (process.env.WORLD === '2') process.env.KACZO_OPENMENU = '1';
   const launcher = new Client();
   const log = [];
   launcher.on('debug', (m) => { log.push(String(m)); });
