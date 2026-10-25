@@ -10,6 +10,7 @@ on:
       gradle: { description: 'gradle',     default: '8.12' }
       style:  { description: 'styl nieba', default: '8' }
       world:  { description: 'wejdź do świata (1/0)', default: '1' }
+      press:  { description: 'sekunda:klawisz (np. 40:Shift_R)', default: '' }
       shots:  { description: 'sekundy zrzutów', default: '45,80,120,160' }
 jobs:
   visual:
@@ -30,7 +31,7 @@ jobs:
       - name: Install tools
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq xvfb imagemagick libgl1-mesa-dri libglx-mesa0 libglu1-mesa libopenal1 x11-utils >/dev/null
+          sudo apt-get install -y -qq xvfb imagemagick libgl1-mesa-dri libglx-mesa0 libglu1-mesa libopenal1 x11-utils xdotool >/dev/null
           cd tools/visual && npm init -y >/dev/null && npm i minecraft-launcher-core --no-audit --no-fund >/dev/null
       - name: Run Minecraft
         working-directory: tools/visual
@@ -38,6 +39,7 @@ jobs:
           MC: ${{ inputs.mc }}
           STYLE: ${{ inputs.style }}
           WORLD: ${{ inputs.world }}
+          PRESS: ${{ inputs.press }}
           SHOTS: ${{ inputs.shots }}
           LIBGL_ALWAYS_SOFTWARE: '1'
           MESA_GL_VERSION_OVERRIDE: '4.5'
