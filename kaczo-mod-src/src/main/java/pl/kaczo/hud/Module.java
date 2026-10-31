@@ -53,7 +53,7 @@ public class Module {
         return e == null ? defaultEnabled : e;
     }
     public void setEnabled(boolean v) {
-        boolean was = Config.st(id).enabled;
+        boolean was = enabled();
         Config.st(id).enabled = v;
         if (id.equals("shaders") && was != v && !ShaderCtl.apply(v) && v) Config.st(id).enabled = false;
     }
