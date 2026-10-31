@@ -20,6 +20,7 @@ dependencies {
 
 processResources {
     inputs.property 'version', project.version
+    from("${projectDir}/../kaczo-shaders") { into 'assets/kaczohud/shaderpack' }
     filesMatching('fabric.mod.json') { expand 'version': project.version, 'mc': project.minecraft_version }
 }
 

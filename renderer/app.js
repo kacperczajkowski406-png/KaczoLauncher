@@ -343,7 +343,7 @@ async function instanceModal(inst, forceLoader) {
     mc: inst ? inst.mc : '',
     ramMb: inst ? inst.ramMb : 0,
     optimize: inst ? inst.optimize !== false : true,
-    shaders: inst ? (inst.shaders === undefined ? 'kaczo' : inst.shaders) : 'kaczo',
+    shaders: inst ? (inst.shaders === undefined ? 'toggle' : inst.shaders) : 'toggle',
   };
   if (!(await ensureVersions(form.loader === 'fabric'))) return;
 
@@ -360,7 +360,7 @@ async function instanceModal(inst, forceLoader) {
     el('label', { class: 'check' }, el('input', { type: 'checkbox', checked: form.optimize, onchange: (e) => { form.optimize = e.target.checked; } }), t('inst.optimize')),
     el('p', { class: 'small muted hint' }, t('inst.optimizeHint')));
 
-  const SHD = [['', t('shd.off')], ['kaczo', 'Kaczo Shaders (nasze)'], ['complementary-reimagined', 'Complementary Reimagined'], ['complementary-unbound', 'Complementary Unbound'], ['bsl-shaders', 'BSL'], ['solas-shader', 'Solas']];
+  const SHD = [['', t('shd.off')], ['toggle', 'Kaczo Shaders – włączane w modzie (zalecane)'], ['kaczo', 'Kaczo Shaders – zawsze włączone'], ['complementary-reimagined', 'Complementary Reimagined'], ['complementary-unbound', 'Complementary Unbound'], ['bsl-shaders', 'BSL'], ['solas-shader', 'Solas']];
   const shdSelect = el('select', { onchange: (e) => { form.shaders = e.target.value; } }, ...SHD.map(([v, n]) => el('option', { value: v }, n)));
   shdSelect.value = form.shaders;
   const shadersRow = el('label', { class: 'field' }, el('span', {}, t('inst.shaders')), shdSelect, el('p', { class: 'small muted hint' }, t('inst.shadersHint')));

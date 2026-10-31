@@ -283,6 +283,7 @@ function importFromInstance(inst, fromInst, onStatus) {
 
 // ───────────── prawdziwe shadery (Iris + paczka shaderów z Modrinth) ─────────────
 const SHADER_PACKS = {
+  'toggle': 'Kaczo Shaders (przełącznik w modzie)',
   'kaczo': 'Kaczo Shaders',
   'complementary-reimagined': 'Complementary Reimagined',
   'complementary-unbound': 'Complementary Unbound',
@@ -304,11 +305,18 @@ function setIrisProps(gameDir, props) {
 
 /** Włącza shadery: instaluje Iris i wybraną paczkę, ustawia ją jako aktywną. */
 async function ensureShaders(inst, log = () => {}) {
-  const slug = inst.shaders === undefined ? 'kaczo' : inst.shaders;      // domyślnie włączone nasze shadery
+  const slug = inst.shaders === undefined ? 'toggle' : inst.shaders;      // domyślnie: Iris + paczka gotowe, włączasz w modzie
   if (inst.loader !== 'fabric' || !slug || !SHADER_PACKS[slug]) return disableShaders(inst);
   try {
     const gameDir = instanceDir(inst);
     await installProject(inst, 'iris', () => {});
+    if (slug === 'toggle') {
+      // Iris i Sodium są zainstalowane; shadery włącza się w modzie (Prawy Shift → Shaders). Nie ruszamy aktualnego stanu.
+      const f = path.join(gameDir, 'config', 'iris.properties');
+      if (!fs.existsSync(f)) setIrisProps(gameDir, { enableShaders: 'false' });
+      log('Shadery: Iris gotowy – włączysz je w menu moda (Prawy Shift → Shaders)');
+      return;
+    }
     if (slug === 'kaczo') {
       const dst = path.join(gameDir, 'shaderpacks', 'KaczoShaders');
       fs.rmSync(dst, { recursive: true, force: true });

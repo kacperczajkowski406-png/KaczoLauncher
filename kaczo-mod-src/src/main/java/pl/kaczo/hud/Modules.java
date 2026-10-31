@@ -177,6 +177,8 @@ public class Modules {
         reg(new Module("waypoint", "Waypoint", "Distance and direction to a saved point (B = set, Shift+B = clear).", "HUD", "WAY").fresh().hud(100, 154)
                 .text(Extras::waypointText));
         reg(new Module("freelook", "Perspective (Freelook)", "Hold Left Alt to look around without turning.", "Visual", "LOOK").fresh().on());
+        reg(new Module("shaders", "Shaders", "One click turns on Kaczo Shaders: real lighting, sun shadows, sky, water (needs Iris – the launcher installs it).", "Visual", "SHD").fresh()
+                .add(Setting.choice("style", "Look", 0, "Cinematic", "Noir Glass", "Dream")));
         reg(new Module("theme", "HUD Color", "One color for the whole HUD: all elements and their accents switch to it.", "Visual", "COLOR").fresh()
                 .add(Setting.color("color", "Theme color", "255,60,60,255,0")));
         reg(new Module("nofire", "No Fire Overlay", "Hides the fire on your screen when you are burning.", "Visual", "FIRE").fresh());

@@ -52,7 +52,11 @@ public class Module {
         Boolean e = Config.st(id).enabled;
         return e == null ? defaultEnabled : e;
     }
-    public void setEnabled(boolean v) { Config.st(id).enabled = v; }
+    public void setEnabled(boolean v) {
+        boolean was = Config.st(id).enabled;
+        Config.st(id).enabled = v;
+        if (id.equals("shaders") && was != v && !ShaderCtl.apply(v) && v) Config.st(id).enabled = false;
+    }
     public boolean fav() { return Config.st(id).fav; }
     public void toggleFav() { Config.st(id).fav = !Config.st(id).fav; }
 

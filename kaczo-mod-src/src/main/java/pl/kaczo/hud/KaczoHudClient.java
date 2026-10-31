@@ -21,6 +21,7 @@ public class KaczoHudClient implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             try { Modules.tick(client); } catch (Throwable ignored) { /* moduł nie może wywrócić gry */ }
+            try { ShaderCtl.tick(client); } catch (Throwable ignored) { }
             while (openKey.wasPressed()) {
                 if (client.currentScreen == null) client.setScreen(new ModMenuScreen());
             }
