@@ -1,0 +1,24 @@
+name: Launcher screenshot
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  shot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm install --no-audit --no-fund
+      - name: Screenshot
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libgbm1 libasound2t64 imagemagick >/dev/null || true
+          mkdir -p out
+          (xvfb-run -a -s "-screen 0 1280x800x24" bash -c 'npx electron . --no-sandbox >/dev/null 2>&1 & sleep 22; import -window root out/launcher.png; kill %1' ) || true
+      - name: Publish
+        run: |
+          git config user.name ci && git config user.email ci@example.com
+          git checkout --orphan visual-data
+          git rm -rf . >/dev/null 2>&1 || true
+          cp out/*.png . 2>/dev/null || true
+          git add *.png && git commit -qm shot && git push -f origin visual-data
