@@ -31,11 +31,11 @@ function createWindow() {
     height: 720,
     minWidth: 920,
     minHeight: 620,
-    backgroundColor: '#0b1022',
+    backgroundColor: '#000000',
     title: 'Kaczo Client',
     icon: path.join(__dirname, 'build', 'icon.png'),
     titleBarStyle: 'hidden',
-    titleBarOverlay: { color: '#0b1022', symbolColor: '#d6e4ee', height: 38 },
+    titleBarOverlay: { color: '#000000', symbolColor: '#ffffff', height: 38 },
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -44,6 +44,27 @@ function createWindow() {
     },
   });
   win.loadFile(path.join(__dirname, 'renderer', 'index.html'));
+
+  // Tylko do testów w CI: KACZO_SHOTS=katalog – robi zrzuty wszystkich stron (i kilku tapet) do tego katalogu.
+  if (process.env.KACZO_SHOTS) {
+    win.webContents.once('did-finish-load', async () => {
+      const fs = require('fs');
+      const out = process.env.KACZO_SHOTS; fs.mkdirSync(out, { recursive: true });
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      await wait(6000);
+      const steps = [['play', null], ['instances', null], ['mods', null], ['accounts', null], ['settings', null], ['settings', 'scroll'], ['play', 'synthwave'], ['play', 'aurora']];
+      let n = 0;
+      for (const [pg, extra] of steps) {
+        try {
+          await win.webContents.executeJavaScript(`(() => { go(${JSON.stringify(pg)}); ${extra === 'scroll' ? "document.getElementById('view').scrollTop = 99999;" : ''} ${extra && extra !== 'scroll' ? `KWall.set(${JSON.stringify(extra)});` : ''} })()`);
+          await wait(1800);
+          const img = await win.webContents.capturePage();
+          fs.writeFileSync(path.join(out, `${String(++n).padStart(2, '0')}-${pg}${extra ? '-' + extra : ''}.png`), img.toPNG());
+        } catch (e) { console.error('shot', pg, e); }
+      }
+      app.quit();
+    });
+  }
 
   // Diagnostyka: F12 lub Ctrl+Shift+I otwiera konsolę, a błędy strony trafiają też do terminala.
   win.webContents.on('before-input-event', (event, input) => {

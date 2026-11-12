@@ -1,0 +1,33 @@
+#wp { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: #000; pointer-events: none; }
+#wp > div { position: absolute; inset: 0; background-position: center; background-size: cover; background-repeat: no-repeat; }
+#wp-base.drift { animation: wpdrift 40s ease-in-out infinite alternate; }
+#wp-layer { background-size: auto 100% !important; background-repeat: repeat-x !important; background-position: 0 0 !important; }
+#wp-layer.scroll { animation: wpscroll var(--dur, 60s) linear infinite; }
+#wp-layer.pulse { background-size: cover !important; background-repeat: no-repeat !important; animation: wppulse var(--dur, 5s) ease-in-out infinite; }
+@keyframes wpdrift { from { transform: scale(1.06) translate(-1%, -.6%); } to { transform: scale(1.1) translate(1%, .6%); } }
+@keyframes wpscroll { from { background-position-x: 0; } to { background-position-x: calc(-100vh * 16 / 9); } }
+@keyframes wppulse { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+html:not([data-theme="glass"]) #wp { display: none; }
+html[data-theme="glass"] body { background: #000 !important; }
+
+/* panel tapet w ustawieniach */
+.wp-card { margin-top: 18px; }
+.wp-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.wp-head h2 { margin: 0; }
+.wp-tabs { display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .14); }
+.wp-tabs button { border: 0; background: transparent; color: #c4c6cd; padding: 6px 13px; border-radius: 999px; font: inherit; font-size: 12.5px; cursor: pointer; }
+.wp-tabs button.on { background: rgba(255, 255, 255, .24); color: #fff; }
+.wp-search { margin-left: auto; width: 190px; }
+.wp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 14px; }
+.wp-item { position: relative; border: 0; padding: 0; background: none; text-align: left; color: #e8e9ee; cursor: pointer; font: inherit; }
+.wp-thumb { position: relative; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255, 255, 255, .16); box-shadow: 0 6px 22px rgba(0, 0, 0, .45); transition: transform .18s, border-color .18s; background: #000; }
+.wp-thumb > div { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.wp-thumb .wl { background-size: auto 100%; background-repeat: repeat-x; }
+.wp-item:hover .wp-thumb { transform: translateY(-2px) scale(1.02); border-color: rgba(255, 255, 255, .5); }
+.wp-item.sel .wp-thumb { border: 2px solid #fff; box-shadow: 0 0 0 3px rgba(255, 255, 255, .12), 0 6px 22px rgba(0, 0, 0, .5); }
+.wp-live { position: absolute; left: 8px; top: 8px; z-index: 2; display: flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 999px; background: rgba(0, 0, 0, .6); backdrop-filter: blur(8px); font-size: 10px; font-weight: 700; letter-spacing: .06em; color: #fff; }
+.wp-live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #ff4d5a; box-shadow: 0 0 8px #ff4d5a; }
+.wp-check { position: absolute; right: 8px; top: 8px; z-index: 2; width: 20px; height: 20px; border-radius: 50%; background: #fff; color: #000; display: grid; place-items: center; font-size: 12px; font-weight: 800; }
+.wp-name { margin: 8px 3px 0; font-size: 13px; font-weight: 600; }
+.wp-meta { margin: 1px 3px 0; font-size: 11.5px; color: #8b8e98; }
+.topbar { background: #000 !important; }

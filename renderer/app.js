@@ -579,6 +579,38 @@ function renderAccounts(view) {
 
 // ───────────────────────── ekran: Ustawienia ─────────────────────────
 
+
+// ───────────────────────── tapety launchera ─────────────────────────
+
+let wpTab = 'all', wpQuery = '';
+function wallpaperCard() {
+  const grid = el('div', { class: 'wp-grid' });
+  const count = el('span', { class: 'muted small' });
+  const draw = () => {
+    const q = wpQuery.trim().toLowerCase();
+    const items = KWall.list.filter((w) => (wpTab === 'all' || (wpTab === 'live' ? w.live : !w.live)) && (!q || w.name.toLowerCase().includes(q)));
+    count.textContent = t('wp.count', { n: items.length });
+    grid.replaceChildren(...(items.length ? items.map((w) => {
+      const base = el('div'); const layer = el('div', { class: 'wl' });
+      KWall.paint(w, base, layer, false);
+      const item = el('button', { class: 'wp-item' + (KWall.current() === w.id ? ' sel' : ''), onclick: () => { KWall.set(w.id); draw(); } },
+        el('div', { class: 'wp-thumb' }, base, w.live && el('span', { class: 'wp-live' }, 'LIVE'), KWall.current() === w.id && el('span', { class: 'wp-check' }, '✓')),
+        el('div', { class: 'wp-name' }, w.name), el('div', { class: 'wp-meta' }, w.cat + ' · ' + (w.live ? 'live' : 'static')));
+      // miniatura „live” faktycznie się rusza po najechaniu
+      item.addEventListener('mouseenter', () => { base.className = w.live ? 'drift' : ''; });
+      item.addEventListener('mouseleave', () => { base.className = ''; });
+      return item;
+    }) : [el('p', { class: 'muted' }, t('wp.none'))]));
+  };
+  const tab = (id, label) => el('button', { class: wpTab === id ? 'on' : '', onclick: (e) => { wpTab = id; e.target.parentNode.querySelectorAll('button').forEach((b) => b.classList.remove('on')); e.target.classList.add('on'); draw(); } }, label);
+  draw();
+  return el('div', { class: 'card wp-card' },
+    el('div', { class: 'wp-head' }, el('h2', {}, t('wp.title')),
+      el('div', { class: 'wp-tabs' }, tab('all', t('wp.all')), tab('live', t('wp.live')), tab('static', t('wp.static'))),
+      el('input', { type: 'search', class: 'wp-search', placeholder: t('wp.search'), value: wpQuery, oninput: (e) => { wpQuery = e.target.value; draw(); } }), count),
+    el('p', { class: 'muted small' }, t('wp.sub')), grid);
+}
+
 function renderSettings(view) {
   const f = { ramMb: S.settings.ramMb, javaPath: S.settings.javaPath, minimizeOnLaunch: S.settings.minimizeOnLaunch, lang: S.settings.lang, discord: S.settings.discord, mediaCapture: S.settings.mediaCapture !== false, theme: S.settings.theme || 'glass' };
   view.append(el('h1', {}, t('set.title')), el('p', { class: 'sub' }, t('set.sub')));
@@ -621,6 +653,7 @@ function renderSettings(view) {
     el('div', { class: 'card' }, el('h2', {}, t('set.defaultsTitle')), el('p', { class: 'muted small' }, t('set.defaultsText'))),
     el('div', { class: 'card' }, el('h2', {}, t('set.hudTitle')), el('p', { class: 'muted small' }, t('set.hudText', { list: hudList })))));
 
+  view.append(wallpaperCard());
   view.append(buildUpdateCard());
   view.append(el('p', { class: 'small muted' }, t('set.dataDir', { dir: S.dataDir })));
 }
