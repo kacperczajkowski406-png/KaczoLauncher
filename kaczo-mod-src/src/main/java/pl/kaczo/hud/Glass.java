@@ -54,11 +54,12 @@ public final class Glass {
     private static boolean autoDone;
     /** Tylko do testów w CI (zmienna KACZO_AUTOWORLD): sam tworzy świat, żeby można było obejrzeć niebo. */
     private static void autoWorld(MinecraftClient client, Screen screen) {
+        if (!autoDone && screen instanceof TitleScreen && System.getenv("KACZO_WALL") != null) Config.st("wallpaper").vals.put("id", System.getenv("KACZO_WALL"));
         if (!autoDone && screen instanceof TitleScreen && System.getenv("KACZO_OPENMENU") != null) {
             autoDone = true;
             new Thread(() -> {
                 try { Thread.sleep(25000); } catch (Throwable ignored) { }
-                client.execute(() -> client.setScreen(new ModMenuScreen()));
+                client.execute(() -> client.setScreen("wall".equals(System.getenv("KACZO_OPENMENU")) ? new WallpaperScreen(null) : new ModMenuScreen()));
             }).start();
             return;
         }

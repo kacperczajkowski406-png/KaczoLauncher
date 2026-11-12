@@ -12,6 +12,7 @@ on:
       world:  { description: 'wejdź do świata (1/0)', default: '1' }
       shaders: { description: 'shadery Iris (1/0)', default: '0' }
       shdstyle: { description: 'styl shaderow 0/1/2', default: '0' }
+      wall:   { description: 'id tapety (np. synthwave)', default: '' }
       press:  { description: 'sekunda:klawisz (np. 40:Shift_R)', default: '' }
       shots:  { description: 'sekundy zrzutów', default: '45,80,120,160' }
 jobs:
@@ -41,6 +42,7 @@ jobs:
           MC: ${{ inputs.mc }}
           STYLE: ${{ inputs.style }}
           WORLD: ${{ inputs.world }}
+          WALL: ${{ inputs.wall }}
           PRESS: ${{ inputs.press }}
           SHADERS: ${{ inputs.shaders }}
           SHDSTYLE: ${{ inputs.shdstyle }}

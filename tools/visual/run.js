@@ -51,6 +51,8 @@ const shot = (name) => { try { execSync(`import -window root ${path.join(OUT, na
 
   if (process.env.WORLD === '1') process.env.KACZO_AUTOWORLD = '1';
   if (process.env.WORLD === '2') process.env.KACZO_OPENMENU = '1';
+  if (process.env.WORLD === '4') process.env.KACZO_OPENMENU = 'wall';
+  if (process.env.WALL) process.env.KACZO_WALL = process.env.WALL;
   let server = null;
   if (process.env.WORLD === '3') {
     const man = JSON.parse((await get('https://piston-meta.mojang.com/mc/game/version_manifest_v2.json')).toString());
