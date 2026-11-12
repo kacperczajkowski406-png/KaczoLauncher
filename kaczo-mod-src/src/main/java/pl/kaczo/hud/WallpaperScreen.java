@@ -30,7 +30,7 @@ public class WallpaperScreen extends KScreen {
         ph = Math.min(height - 20, 340);
         px = (width - pw) / 2; py = (height - ph) / 2;
         gx = px + 14; gy = py + 64; gw = pw - 28; gh = ph - 64 - 12;
-        cols = Math.max(2, Math.min(4, (gw + GAP) / 118));
+        cols = Math.max(2, Math.min(4, (gw + GAP) / 100));
         cw = (gw - GAP * (cols - 1)) / cols;
         ch = cw * 9 / 16;
     }
@@ -74,7 +74,7 @@ public class WallpaperScreen extends KScreen {
         ctx.drawText(tr, L.t("Wallpapers"), 0, 0, 0xFFFFFFFF, true);
         Compat.pop(ctx);
         long live = Wallpapers.ALL.stream().filter(Wallpapers.Wp::live).count();
-        ctx.drawText(tr, Wallpapers.ALL.size() + " " + L.t("wallpapers") + "  ·  " + live + " live  ·  " + L.t("click to apply, hover to preview"), px + 16, py + 28, 0xFF8A8A8A, false);
+        ctx.drawText(tr, tr.trimToWidth(Wallpapers.ALL.size() + " " + L.t("wallpapers") + "  ·  " + live + " live", Math.max(40, pw / 2 - 20)), px + 16, py + 29, 0xFF8A8A8A, false);
         // wyszukiwarka
         int sw = Math.min(140, pw / 3), sx = px + pw - sw - 14, sy = py + 14;
         boolean sh = Ui.in(mx, my, sx, sy, sw, 16);
