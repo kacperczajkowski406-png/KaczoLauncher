@@ -107,7 +107,6 @@ public class WallpaperScreen extends KScreen {
             ctx.enableScissor(cx, Math.max(cy, gy), cx + cw, Math.min(cy + ch, gy + gh));
             Wallpapers.draw(ctx, w, cx, cy, cw, ch, 1f, hv ? 1f : 0f);
             ctx.disableScissor();
-            ctx.enableScissor(gx - 4, gy - 2, gx + gw + 4, gy + gh);
             Ui.ringT(ctx, cx - 1, cy - 1, cw + 2, ch + 2, 7, sel ? 2 : 1, sel ? 0xFFFFFFFF : (int) (0x30 + 0x60 * hz) << 24 | 0xFFFFFF);
             if (w.live()) {
                 Ui.rrectD(ctx, cx + 5, cy + 5, 28, 11, 5.5, 0xC0000000);
