@@ -32,16 +32,8 @@ public final class Visual {
     public static void aurora(DrawContext ctx, int w, int h, float a) {
         float t = (System.currentTimeMillis() - T0) / 1000f;
         ctx.fillGradient(0, 0, w, h, Ui.fade(0xFF000000, a), Ui.fade(0xFF000000, a));
-        Identifier id = bgTexture(MinecraftClient.getInstance());
-        if (id == null) { Ribbons.draw(ctx, w, h, t, a * 0.9f, 3); return; }
-        float s = Math.max(w / 1920f, h / 1080f) * (1.07f + 0.015f * (float) Math.sin(t * 0.25));
-        float ox = (w - 1920 * s) / 2f + (float) Math.sin(t * 0.21) * w * 0.012f;
-        float oy = (h - 1080 * s) / 2f + (float) Math.cos(t * 0.17) * h * 0.012f;
-        Compat.push(ctx);
-        Compat.translate(ctx, ox, oy);
-        Compat.scale(ctx, s, s);
-        Compat.texA(ctx, id, 1920, 1080, 0xFFFFFF, a);
-        Compat.pop(ctx);
+        try { if (Wallpapers.full(ctx, w, h, a)) return; } catch (Throwable ignored) { }
+        Ribbons.draw(ctx, w, h, t, a * 0.9f, 3);
     }
 
     private static Identifier logoTexture(MinecraftClient mc) {

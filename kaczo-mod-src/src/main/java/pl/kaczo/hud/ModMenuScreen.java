@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class ModMenuScreen extends KScreen {
     private static final String[] TABS = {"All", "Favorites", "New", "HUD", "PvP", "Utility", "Visual"};
-    private static final String[] NAV = {"Modules", "Appearance", "Edit HUD", "About"};
+    private static final String[] NAV = {"Modules", "Appearance", "Edit HUD", "About", "Wallpapers"};
     private static int page = 0;
     private static String tab = "All", query = "";
     private static double scroll = 0;
@@ -151,6 +151,11 @@ public class ModMenuScreen extends KScreen {
             case 2 -> {
                 Ui.ringT(ctx, cx - 6, cy - 5, 12, 10, 2.5, 1, col);
                 Ui.rrectD(ctx, cx - 3.5, cy - 2.5, 4.5, 4, 1, col);
+            }
+            case 4 -> {
+                Ui.ringT(ctx, cx - 6, cy - 5, 12, 10, 2.5, 1, col);
+                Ui.rrectD(ctx, cx + 1.5, cy - 3.2, 2.6, 2.6, 1.3, col);
+                Ui.rrectD(ctx, cx - 4.5, cy + 0.5, 6, 1.2, 0.6, col);
             }
             default -> {
                 Ui.ringT(ctx, cx - 5.5, cy - 5.5, 11, 11, 5.5, 1, col);
@@ -371,6 +376,7 @@ public class ModMenuScreen extends KScreen {
         for (int i = 0; i < NAV.length; i++) {
             if (Ui.in(mx, my, wx + 10, y, sb - 16, 22)) {
                 if (i == 2) client.setScreen(new EditScreen(this, null));
+                else if (i == 4) client.setScreen(new WallpaperScreen(this));
                 else { page = i; sel = null; scroll = 0; }
                 return true;
             }
