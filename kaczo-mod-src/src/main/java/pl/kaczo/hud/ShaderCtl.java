@@ -34,8 +34,36 @@ public final class ShaderCtl {
             }
         }
         int style = Math.max(0, Math.min(2, Modules.byId("shaders").num("style")));
-        Files.writeString(dst.getParent().resolve(PACK + ".txt"), "STYLE=" + style + "\n");
-        appliedStyle = style;
+        boolean wall = Modules.byId("shaders").bool("wallsky");
+        Wallpapers.Wp wp = Wallpapers.current();
+        String opts = "STYLE=" + style + "\n";
+        Path td = dst.resolve("shaders").resolve("textures");
+        Files.createDirectories(td);
+        if (!wall) {
+            copyRes("/assets/kaczohud/textures/wallpaper/none.png", td.resolve("kwall.png"));
+            copyRes("/assets/kaczohud/textures/wallpaper/none.png", td.resolve("kwall_l.png"));
+        } else {
+            // niebo = wybrana tapeta (ta sama co w menu): obraz + ewentualna ruchoma warstwa trafiają do paczki jako tekstury
+            copyRes(wp.base().startsWith("/") ? wp.base() : "/assets/kaczohud/textures/wallpaper/" + wp.base() + ".png", td.resolve("kwall.png"));
+            copyRes("/assets/kaczohud/textures/wallpaper/" + (wp.layer() != null ? wp.layer() : "none") + ".png", td.resolve("kwall_l.png"));
+            int sp = wp.layer() == null ? 0 : (wp.id().equals("aurora") ? 47 : wp.id().equals("nebula") ? 26 : wp.id().equals("sakura") ? 73 : 0);
+            opts += "WALL=1\nWMODE=" + (wp.layer() == null ? 0 : wp.mode()) + "\nWSPEED=" + sp + "\n";
+        }
+        Files.writeString(dst.getParent().resolve(PACK + ".txt"), opts);
+        appliedStyle = style + (wall ? 10 + Math.abs(wp.id().hashCode() % 1000) * 10 : 0);
+    }
+
+    private static void copyRes(String res, Path to) throws IOException {
+        try (java.io.InputStream in = ShaderCtl.class.getResourceAsStream(res)) {
+            if (in == null) throw new IOException("brak " + res);
+            Files.copy(in, to, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+    private static int stateKey() {
+        Module m = Modules.byId("shaders");
+        int style = Math.max(0, Math.min(2, m.num("style")));
+        return style + (m.bool("wallsky") ? 10 + Math.abs(Wallpapers.current().id().hashCode() % 1000) * 10 : 0);
     }
 
     /** Włącza/wyłącza shadery. Zwraca false, gdy nie da się ich włączyć (np. brak Iris). */
@@ -75,8 +103,7 @@ public final class ShaderCtl {
             return;
         }
         if (m.enabled()) {
-            int style = Math.max(0, Math.min(2, m.num("style")));
-            if (style != appliedStyle && appliedStyle != -1) apply(true);
+            if (stateKey() != appliedStyle && appliedStyle != -1) apply(true);
         }
     }
 }

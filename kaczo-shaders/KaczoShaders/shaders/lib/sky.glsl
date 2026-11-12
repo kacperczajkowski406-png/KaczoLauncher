@@ -12,6 +12,23 @@ float fbm(vec2 p) {
     return s;
 }
 
+#if WALL == 1
+uniform sampler2D kWall;
+uniform sampler2D kWallL;
+// Niebo pokryte wybraną tapetą (statyczną lub „live”): mapowanie kierunku patrzenia na obraz, lustrzane po obwodzie, bez szwu.
+vec3 wallSky(vec3 dir, float t) {
+    float az = atan(dir.x, dir.z) / 6.2831853 + 0.5;
+    float x = 1.0 - abs(1.0 - mod(az * 2.0, 2.0));
+    float v = 1.0 - pow(clamp(dir.y, 0.0, 1.0), 0.8) * 0.97;
+    vec3 w = texture(kWall, vec2(x, v)).rgb;
+    float xl = WMODE == 1 ? fract(az + t * float(WSPEED) * 0.0001) : x;
+    vec4 L = texture(kWallL, vec2(xl, v));
+    float pl = WMODE == 2 ? 0.55 + 0.45 * sin(t * 1.3) : 1.0;
+    w = mix(w, L.rgb, L.a * pl);
+    return pow(w, vec3(1.15)) * 1.2;
+}
+#endif
+
 // dir – kierunek patrzenia w świecie, sunDir – kierunek do słońca (świat), rain 0..1, t – czas
 vec3 skyColor(vec3 dir, vec3 sunDir, float rain, float t, bool withClouds) {
     float sy = sunDir.y;
@@ -28,13 +45,16 @@ vec3 skyColor(vec3 dir, vec3 sunDir, float rain, float t, bool withClouds) {
     vec3 col = mix(zen, hor, g);
     col = mix(col, hor * 0.45, smoothstep(0.0, -0.3, h));
 
+#if WALL == 1
+    col = mix(col, wallSky(dir, t), smoothstep(-0.03, 0.06, dir.y));
+#endif
     float sd = max(dot(dir, sunDir), 0.0);
     vec3 sunCol = mix(vec3(1.0, 0.45, 0.18), vec3(1.0, 0.92, 0.75), smoothstep(0.0, 0.45, sy));
     col += sunCol * (pow(sd, 5.0) * 0.20 + pow(sd, 48.0) * 0.55 + pow(sd, 1200.0) * 2.5) * smoothstep(-0.18, 0.06, sy);
     float md = max(dot(dir, -sunDir), 0.0);
     col += vec3(0.32, 0.44, 0.80) * (pow(md, 10.0) * 0.045 + pow(md, 400.0) * 0.5) * (1.0 - day);
 
-    if (withClouds && dir.y > 0.01) {
+    if (withClouds && WALL == 0 && dir.y > 0.01) {
         vec2 p = dir.xz / (dir.y + 0.14) * 1.1 + vec2(t * 0.006, t * 0.003);
         float n = fbm(p * 1.7);
         float c = smoothstep(0.50, 0.80, n) * smoothstep(0.01, 0.28, dir.y);

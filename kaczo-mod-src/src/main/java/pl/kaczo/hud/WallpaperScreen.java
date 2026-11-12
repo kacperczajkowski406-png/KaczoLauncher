@@ -20,15 +20,19 @@ public class WallpaperScreen extends KScreen {
     private final List<Wallpapers.Wp> shown = new ArrayList<>();
     private int px, py, pw, ph, gx, gy, gw, gh, cols, cw, ch;
     private static final int GAP = 8;
+    private float S = 1f;
+    private int vw, vh;
 
     public WallpaperScreen(Screen parent) { super(Text.literal("Wallpapers")); this.parent = parent; }
 
     @Override public void close() { client.setScreen(parent); }
 
     private void layout() {
-        pw = Math.min(width - 20, 560);
-        ph = Math.min(height - 20, 340);
-        px = (width - pw) / 2; py = (height - ph) / 2;
+        S = (float) Math.min(1.0, 2.6 / Ui.baseSf());
+        vw = Math.round(width / S); vh = Math.round(height / S);
+        pw = Math.min(Math.round(vw * 0.78f), 580);
+        ph = Math.min(Math.round(vh * 0.8f), 340);
+        px = (vw - pw) / 2; py = (vh - ph) / 2;
         gx = px + 14; gy = py + 64; gw = pw - 28; gh = ph - 64 - 12;
         cols = Math.max(2, Math.min(4, (gw + GAP) / 100));
         cw = (gw - GAP * (cols - 1)) / cols;
@@ -59,13 +63,22 @@ public class WallpaperScreen extends KScreen {
         scroll = Math.max(0, Math.min(maxScroll(), scroll));
         TextRenderer tr = client.textRenderer;
         // tło: tapeta pod kursorem (podgląd) albo wybrana
+        mx = Math.round(mx / S); my = Math.round(my / S);
         Wallpapers.Wp hov = null;
         for (int i = 0; i < shown.size(); i++)
             if (Ui.in(mx, my, cellX(i), cellY(i), cw, ch) && my >= gy && my <= gy + gh) hov = shown.get(i);
         Wallpapers.Wp cur = Wallpapers.current();
         ctx.fill(0, 0, width, height, 0xFF000000);
         try { Wallpapers.draw(ctx, hov != null ? hov : cur, 0, 0, width, height, 1f, 1f); } catch (Throwable ignored) { }
-        Ui.glass(ctx, px, py, pw, ph, 12, Ui.fade(0xB4000000, anim));
+        ctx.fill(0, 0, width, height, Ui.fade(0x40000000, anim));
+        Compat.push(ctx);
+        Compat.scale(ctx, S, S);
+        Ui.extra = S;
+        try { drawPanel(ctx, tr, mx, my, anim, cur); } finally { Ui.extra = 1f; Compat.pop(ctx); }
+    }
+
+    private void drawPanel(DrawContext ctx, TextRenderer tr, int mx, int my, float anim, Wallpapers.Wp cur) {
+        Ui.glass(ctx, px, py, pw, ph, 18, Ui.fade(0xB4000000, anim));
         if (anim < 0.3f) return;
         // nagłówek
         Compat.push(ctx);
@@ -128,7 +141,7 @@ public class WallpaperScreen extends KScreen {
 
     @Override
     protected boolean onClick(double mx, double my, int b) {
-        layout(); filter();
+        layout(); filter(); mx /= S; my /= S;
         focus = false;
         if (!Ui.in(mx, my, px, py, pw, ph)) { close(); return true; }
         int sw = Math.min(140, pw / 3);

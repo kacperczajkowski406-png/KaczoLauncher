@@ -16,9 +16,14 @@ public class Ui {
     // ───────────── rysowanie w pikselach ekranu (gładkie rogi niezależnie od skali GUI) ─────────────
 
     /** Skala GUI (ile pikseli ekranu przypada na jeden „piksel” Minecrafta). */
-    public static double sf() {
+    /** Dodatkowe skalowanie ekranu (ModMenuScreen zmniejsza panel) – żeby kształty nadal rysowały się co do piksela. */
+    public static float extra = 1f;
+
+    public static double baseSf() {
         try { return Math.max(1.0, MinecraftClient.getInstance().getWindow().getScaleFactor()); } catch (Throwable t) { return 1.0; }
     }
+
+    public static double sf() { return baseSf() * extra; }
 
     private static void begin(DrawContext ctx, double s) { Compat.push(ctx); Compat.scale(ctx, (float) (1.0 / s), (float) (1.0 / s)); }
     private static void end(DrawContext ctx) { Compat.pop(ctx); }

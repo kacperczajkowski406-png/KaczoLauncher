@@ -11,6 +11,9 @@ void main() {
     vec3 sunDir = normalize(mat3(gbufferModelViewInverse) * sunPosition);
     float night = 1.0 - smoothstep(-0.18, 0.04, sunDir.y);
     if (isStar > 0.5) {
+#if WALL == 1
+        discard;
+#endif
         outColor = vec4(vec3(1.0, 0.97, 0.92) * night * 1.4 * (1.0 - rainStrength), 1.0);
         return;
     }

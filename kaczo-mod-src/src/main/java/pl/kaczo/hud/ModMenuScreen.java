@@ -37,11 +37,17 @@ public class ModMenuScreen extends KScreen {
 
     // ───────────── układ ─────────────
 
+    private float S = 1f;
+    private int vw, vh;
+
     private void layout() {
-        ww = Math.min(width - 16, 620);
-        wh = Math.min(height - 16, 350);
-        wx = (width - ww) / 2;
-        wy = (height - wh) / 2;
+        double g = Ui.baseSf();
+        S = (float) Math.min(1.0, 2.6 / g);          // panel ma być PANELEM, a nie ekranem – przy dużej skali GUI zmniejszamy go
+        vw = Math.round(width / S); vh = Math.round(height / S);
+        ww = Math.min(Math.round(vw * 0.76f), 580);
+        wh = Math.min(Math.round(vh * 0.78f), 340);
+        wx = (vw - ww) / 2;
+        wy = (vh - wh) / 2;
         sb = ww >= 440 ? 116 : 38;
         cx0 = wx + sb;
         cw = ww - sb;
@@ -85,15 +91,27 @@ public class ModMenuScreen extends KScreen {
         anim = Ui.easeOut((System.currentTimeMillis() - openedAt) / 260f);
         layout();
         TextRenderer tr = client.textRenderer;
-        Visual.aurora(ctx, width, height, anim);
-        int inset = Math.round((1 - anim) * 10);
-        Ui.glass(ctx, wx + inset, wy + inset, ww - 2 * inset, wh - 2 * inset, 10, f(0xA6000000));
-        if (anim < 0.35f) return;                     // zawartość pojawia się, gdy okno jest już prawie na miejscu
-        drawSidebar(ctx, tr, mx, my);
-        if (page == 0) drawModules(ctx, tr, mx, my);
-        else if (page == 1) drawSettingsPage(ctx, tr, mx, my);
-        else drawAbout(ctx, tr);
-        drawDrawer(ctx, tr, mx, my);
+        // tło: gra / tapeta menu zostaje widoczna, tylko lekko przyciemniona i rozmyta światłem
+        ctx.fill(0, 0, width, height, f(0x70000000));
+        mx = Math.round(mx / S); my = Math.round(my / S);
+        Compat.push(ctx);
+        Compat.scale(ctx, S, S);
+        Ui.extra = S;
+        try {
+            float pop = 0.94f + 0.06f * anim;                 // panel „wyskakuje” z lekkim powiększeniem
+            Compat.push(ctx);
+            Compat.translate(ctx, vw / 2f * (1 - pop), vh / 2f * (1 - pop));
+            Compat.scale(ctx, pop, pop);
+            Ui.glass(ctx, wx, wy, ww, wh, 18, f(0xB0000000));
+            if (anim >= 0.3f) {
+                drawSidebar(ctx, tr, mx, my);
+                if (page == 0) drawModules(ctx, tr, mx, my);
+                else if (page == 1) drawSettingsPage(ctx, tr, mx, my);
+                else drawAbout(ctx, tr);
+                drawDrawer(ctx, tr, mx, my);
+            }
+            Compat.pop(ctx);
+        } finally { Ui.extra = 1f; Compat.pop(ctx); }
     }
 
     private void drawSidebar(DrawContext ctx, TextRenderer tr, int mx, int my) {
@@ -346,7 +364,7 @@ public class ModMenuScreen extends KScreen {
 
     @Override
     protected boolean onClick(double mx, double my, int button) {
-        layout();
+        layout(); mx /= S; my /= S;
         // szuflada
         if (sel != null) {
             int dw = drawerW(), dx = wx + ww - 6 - dw, dy = wy + 6, dh = wh - 12;
@@ -411,6 +429,7 @@ public class ModMenuScreen extends KScreen {
 
     @Override
     protected boolean onDrag(double mx, double my, int button, double dx, double dy) {
+        mx /= S; my /= S;
         if (drawer != null && sel != null && drawer.mouseDragged(mx, my)) return true;
         return page == 1 && general != null && general.mouseDragged(mx, my);
     }
@@ -425,6 +444,7 @@ public class ModMenuScreen extends KScreen {
 
     @Override
     protected boolean onScroll(double mx, double my, double v) {
+        mx /= S; my /= S;
         if (sel != null && drawer != null) return drawer.scrolled(mx, my, v) || true;
         if (page == 1 && general != null && general.scrolled(mx, my, v)) return true;
         if (page == 0) scroll = Math.max(0, Math.min(maxScroll(), scroll - v * 22));

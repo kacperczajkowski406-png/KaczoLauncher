@@ -9,3 +9,6 @@
 #define CHROMA             //
 #define GRAIN              //
 #define SAT 100            //[60 80 100 120 140]
+#define WALL 0             //[0 1]
+#define WMODE 0            //[0 1 2]
+#define WSPEED 0           //[0 26 47 73]
