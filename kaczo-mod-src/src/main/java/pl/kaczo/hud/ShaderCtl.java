@@ -74,6 +74,7 @@ public final class ShaderCtl {
                 if (on) toast(mc, "Brak Iris – uruchom grę przez Kaczo Client (instaluje go sam)");
                 return false;
             }
+            System.out.println("[KaczoShaders] apply on=" + on);
             if (on) extractPack(mc);
             Class<?> iris = Class.forName("net.irisshaders.iris.Iris");
             Object cfg = iris.getMethod("getIrisConfig").invoke(null);
@@ -84,6 +85,7 @@ public final class ShaderCtl {
             Class.forName("net.irisshaders.iris.api.v0.IrisApiConfig").getMethod("setShadersEnabledAndApply", boolean.class).invoke(ac, on);
             return true;
         } catch (Throwable t) {
+            System.out.println("[KaczoShaders] apply failed: " + t); t.printStackTrace(System.out);
             toast(mc, "Nie udało się przełączyć shaderów");
             return false;
         }
