@@ -2,7 +2,7 @@
 html[data-theme="glass"] .shell { display: block; position: relative; height: calc(100vh - 38px); }
 html[data-theme="glass"] .sidebar {
   position: fixed; left: 50%; bottom: 18px; top: auto; transform: translateX(-50%); z-index: 20;
-  width: auto; margin: 0; padding: 8px 10px; border-radius: 999px; flex-direction: row; align-items: center; gap: 6px;
+  width: auto; height: auto !important; min-height: 0 !important; max-height: none !important; right: auto; margin: 0 !important; padding: 8px 10px; border-radius: 999px; flex-direction: row; align-items: center; gap: 6px;
   background: rgba(12, 12, 16, .55); box-shadow: 0 16px 50px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .16);
 }
 html[data-theme="glass"] .sidebar .logo { margin: 0 8px 0 4px; padding: 0; }
