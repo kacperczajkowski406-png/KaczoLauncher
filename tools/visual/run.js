@@ -37,7 +37,7 @@ const shot = (name) => { try { execSync(`import -window root ${path.join(OUT, na
       console.log('mod', f.filename);
     }
     const dst = path.join(GAME, 'shaderpacks', 'KaczoShaders');
-    if (process.env.SHDSTYLE === 'toggle') { fs.mkdirSync(path.join(process.env.HOME, '.kaczo-client'), { recursive: true }); fs.writeFileSync(path.join(process.env.HOME, '.kaczo-client', 'hud-settings.json'), JSON.stringify({ mods: { shaders: { enabled: true, vals: { style: '0' } }, wallpaper: { vals: { id: process.env.WALL || 'silk' } } } })); } else {
+    if ((process.env.SHDSTYLE || '').startsWith('toggle')) { fs.mkdirSync(path.join(process.env.HOME, '.kaczo-client'), { recursive: true }); fs.writeFileSync(path.join(process.env.HOME, '.kaczo-client', 'hud-settings.json'), JSON.stringify({ mods: { shaders: { enabled: true, vals: { style: '0', mode: process.env.SHDSTYLE === 'togglesky' ? '1' : '0' } }, wallpaper: { vals: { id: process.env.WALL || 'silk' } } } })); } else {
     fs.cpSync(path.resolve('../../kaczo-shaders/KaczoShaders'), dst, { recursive: true });
     fs.mkdirSync(path.join(GAME, 'config'), { recursive: true });
     fs.writeFileSync(path.join(GAME, 'config', 'iris.properties'), `enableShaders=true\nshaderPack=KaczoShaders\n`);
@@ -46,7 +46,7 @@ const shot = (name) => { try { execSync(`import -window root ${path.join(OUT, na
   }
   // ustawienia moda: wybrany styl nieba
   const home = process.env.HOME; fs.mkdirSync(path.join(home, '.kaczo-client'), { recursive: true });
-  if (process.env.SHDSTYLE !== 'toggle') fs.writeFileSync(path.join(home, '.kaczo-client', 'hud-settings.json'), JSON.stringify({ mods: { sky: { enabled: true, vals: { style: STYLE } } } }));
+  if (!(process.env.SHDSTYLE || '').startsWith('toggle')) fs.writeFileSync(path.join(home, '.kaczo-client', 'hud-settings.json'), JSON.stringify({ mods: { sky: { enabled: true, vals: { style: STYLE } } } }));
   fs.writeFileSync(path.join(GAME, 'options.txt'), 'onboardAccessibility:false\ntutorialStep:none\nguiScale:2\nmaxFps:30\nrenderDistance:6\nlang:pl_pl\n');
 
   if (process.env.WORLD === '1') process.env.KACZO_AUTOWORLD = '1';

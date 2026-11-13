@@ -46,7 +46,11 @@ vec3 skyColor(vec3 dir, vec3 sunDir, float rain, float t, bool withClouds) {
     col = mix(col, hor * 0.45, smoothstep(0.0, -0.3, h));
 
 #if WALL == 1
+#if SKYONLY == 1
+    col = mix(col, wallSky(dir, t) * 0.85, smoothstep(-0.03, 0.06, dir.y));    // bez post-processingu: korekta jasności
+#else
     col = mix(col, wallSky(dir, t), smoothstep(-0.03, 0.06, dir.y));
+#endif
 #endif
     float sd = max(dot(dir, sunDir), 0.0);
     vec3 sunCol = mix(vec3(1.0, 0.45, 0.18), vec3(1.0, 0.92, 0.75), smoothstep(0.0, 0.45, sy));

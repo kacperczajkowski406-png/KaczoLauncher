@@ -178,6 +178,7 @@ public class Modules {
                 .text(Extras::waypointText));
         reg(new Module("freelook", "Perspective (Freelook)", "Hold Left Alt to look around without turning.", "Visual", "LOOK").fresh().on());
         reg(new Module("shaders", "Shaders", "One click turns on Kaczo Shaders: real lighting, sun shadows, sky, water (needs Iris – the launcher installs it).", "Visual", "SHD").fresh()
+                .add(Setting.choice("mode", "Mode", 0, "Full shaders", "Sky only"))
                 .add(Setting.choice("style", "Look", 0, "Cinematic", "Noir Glass", "Dream"))
                 .add(Setting.bool("wallsky", "Sky = selected wallpaper", true)));
         reg(new Module("theme", "HUD Color", "One color for the whole HUD: all elements and their accents switch to it.", "Visual", "COLOR").fresh()

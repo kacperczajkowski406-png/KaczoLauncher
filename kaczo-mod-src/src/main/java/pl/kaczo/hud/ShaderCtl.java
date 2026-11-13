@@ -22,19 +22,26 @@ public final class ShaderCtl {
     }
 
     /** Rozpakowuje paczkę shaderów z moda do folderu shaderpacks (zawsze świeża wersja). */
+    public static boolean skyOnly() { return Modules.byId("shaders").num("mode") == 1; }
+    public static String packName() { return skyOnly() ? "KaczoSky" : PACK; }
+
     private static void extractPack(MinecraftClient mc) throws IOException {
-        Path dst = FabricLoader.getInstance().getGameDir().resolve("shaderpacks").resolve(PACK);
+        boolean only = skyOnly();
+        Path dst = FabricLoader.getInstance().getGameDir().resolve("shaderpacks").resolve(packName());
         Path src = FabricLoader.getInstance().getModContainer("kaczohud").orElseThrow()
                 .findPath("assets/kaczohud/shaderpack/" + PACK).orElseThrow(() -> new IOException("brak paczki w modzie"));
         try (Stream<Path> w = Files.walk(src)) {
             for (Path p : (Iterable<Path>) w::iterator) {
+                String rel = src.relativize(p).toString().replace('\\', '/');
+                // „Samo niebo”: tylko program nieba + biblioteki – reszta gry zostaje waniliowa (bez cieni, świateł i post-processingu)
+                if (only && !Files.isDirectory(p) && !(rel.startsWith("shaders/lib/") || rel.startsWith("shaders/gbuffers_skybasic."))) continue;
                 Path t = dst.resolve(src.relativize(p).toString());
                 if (Files.isDirectory(p)) Files.createDirectories(t);
                 else { Files.createDirectories(t.getParent()); Files.copy(p, t, java.nio.file.StandardCopyOption.REPLACE_EXISTING); }
             }
         }
         int style = Math.max(0, Math.min(2, Modules.byId("shaders").num("style")));
-        boolean wall = Modules.byId("shaders").bool("wallsky");
+        boolean wall = Modules.byId("shaders").bool("wallsky") || only;
         Wallpapers.Wp wp = Wallpapers.current();
         String opts = "STYLE=" + style + "\n";
         Path td = dst.resolve("shaders").resolve("textures");
@@ -49,8 +56,12 @@ public final class ShaderCtl {
             int sp = wp.layer() == null ? 0 : (wp.id().equals("aurora") ? 47 : wp.id().equals("nebula") ? 26 : wp.id().equals("sakura") ? 73 : 0);
             opts += "WALL=1\nWMODE=" + (wp.layer() == null ? 0 : wp.mode()) + "\nWSPEED=" + sp + "\n";
         }
-        Files.writeString(dst.getParent().resolve(PACK + ".txt"), opts);
-        appliedStyle = style + (wall ? 10 + Math.abs(wp.id().hashCode() % 1000) * 10 : 0);
+        if (only) {
+            opts += "SKYONLY=1\n";
+            Files.writeString(dst.resolve("shaders").resolve("shaders.properties"), "customTexture.kWall=textures/kwall.png\ncustomTexture.kWallL=textures/kwall_l.png\n");
+        }
+        Files.writeString(dst.getParent().resolve(packName() + ".txt"), opts);
+        appliedStyle = stateKey();
     }
 
     private static void copyRes(String res, Path to) throws IOException {
@@ -62,8 +73,8 @@ public final class ShaderCtl {
 
     private static int stateKey() {
         Module m = Modules.byId("shaders");
-        int style = Math.max(0, Math.min(2, m.num("style")));
-        return style + (m.bool("wallsky") ? 10 + Math.abs(Wallpapers.current().id().hashCode() % 1000) * 10 : 0);
+        int style = Math.max(0, Math.min(2, m.num("style"))) + (m.num("mode") == 1 ? 5_000_000 : 0);
+        return style + (m.bool("wallsky") || m.num("mode") == 1 ? 10 + Math.abs(Wallpapers.current().id().hashCode() % 1000) * 10 : 0);
     }
 
     /** Włącza/wyłącza shadery. Zwraca false, gdy nie da się ich włączyć (np. brak Iris). */
@@ -78,7 +89,7 @@ public final class ShaderCtl {
             if (on) extractPack(mc);
             Class<?> iris = Class.forName("net.irisshaders.iris.Iris");
             Object cfg = iris.getMethod("getIrisConfig").invoke(null);
-            cfg.getClass().getMethod("setShaderPackName", String.class).invoke(cfg, PACK);
+            cfg.getClass().getMethod("setShaderPackName", String.class).invoke(cfg, packName());
             try { cfg.getClass().getMethod("save").invoke(cfg); } catch (Throwable ignored) { }
             Object api = Class.forName("net.irisshaders.iris.api.v0.IrisApi").getMethod("getInstance").invoke(null);
             Object ac = api.getClass().getMethod("getConfig").invoke(api);

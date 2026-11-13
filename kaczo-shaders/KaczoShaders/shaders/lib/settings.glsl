@@ -12,3 +12,4 @@
 #define WALL 0             //[0 1]
 #define WMODE 0            //[0 1 2]
 #define WSPEED 0           //[0 26 47 73]
+#define SKYONLY 0          //[0 1]
