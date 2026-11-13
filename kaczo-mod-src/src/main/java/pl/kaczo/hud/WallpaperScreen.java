@@ -10,8 +10,10 @@ import java.util.List;
 
 /** Panel tapet menu głównego: siatka miniatur (live i statyczne), wyszukiwarka, kategorie. Najechanie = podgląd w tle. */
 public class WallpaperScreen extends KScreen {
-    private static final String[] TABS = {"All", "Live", "Static", "Dark", "Nature", "Space", "Colors"};
+    private static final String[] TABS = {"All", "Favorites", "Live", "Static", "Dark", "Nature", "Space", "Colors"};
     private static String tab = "All", query = "";
+    private static int sort = 0;                       // 0 domyślnie, 1 A–Z, 2 live najpierw, 3 ulubione najpierw
+    private static final String[] SORTS = {"Default", "A-Z", "Live first", "Favorites first"};
     private static double scroll = 0;
 
     private final Screen parent;
@@ -43,12 +45,16 @@ public class WallpaperScreen extends KScreen {
         shown.clear();
         String q = query.toLowerCase();
         for (Wallpapers.Wp w : Wallpapers.ALL) {
+            if (tab.equals("Favorites") && !Wallpapers.isFav(w)) continue;
             if (tab.equals("Live") && !w.live()) continue;
             if (tab.equals("Static") && w.live()) continue;
-            if (!tab.equals("All") && !tab.equals("Live") && !tab.equals("Static") && !w.cat().equals(tab)) continue;
+            if (!tab.equals("All") && !tab.equals("Favorites") && !tab.equals("Live") && !tab.equals("Static") && !w.cat().equals(tab)) continue;
             if (!q.isEmpty() && !w.name().toLowerCase().contains(q)) continue;
             shown.add(w);
         }
+        if (sort == 1) shown.sort((a, b) -> a.name().compareToIgnoreCase(b.name()));
+        else if (sort == 2) shown.sort((a, b) -> Boolean.compare(b.live(), a.live()));
+        else if (sort == 3) shown.sort((a, b) -> Boolean.compare(Wallpapers.isFav(b), Wallpapers.isFav(a)));
     }
 
     private int cellX(int i) { return gx + (i % cols) * (cw + GAP); }
@@ -95,6 +101,12 @@ public class WallpaperScreen extends KScreen {
         String st = tr.trimToWidth(query.isEmpty() && !focus ? L.t("Search") : query, sw - 18);
         ctx.drawText(tr, st, sx + 9, sy + 4, query.isEmpty() ? 0xFF808080 : 0xFFFFFFFF, false);
         if (focus && (System.currentTimeMillis() / 500) % 2 == 0) ctx.fill(sx + 9 + tr.getWidth(st), sy + 3, sx + 10 + tr.getWidth(st), sy + 13, 0xFFFFFFFF);
+        // sortowanie
+        String sl = L.t("Sort") + ": " + L.t(SORTS[sort]);
+        int sbw = tr.getWidth(sl) + 14, sbx = sx - sbw - 6;
+        boolean sbh = Ui.in(mx, my, sbx, sy, sbw, 16);
+        Ui.card(ctx, sbx, sy, sbw, 16, 8, sbh ? 0x26FFFFFF : 0x18FFFFFF, 0x22FFFFFF);
+        ctx.drawText(tr, sl, sbx + 7, sy + 4, 0xFFE0E0E0, false);
         // zakładki
         int tx = px + 16, ty = py + 42;
         int total = 0;
@@ -132,7 +144,12 @@ public class WallpaperScreen extends KScreen {
                 Ui.rrectD(ctx, cx + cw - 17, cy + 5, 12, 12, 6, 0xFFFFFFFF);
                 ctx.drawText(tr, "✓", cx + cw - 14, cy + 7, 0xFF000000, false);
             }
-            ctx.drawText(tr, tr.trimToWidth(w.name(), cw), cx + 2, cy + ch + 5, hv || sel ? 0xFFFFFFFF : 0xFFC0C0C0, false);
+            boolean fav = Wallpapers.isFav(w), hh = Ui.in(mx, my, cx + cw - 17, cy + ch - 17, 14, 14);
+            if (fav || hv) {
+                Ui.rrectD(ctx, cx + cw - 17, cy + ch - 17, 13, 13, 6.5, hh ? 0xD0000000 : 0x90000000);
+                ctx.drawText(tr, "\u2665", cx + cw - 14, cy + ch - 14, fav ? 0xFFFF4D6A : 0xFFCCCCCC, false);
+            }
+            ctx.drawText(tr, tr.trimToWidth(w.name(), cw - 10), cx + 2, cy + ch + 5, hv || sel ? 0xFFFFFFFF : 0xFFC0C0C0, false);
             ctx.drawText(tr, w.cat() + " · " + (w.live() ? "live" : "static"), cx + 2, cy + ch + 14, 0xFF707070, false);
         }
         ctx.disableScissor();
@@ -146,6 +163,11 @@ public class WallpaperScreen extends KScreen {
         if (!Ui.in(mx, my, px, py, pw, ph)) { close(); return true; }
         int sw = Math.min(140, pw / 3);
         if (Ui.in(mx, my, px + pw - sw - 14, py + 14, sw, 16)) { focus = true; return true; }
+        {
+            String sl = L.t("Sort") + ": " + L.t(SORTS[sort]);
+            int sbw = client.textRenderer.getWidth(sl) + 14, sbx = px + pw - sw - 14 - sbw - 6;
+            if (Ui.in(mx, my, sbx, py + 14, sbw, 16)) { sort = (sort + 1) % SORTS.length; scroll = 0; return true; }
+        }
         TextRenderer tr = client.textRenderer;
         int x = px + 16;
         for (String t : TABS) {
@@ -155,7 +177,11 @@ public class WallpaperScreen extends KScreen {
         }
         if (my >= gy && my <= gy + gh)
             for (int i = 0; i < shown.size(); i++)
-                if (Ui.in(mx, my, cellX(i), cellY(i), cw, ch)) { Wallpapers.select(shown.get(i)); return true; }
+                if (Ui.in(mx, my, cellX(i), cellY(i), cw, ch)) {
+                    if (Ui.in(mx, my, cellX(i) + cw - 17, cellY(i) + ch - 17, 14, 14)) Wallpapers.toggleFav(shown.get(i));
+                    else Wallpapers.select(shown.get(i));
+                    return true;
+                }
         return true;
     }
 

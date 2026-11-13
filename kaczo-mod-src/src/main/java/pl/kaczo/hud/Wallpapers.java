@@ -48,6 +48,20 @@ public final class Wallpapers {
         return ALL.get(0);
     }
 
+    public static boolean isFav(Wp w) {
+        String f = Config.st("wallpaper").vals.get("fav");
+        return f != null && ("," + f + ",").contains("," + w.id() + ",");
+    }
+
+    public static void toggleFav(Wp w) {
+        java.util.LinkedHashSet<String> set = new java.util.LinkedHashSet<>();
+        String f = Config.st("wallpaper").vals.get("fav");
+        if (f != null && !f.isEmpty()) set.addAll(java.util.Arrays.asList(f.split(",")));
+        if (!set.remove(w.id())) set.add(w.id());
+        Config.st("wallpaper").vals.put("fav", String.join(",", set));
+        Config.save();
+    }
+
     public static void select(Wp w) {
         Config.st("wallpaper").vals.put("id", w.id());
         Config.save();

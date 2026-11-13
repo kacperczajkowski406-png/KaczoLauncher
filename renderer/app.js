@@ -582,19 +582,25 @@ function renderAccounts(view) {
 
 // ───────────────────────── tapety launchera ─────────────────────────
 
-let wpTab = 'all', wpQuery = '';
+let wpTab = 'all', wpQuery = '', wpSort = 'default';
+const wpFavs = () => { try { return JSON.parse(localStorage.getItem('kaczo.wpfav') || '[]'); } catch (e) { return []; } };
+const wpToggleFav = (id) => { const f = wpFavs(); const i = f.indexOf(id); if (i >= 0) f.splice(i, 1); else f.push(id); try { localStorage.setItem('kaczo.wpfav', JSON.stringify(f)); } catch (e) { /* bez zapisu */ } };
 function wallpaperCard() {
   const grid = el('div', { class: 'wp-grid' });
   const count = el('span', { class: 'muted small' });
   const draw = () => {
     const q = wpQuery.trim().toLowerCase();
-    const items = KWall.list.filter((w) => (wpTab === 'all' || (wpTab === 'live' ? w.live : !w.live)) && (!q || w.name.toLowerCase().includes(q)));
+    const favs = wpFavs();
+    const items = KWall.list.filter((w) => (wpTab === 'all' || (wpTab === 'fav' ? favs.includes(w.id) : wpTab === 'live' ? w.live : !w.live)) && (!q || w.name.toLowerCase().includes(q)));
+    if (wpSort === 'az') items.sort((a, b) => a.name.localeCompare(b.name));
+    else if (wpSort === 'live') items.sort((a, b) => Number(b.live) - Number(a.live));
+    else if (wpSort === 'fav') items.sort((a, b) => Number(favs.includes(b.id)) - Number(favs.includes(a.id)));
     count.textContent = t('wp.count', { n: items.length });
     grid.replaceChildren(...(items.length ? items.map((w) => {
       const base = el('div'); const layer = el('div', { class: 'wl' });
       KWall.paint(w, base, layer, false);
       const item = el('button', { class: 'wp-item' + (KWall.current() === w.id ? ' sel' : ''), onclick: () => { KWall.set(w.id); draw(); } },
-        el('div', { class: 'wp-thumb' }, base, w.live && el('span', { class: 'wp-live' }, 'LIVE'), KWall.current() === w.id && el('span', { class: 'wp-check' }, '✓')),
+        el('div', { class: 'wp-thumb' }, base, el('span', { class: 'wp-heart' + (favs.includes(w.id) ? ' on' : ''), onclick: (e) => { e.stopPropagation(); wpToggleFav(w.id); draw(); } }, '♥'), w.live && el('span', { class: 'wp-live' }, 'LIVE'), KWall.current() === w.id && el('span', { class: 'wp-check' }, '✓')),
         el('div', { class: 'wp-name' }, w.name), el('div', { class: 'wp-meta' }, w.cat + ' · ' + (w.live ? 'live' : 'static')));
       // miniatura „live” faktycznie się rusza po najechaniu
       item.addEventListener('mouseenter', () => { base.className = w.live ? 'drift' : ''; });
@@ -606,7 +612,8 @@ function wallpaperCard() {
   draw();
   return el('div', { class: 'card wp-card' },
     el('div', { class: 'wp-head' }, el('h2', {}, t('wp.title')),
-      el('div', { class: 'wp-tabs' }, tab('all', t('wp.all')), tab('live', t('wp.live')), tab('static', t('wp.static'))),
+      el('div', { class: 'wp-tabs' }, tab('all', t('wp.all')), tab('fav', t('wp.fav')), tab('live', t('wp.live')), tab('static', t('wp.static'))),
+      el('select', { class: 'wp-sort', onchange: (e) => { wpSort = e.target.value; draw(); } }, ...[['default', t('wp.sortDefault')], ['az', 'A–Z'], ['live', t('wp.sortLive')], ['fav', t('wp.sortFav')]].map(([v, l]) => el('option', { value: v, selected: wpSort === v }, l))),
       el('input', { type: 'search', class: 'wp-search', placeholder: t('wp.search'), value: wpQuery, oninput: (e) => { wpQuery = e.target.value; draw(); } }), count),
     el('p', { class: 'muted small' }, t('wp.sub')), grid);
 }
