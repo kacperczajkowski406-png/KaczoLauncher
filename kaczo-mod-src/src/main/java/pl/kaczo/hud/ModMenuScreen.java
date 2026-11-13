@@ -44,8 +44,8 @@ public class ModMenuScreen extends KScreen {
         double g = Ui.baseSf();
         S = (float) Math.min(1.0, 2.6 / g);          // panel ma być PANELEM, a nie ekranem – przy dużej skali GUI zmniejszamy go
         vw = Math.round(width / S); vh = Math.round(height / S);
-        ww = Math.min(Math.round(vw * 0.76f), 580);
-        wh = Math.min(Math.round(vh * 0.78f), 340);
+        ww = Math.min(Math.round(vw * 0.84f), 620);
+        wh = Math.min(Math.round(vh * 0.84f), 350);
         wx = (vw - ww) / 2;
         wy = (vh - wh) / 2;
         sb = ww >= 440 ? 116 : 38;
@@ -92,7 +92,8 @@ public class ModMenuScreen extends KScreen {
         layout();
         TextRenderer tr = client.textRenderer;
         // tło: gra / tapeta menu zostaje widoczna, tylko lekko przyciemniona i rozmyta światłem
-        ctx.fill(0, 0, width, height, f(0x70000000));
+        if (client.world == null) Visual.aurora(ctx, width, height, 1f);
+        ctx.fill(0, 0, width, height, f(client.world == null ? 0x50000000 : 0x70000000));
         mx = Math.round(mx / S); my = Math.round(my / S);
         Compat.push(ctx);
         Compat.scale(ctx, S, S);
