@@ -37,7 +37,7 @@ const shot = (name) => { try { execSync(`import -window root ${path.join(OUT, na
       console.log('mod', f.filename);
     }
     const dst = path.join(GAME, 'shaderpacks', 'KaczoShaders');
-    if (process.env.SHDSTYLE === 'toggle') { fs.mkdirSync(path.join(process.env.HOME, '.kaczo-client'), { recursive: true }); fs.writeFileSync(path.join(process.env.HOME, '.kaczo-client', 'hud-settings.json'), JSON.stringify({ mods: { shaders: { enabled: true, vals: { style: '0' } } } })); } else {
+    if (process.env.SHDSTYLE === 'toggle') { fs.mkdirSync(path.join(process.env.HOME, '.kaczo-client'), { recursive: true }); fs.writeFileSync(path.join(process.env.HOME, '.kaczo-client', 'hud-settings.json'), JSON.stringify({ mods: { shaders: { enabled: true, vals: { style: '0' } }, wallpaper: { vals: { id: process.env.WALL || 'silk' } } } })); } else {
     fs.cpSync(path.resolve('../../kaczo-shaders/KaczoShaders'), dst, { recursive: true });
     fs.mkdirSync(path.join(GAME, 'config'), { recursive: true });
     fs.writeFileSync(path.join(GAME, 'config', 'iris.properties'), `enableShaders=true\nshaderPack=KaczoShaders\n`);
