@@ -46,7 +46,7 @@ const shot = (name) => { try { execSync(`import -window root ${path.join(OUT, na
   }
   // ustawienia moda: wybrany styl nieba
   const home = process.env.HOME; fs.mkdirSync(path.join(home, '.kaczo-client'), { recursive: true });
-  fs.writeFileSync(path.join(home, '.kaczo-client', 'hud-settings.json'), JSON.stringify({ mods: { sky: { enabled: true, vals: { style: STYLE } } } }));
+  if (process.env.SHDSTYLE !== 'toggle') fs.writeFileSync(path.join(home, '.kaczo-client', 'hud-settings.json'), JSON.stringify({ mods: { sky: { enabled: true, vals: { style: STYLE } } } }));
   fs.writeFileSync(path.join(GAME, 'options.txt'), 'onboardAccessibility:false\ntutorialStep:none\nguiScale:2\nmaxFps:30\nrenderDistance:6\nlang:pl_pl\n');
 
   if (process.env.WORLD === '1') process.env.KACZO_AUTOWORLD = '1';
