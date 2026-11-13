@@ -37,6 +37,7 @@ public class ModMenuScreen extends KScreen {
 
     // ───────────── układ ─────────────
 
+    private final net.minecraft.client.gui.screen.Screen behind = net.minecraft.client.MinecraftClient.getInstance().currentScreen;
     private float S = 1f;
     private int vw, vh;
 
@@ -92,8 +93,11 @@ public class ModMenuScreen extends KScreen {
         layout();
         TextRenderer tr = client.textRenderer;
         // tło: gra / tapeta menu zostaje widoczna, tylko lekko przyciemniona i rozmyta światłem
-        if (client.world == null) Visual.aurora(ctx, width, height, 1f);
-        ctx.fill(0, 0, width, height, f(client.world == null ? 0x50000000 : 0x70000000));
+        // za panelem zwykła gra (albo zwykłe menu główne) – żadnej osobnej tapety
+        if (client.world == null && behind instanceof net.minecraft.client.gui.screen.TitleScreen) {
+            try { behind.render(ctx, -1, -1, delta); } catch (Throwable ignored) { }
+        }
+        ctx.fill(0, 0, width, height, f(0x48000000));
         mx = Math.round(mx / S); my = Math.round(my / S);
         Compat.push(ctx);
         Compat.scale(ctx, S, S);
