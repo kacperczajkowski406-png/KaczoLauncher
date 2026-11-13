@@ -1,0 +1,41 @@
+/* ───── Nowy układ: pływający dock zamiast kolumny, wielki „hero”, bez pudełek ───── */
+html[data-theme="glass"] .shell { display: block; position: relative; height: calc(100vh - 38px); }
+html[data-theme="glass"] .sidebar {
+  position: fixed; left: 50%; bottom: 18px; top: auto; transform: translateX(-50%); z-index: 20;
+  width: auto; margin: 0; padding: 8px 10px; border-radius: 999px; flex-direction: row; align-items: center; gap: 6px;
+  background: rgba(12, 12, 16, .55); box-shadow: 0 16px 50px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .16);
+}
+html[data-theme="glass"] .sidebar .logo { margin: 0 8px 0 4px; padding: 0; }
+html[data-theme="glass"] .sidebar .logo div { display: none; }
+html[data-theme="glass"] .sidebar .logo-img { width: 34px; height: 34px; }
+html[data-theme="glass"] #nav { display: flex; flex-direction: row; gap: 4px; }
+html[data-theme="glass"] .nav-item { padding: 10px 16px; font-size: 13.5px; transition: background .2s, transform .2s; }
+html[data-theme="glass"] .nav-item:hover { transform: translateY(-2px); }
+html[data-theme="glass"] .sidebar-foot, html[data-theme="glass"] #np { display: none; }
+html[data-theme="glass"] #view { height: 100%; overflow: auto; padding: 22px 6vw 110px; box-sizing: border-box; }
+
+/* Play: ogromny tytuł na tapecie, szklana pigułka akcji pod spodem */
+html[data-theme="glass"] .page-head h1 { font-size: 15px; letter-spacing: .3em; text-transform: uppercase; opacity: .6; }
+html[data-theme="glass"] .hero { background: transparent !important; border: 0 !important; box-shadow: none !important; backdrop-filter: none; padding: 6vh 0 0; min-height: 40vh; display: flex; flex-direction: column; justify-content: flex-end; }
+html[data-theme="glass"] .hero-info h1 { font-size: clamp(44px, 8vw, 104px); line-height: .95; letter-spacing: -.03em; font-weight: 800; margin: 14px 0 8px; text-shadow: 0 8px 60px rgba(0, 0, 0, .55); }
+html[data-theme="glass"] .hero-brand, html[data-theme="glass"] .hotbar { display: none; }
+html[data-theme="glass"] .play-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 22px; padding: 10px; border-radius: 999px; width: fit-content; max-width: 100%;
+  background: rgba(14, 14, 18, .5); border: 1px solid var(--line); backdrop-filter: blur(24px); box-shadow: 0 14px 44px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .14); }
+html[data-theme="glass"] .play-btn { border: 0; border-radius: 999px; padding: 16px 54px; font-size: 18px; font-weight: 800; letter-spacing: .12em; background: #fff; color: #08080a; cursor: pointer;
+  box-shadow: 0 0 40px rgba(255, 255, 255, .35); transition: transform .2s, box-shadow .2s; animation: playglow 3.2s ease-in-out infinite; }
+html[data-theme="glass"] .play-btn:hover { transform: scale(1.05); box-shadow: 0 0 60px rgba(255, 255, 255, .55); }
+html[data-theme="glass"] .play-btn.stop { background: #ff4d5a; color: #fff; animation: none; }
+@keyframes playglow { 0%, 100% { box-shadow: 0 0 30px rgba(255, 255, 255, .25); } 50% { box-shadow: 0 0 52px rgba(255, 255, 255, .5); } }
+html[data-theme="glass"] .selectors { display: flex; gap: 8px; }
+html[data-theme="glass"] .progress { margin-top: 14px; }
+html[data-theme="glass"] .log { margin-top: 12px; max-width: 720px; }
+html[data-theme="glass"] .badge { backdrop-filter: blur(12px); background: rgba(255, 255, 255, .12) !important; color: #fff !important; border: 1px solid rgba(255, 255, 255, .18) !important; padding: 5px 12px; }
+
+/* karty zamiast „pudełek”: większe zaokrąglenia, bez ciężkich ramek, delikatny ruch */
+html[data-theme="glass"] .card { border-radius: 28px !important; border-color: rgba(255, 255, 255, .10) !important; transition: transform .25s, background .25s; }
+html[data-theme="glass"] .card.inst:hover, html[data-theme="glass"] .card.mod:hover { transform: translateY(-3px); background: rgba(30, 30, 36, .6) !important; }
+html[data-theme="glass"] h1 { font-weight: 800; letter-spacing: -.02em; }
+html[data-theme="glass"] .page-head { margin-bottom: 8px; }
+.topbar { background: transparent !important; }
+#view > * { animation: viewin .45s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes viewin { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
