@@ -151,13 +151,21 @@ public class Modules {
                 .size(mc -> new int[]{12 + mc.textRenderer.getWidth(brandText()) + 4, 12})
                 .draw(70, 12, Modules::drawBrand)
                 .add(Setting.bool("showlogo", "Show logo", true)));
-        MUSIC = reg(new Module("music", "Now Playing", "Cover, title and lyrics of your music (Windows).", "HUD", "MUSIC").fresh().on().hud(6, 270)
+        MUSIC = reg(new Module("music", "Music Display", "Cover, title and lyrics of your music (Windows).", "HUD", "MUSIC").fresh().on().hud(6, 270)
                 .size(NowPlayingCard::size).draw(150, 36, NowPlayingCard::draw)
                 .add(Setting.bool("cover", "Show cover", true))
                 .add(Setting.bool("lyrics", "Show lyrics", true))
                 .add(Setting.bool("world", "Lyrics in the world (anchored)", true))
                 .add(Setting.num("width", "Min width", 100, 320, 130))
-                .add(Setting.bool("hide", "Hide when nothing plays", true)));
+                .add(Setting.bool("hide", "Hide when nothing plays", true))
+                // tekst w świecie: wygląd i położenie
+                .add(Setting.num("wdist", "Text distance (blocks)", 2, 16, 6))
+                .add(Setting.num("wsize", "Text size (%)", 50, 250, 100))
+                .add(Setting.num("wspread", "Side offset (degrees)", 0, 45, 22))
+                .add(Setting.choice("wanim", "Text animation", 0, "Typewriter", "Fade", "Rise", "Pop", "Wave"))
+                .add(Setting.color("wtext", "Lyrics text color", Setting.WHITE))
+                .add(Setting.num("wglow", "Glow strength", 0, 100, 60))
+                .add(Setting.bool("wplate", "Dark plate behind text", true)));
 
         reg(new Module("reach", "Reach Display", "Distance of your last hit.", "PvP", "REACH").fresh().hud(6, 290)
                 .text(mc -> Extras.reachText()));

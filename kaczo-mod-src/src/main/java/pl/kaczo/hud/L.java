@@ -34,7 +34,7 @@ public class L {
             {"CPS", "CPS"}, {"Clicks per second.", "Kliknięcia na sekundę."},
             {"Keystrokes", "Klawisze"}, {"Shows WASD, space and mouse buttons.", "Pokazuje WASD, spację i przyciski myszy."},
             {"Armor Status", "Pancerz"}, {"Your armor and durability.", "Twój pancerz i wytrzymałość."},
-            {"Now Playing", "Teraz gra"}, {"Cover, title and lyrics of your music (Windows).", "Okładka, tytuł i tekst Twojej muzyki (Windows)."},
+            {"Music Display", "Music Display"}, {"Text distance (blocks)", "Odległość tekstu (bloki)"}, {"Text size (%)", "Rozmiar tekstu (%)"}, {"Side offset (degrees)", "Odchylenie w bok (stopnie)"}, {"Text animation", "Animacja tekstu"}, {"Typewriter", "Maszyna do pisania"}, {"Fade", "Pojawianie"}, {"Rise", "Wznoszenie"}, {"Pop", "Wyskok"}, {"Wave", "Fala"}, {"Lyrics text color", "Kolor tekstu piosenki"}, {"Glow strength", "Siła poświaty"}, {"Dark plate behind text", "Ciemna płytka pod tekstem"}, {"Cover, title and lyrics of your music (Windows).", "Okładka, tytuł i tekst Twojej muzyki (Windows)."},
             {"Show lyrics", "Pokaż tekst"}, {"Lyrics lines", "Linijki tekstu"}, {"Show cover", "Pokaż okładkę"}, {"Hide when nothing plays", "Ukryj, gdy nic nie gra"},
             {"Custom Crosshair", "Własny celownik"}, {"Your own crosshair.", "Twój własny celownik."},
             {"Dot", "Kropka"}, {"Cross", "Krzyż"}, {"Circle", "Okrąg"}, {"Square", "Kwadrat"},

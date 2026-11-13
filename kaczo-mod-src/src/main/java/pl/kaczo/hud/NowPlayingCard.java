@@ -5,7 +5,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 
 /**
- * Karta „Teraz gra”: okładka, tytuł, artysta i JEDNA linijka tekstu (aktualna).
+ * Karta „Music Display”: okładka, tytuł, artysta i JEDNA linijka tekstu (aktualna).
  * Gdy tytuł albo linijka są za długie, karta płynnie poszerza się w bok (animacja), a gdy się skrócą – zwęża.
  */
 public class NowPlayingCard {
