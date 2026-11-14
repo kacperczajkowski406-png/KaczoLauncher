@@ -22,7 +22,7 @@ dependencies {
 
 processResources {
     inputs.property 'version', project.version
-    filesMatching('fabric.mod.json') { expand 'version': project.version, 'mc': project.minecraft_version }
+    filesMatching('fabric.mod.json') { expand 'version': project.version, 'mc': (project.minecraft_version.startsWith('26.1') ? '26.1.x' : project.minecraft_version) }
 }
 
 tasks.withType(JavaCompile).configureEach {
