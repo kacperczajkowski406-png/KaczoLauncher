@@ -44,4 +44,5 @@ public final class Compat {
         int al = Math.max(0, Math.min(255, Math.round(a * 255)));
         ctx.drawTexture(RenderPipelines.GUI_TEXTURED, id, 0, 0, 0f, 0f, w, h, w, h, (al << 24) | (rgb & 0xFFFFFF));
     }
+    public static void press(net.minecraft.client.gui.widget.ButtonWidget b) { b.onPress(); }
 }

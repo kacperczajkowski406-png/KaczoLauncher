@@ -48,4 +48,5 @@ public final class Compat {
     public static long dayTime(net.minecraft.client.multiplayer.ClientLevel level) { return level.getGameTime(); }
     /** Komunikat nad paskiem życia (action bar). */
     public static void actionBar(Minecraft mc, net.minecraft.network.chat.Component text) { mc.gui.setOverlayMessage(text, false); }
+    public static void press(net.minecraft.client.gui.components.Button b) { b.onPress(new net.minecraft.client.input.KeyEvent(257, 0, 0)); }
 }

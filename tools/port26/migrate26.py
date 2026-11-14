@@ -195,7 +195,6 @@ POST = [
     ('ClipContext.ShapeType.', 'ClipContext.Block.'), ('ClipContext.FluidHandling.', 'ClipContext.Fluid.'),
     ('Heightmap.Type.', 'Heightmap.Types.'), ('.getTopY(Heightmap', '.getHeight(Heightmap'),
     ('dir.multiply(d)', 'dir.scale(d)'),
-    ('bw.onPress()', 'bw.onPress(new net.minecraft.client.input.KeyEvent(257, 0, 0))'),
 ]
 def postfix(out):
     n = 0

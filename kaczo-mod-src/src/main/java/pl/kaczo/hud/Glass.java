@@ -87,7 +87,7 @@ public final class Glass {
                     try { Thread.sleep(4000); } catch (Throwable ignored) { }
                     client.execute(() -> {
                         for (ClickableWidget b : Screens.getButtons(client.currentScreen))
-                            if (b instanceof ButtonWidget bw && bw.getMessage().getContent() instanceof TranslatableTextContent t && t.getKey().equals("selectWorld.create")) bw.onPress();
+                            if (b instanceof ButtonWidget bw && bw.getMessage().getContent() instanceof TranslatableTextContent t && t.getKey().equals("selectWorld.create")) Compat.press(bw);
                     });
                 }).start();
             }

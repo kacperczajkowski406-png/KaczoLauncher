@@ -50,4 +50,5 @@ public final class Compat {
         ctx.draw();
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
     }
+    public static void press(net.minecraft.client.gui.widget.ButtonWidget b) { b.onPress(); }
 }
