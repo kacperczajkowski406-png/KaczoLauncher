@@ -65,9 +65,9 @@ public final class Sb {
         boolean showScores = m.bool("scores");
         List<Row> rows = new ArrayList<>();
         for (ScoreboardEntry e : entries) {
-            Text name = Team.decorateName(sb.getScoreHolderTeam(e.owner()), e.name());
+            Text nm = Team.decorateName(sb.getScoreHolderTeam(e.owner()), e.name());
             Text score = showScores ? e.formatted(obj.getNumberFormatOr(StyledNumberFormat.RED)) : Text.empty();
-            rows.add(new Row(name, score));
+            rows.add(new Row(nm, score));
         }
         Text title = obj.getDisplayName();
         var font = mc.textRenderer;

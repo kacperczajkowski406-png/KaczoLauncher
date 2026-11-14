@@ -23,6 +23,15 @@ public final class Compat {
     public static void pop(GuiGraphicsExtractor ctx) { ctx.pose().popMatrix(); }
     public static void translate(GuiGraphicsExtractor ctx, float x, float y) { ctx.pose().translate(x, y); }
     public static void scale(GuiGraphicsExtractor ctx, float x, float y) { ctx.pose().scale(x, y); }
+    public static void rotate(GuiGraphicsExtractor ctx, float rad) { ctx.pose().rotate(rad); }
+    public static net.minecraft.network.chat.Component clockText(String s) {
+        return net.minecraft.network.chat.Component.literal(s).setStyle(net.minecraft.network.chat.Style.EMPTY.withFont(new net.minecraft.network.chat.FontDescription.Resource(Identifier.fromNamespaceAndPath("kaczohud", "clock"))));
+    }
+    /** Tekstura z tintem rgb i przezroczystością a (0..1). */
+    public static void texA(GuiGraphicsExtractor ctx, Identifier id, int w, int h, int rgb, float a) {
+        int argb = (Math.max(0, Math.min(255, Math.round(a * 255))) << 24) | (rgb & 0xFFFFFF);
+        ctx.blit(RenderPipelines.GUI_TEXTURED, id, 0, 0, 0f, 0f, w, h, w, h, argb);
+    }
     public static void flush(GuiGraphicsExtractor ctx) { }
     public static void alpha(float a) { }
 

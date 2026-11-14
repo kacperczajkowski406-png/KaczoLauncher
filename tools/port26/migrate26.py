@@ -77,7 +77,7 @@ def rewrite(txt):
     txt = re.sub(r'HudRenderCallback\.EVENT\.register\(\(ctx, tick\) ->', 'HudElementRegistry.addLast(net.minecraft.resources.Identifier.fromNamespaceAndPath("kaczohud", "hud"), (ctx, tick) ->', txt)
     txt = txt.replace('SoundEvent.fromNamespaceAndPath(', 'SoundEvent.createVariableRangeEvent(').replace('SoundInstance.AttenuationType', 'SoundInstance.Attenuation')
     txt = txt.replace('setDone();', 'stop();').replace('cur.isDone()', 'cur.isStopped()')
-    txt = re.sub(r'(\w+)\.getTimeOfDay\(\)', r'Compat.dayTime(\1)', txt)
+    txt = re.sub(r'([\w.]+)\.getTimeOfDay\(\)', r'Compat.dayTime(\1)', txt)
     txt = re.sub(r'mc\.player\.sendMessage\((.*), true\)', r'Compat.actionBar(mc, \1)', txt)
     txt = add_arg(txt, 'drawTextWithShadow', 'text', ', true')
     if re.search(r'extends\s+(KScreen|Screen)\b', txt):
@@ -188,8 +188,28 @@ def members(jar, cls):
 
 ERR = re.compile(r'^(?P<file>\S+\.java):(?P<line>\d+): error: cannot find symbol$')
 
+POST = [
+    ('.substrByWidth(', '.plainSubstrByWidth('),
+    ('SoundEvent.fromNamespaceAndPath(', 'SoundEvent.createVariableRangeEvent('),
+    ('this.repeatDelay =', 'this.delay ='), ('this.repeat =', 'this.looping ='), ('this.attenuationType =', 'this.attenuation ='),
+    ('ClipContext.ShapeType.', 'ClipContext.Block.'), ('ClipContext.FluidHandling.', 'ClipContext.Fluid.'),
+    ('Heightmap.Type.', 'Heightmap.Types.'), ('.getTopY(Heightmap', '.getHeight(Heightmap'),
+    ('dir.multiply(d)', 'dir.scale(d)'),
+    ('bw.onPress()', 'bw.onPress(new net.minecraft.client.input.KeyEvent(257, 0, 0))'),
+]
+def postfix(out):
+    n = 0
+    for root, _, fs in os.walk(out):
+        for f in fs:
+            if not f.endswith('.java'): continue
+            p = os.path.join(root, f); t = open(p, encoding='utf8').read(); o = t
+            for a, b in POST: t = t.replace(a, b)
+            if t != o: open(p, 'w', encoding='utf8').write(t); n += 1
+    return n
+
 def fix(args):
     mapp, out, log, jar = args[:4]
+    pf = postfix(out)
     classes, inv, ymem = load_map(mapp)
     allc = [l.strip().replace('/', '.') for l in subprocess.run(['unzip', '-Z1', jar], capture_output=True, text=True).stdout.split('\n') if l.endswith('.class')]
     allc = [c[:-6] for c in allc]
@@ -300,7 +320,7 @@ def fix(args):
         open(path, 'w', encoding='utf8').write('\n'.join(L))
     for u in unresolved[:60]: print('NIEROZWIĄZANE:', u)
     print(f'poprawek: {changed}, nierozwiązanych: {len(unresolved)}')
-    sys.exit(0 if changed else 3)
+    sys.exit(0 if (changed or pf) else 3)
 
 if __name__ == '__main__':
     {'gen': gen, 'fix': fix}[sys.argv[1]](sys.argv[2:])
