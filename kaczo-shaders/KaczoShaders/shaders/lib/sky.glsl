@@ -20,6 +20,18 @@ vec3 wallSky(vec3 dir, float t) {
     float az = atan(dir.x, dir.z) / 6.2831853 + 0.5;
     float x = 1.0 - abs(1.0 - mod(az * 2.0, 2.0));
     float v = 1.0 - pow(clamp(dir.y, 0.0, 1.0), 0.8) * 0.97;
+#if WATLAS == 1
+    // animowane niebo: klatki leżą w atlasie 4x4, płynnie mieszamy dwie sąsiednie
+    float fr = t * float(WFPS) * 0.1;
+    float i0 = mod(floor(fr), float(WFRAMES));
+    float i1 = mod(i0 + 1.0, float(WFRAMES));
+    float k = fr - floor(fr);
+    k = k * k * (3.0 - 2.0 * k);
+    vec2 uvc = clamp(vec2(x, v), 0.004, 0.996);
+    vec3 wa = texture(kWall, (vec2(mod(i0, 4.0), floor(i0 / 4.0)) + uvc) * 0.25).rgb;
+    vec3 wb = texture(kWall, (vec2(mod(i1, 4.0), floor(i1 / 4.0)) + uvc) * 0.25).rgb;
+    return pow(mix(wa, wb, k), vec3(1.1)) * 1.3;
+#endif
     vec3 w = texture(kWall, vec2(x, v)).rgb;
     float xl = WMODE == 1 ? fract(az + t * float(WSPEED) * 0.0001) : x;
     vec4 L = texture(kWallL, vec2(xl, v));

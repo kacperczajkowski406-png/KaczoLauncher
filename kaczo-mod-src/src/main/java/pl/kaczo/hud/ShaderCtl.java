@@ -41,18 +41,24 @@ public final class ShaderCtl {
             }
         }
         int style = Math.max(0, Math.min(2, Modules.byId("shaders").num("style")));
-        boolean wall = Modules.byId("shaders").bool("wallsky") || only;
-        Wallpapers.Wp wp = Wallpapers.current();
+        Skies.Sky sk = Skies.current(only);
+        boolean wall = !sk.id().equals("kaczo");
         String opts = "STYLE=" + style + "\n";
         Path td = dst.resolve("shaders").resolve("textures");
         Files.createDirectories(td);
+        String W = "/assets/kaczohud/textures/wallpaper/";
         if (!wall) {
-            copyRes("/assets/kaczohud/textures/wallpaper/none.png", td.resolve("kwall.png"));
-            copyRes("/assets/kaczohud/textures/wallpaper/none.png", td.resolve("kwall_l.png"));
+            copyRes(W + "none.png", td.resolve("kwall.png"));
+            copyRes(W + "none.png", td.resolve("kwall_l.png"));
+        } else if (sk.atlas() != null) {
+            // animowane niebo z klatek: jeden atlas 4×4, shader miesza kolejne klatki
+            copyRes("/assets/kaczohud/textures/sky/" + sk.atlas() + ".png", td.resolve("kwall.png"));
+            copyRes(W + "none.png", td.resolve("kwall_l.png"));
+            opts += "WALL=1\nWATLAS=1\nWFRAMES=" + sk.frames() + "\nWFPS=" + sk.fps10() + "\n";
         } else {
-            // niebo = wybrana tapeta (ta sama co w menu): obraz + ewentualna ruchoma warstwa trafiają do paczki jako tekstury
-            copyRes(wp.base().startsWith("/") ? wp.base() : "/assets/kaczohud/textures/wallpaper/" + wp.base() + ".png", td.resolve("kwall.png"));
-            copyRes("/assets/kaczohud/textures/wallpaper/" + (wp.layer() != null ? wp.layer() : "none") + ".png", td.resolve("kwall_l.png"));
+            Wallpapers.Wp wp = Wallpapers.ALL.stream().filter(x -> x.id().equals(sk.wallpaperId())).findFirst().orElse(Wallpapers.ALL.get(0));
+            copyRes(wp.base().startsWith("/") ? wp.base() : W + wp.base() + ".png", td.resolve("kwall.png"));
+            copyRes(W + (wp.layer() != null ? wp.layer() : "none") + ".png", td.resolve("kwall_l.png"));
             int sp = wp.layer() == null ? 0 : (wp.id().equals("aurora") ? 47 : wp.id().equals("nebula") ? 26 : wp.id().equals("sakura") ? 73 : 0);
             opts += "WALL=1\nWMODE=" + (wp.layer() == null ? 0 : wp.mode()) + "\nWSPEED=" + sp + "\n";
         }
@@ -74,7 +80,7 @@ public final class ShaderCtl {
     private static int stateKey() {
         Module m = Modules.byId("shaders");
         int style = Math.max(0, Math.min(2, m.num("style"))) + (m.num("mode") == 1 ? 5_000_000 : 0);
-        return style + (m.bool("wallsky") || m.num("mode") == 1 ? 10 + Math.abs(Wallpapers.current().id().hashCode() % 1000) * 10 : 0);
+        return style + 10 + m.num("sky") * 10 + (m.num("mode") == 1 ? 1000 : 0);
     }
 
     /** Włącza/wyłącza shadery. Zwraca false, gdy nie da się ich włączyć (np. brak Iris). */

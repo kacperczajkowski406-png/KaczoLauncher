@@ -37,7 +37,7 @@ const shot = (name) => { try { execSync(`import -window root ${path.join(OUT, na
       console.log('mod', f.filename);
     }
     const dst = path.join(GAME, 'shaderpacks', 'KaczoShaders');
-    if ((process.env.SHDSTYLE || '').startsWith('toggle')) { fs.mkdirSync(path.join(process.env.HOME, '.kaczo-client'), { recursive: true }); fs.writeFileSync(path.join(process.env.HOME, '.kaczo-client', 'hud-settings.json'), JSON.stringify({ mods: { shaders: { enabled: true, vals: { style: '0', mode: process.env.SHDSTYLE === 'togglesky' ? '1' : '0' } }, wallpaper: { vals: { id: process.env.WALL || 'silk' } } } })); } else {
+    if ((process.env.SHDSTYLE || '').startsWith('toggle')) { fs.mkdirSync(path.join(process.env.HOME, '.kaczo-client'), { recursive: true }); fs.writeFileSync(path.join(process.env.HOME, '.kaczo-client', 'hud-settings.json'), JSON.stringify({ mods: { shaders: { enabled: true, vals: { style: '0', mode: process.env.SHDSTYLE === 'togglesky' ? '1' : '0', sky: /^\d+$/.test(process.env.WALL || '') ? process.env.WALL : '0' } }, wallpaper: { vals: { id: /^\d+$/.test(process.env.WALL || '') ? 'silk' : (process.env.WALL || 'silk') } } } })); } else {
     fs.cpSync(path.resolve('../../kaczo-shaders/KaczoShaders'), dst, { recursive: true });
     fs.mkdirSync(path.join(GAME, 'config'), { recursive: true });
     fs.writeFileSync(path.join(GAME, 'config', 'iris.properties'), `enableShaders=true\nshaderPack=KaczoShaders\n`);

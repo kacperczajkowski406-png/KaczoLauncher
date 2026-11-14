@@ -13,3 +13,6 @@
 #define WMODE 0            //[0 1 2]
 #define WSPEED 0           //[0 26 47 73]
 #define SKYONLY 0          //[0 1]
+#define WATLAS 0           //[0 1]
+#define WFRAMES 16         //[11 12 16]
+#define WFPS 3             //[3 16 18 100 149]
