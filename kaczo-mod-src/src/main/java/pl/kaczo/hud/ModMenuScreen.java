@@ -421,6 +421,7 @@ public class ModMenuScreen extends KScreen {
                     Module m = shown.get(i);
                     if (Ui.in(mx, my, rx + rw - 52, ry + 10, 14, 14)) { m.toggleFav(); return true; }
                     if (Ui.in(mx, my, rx + rw - 36, ry + 9, 30, 16)) { m.setEnabled(!m.enabled()); return true; }
+                    if (m == Modules.MUSIC) { client.setScreen(new LyricsScreen(this)); return true; }
                     sel = m; drawer = null;
                     return true;
                 }
