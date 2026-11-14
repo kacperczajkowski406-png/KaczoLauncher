@@ -33,10 +33,11 @@ jobs:
         run: bash tools/port26/run.sh
       - name: Dump class members
         run: |
-          J=$(find /tmp/gh-home -name "minecraft*26.1*.jar" -size +10M 2>/dev/null | grep -v sources | head -1); echo "JAR=$J"
-          for c in gui.components.AbstractWidget gui.screens.LoadingOverlay gui.components.BossHealthOverlay renderer.PanoramaRenderer client.gui.components.SplashRenderer gui.components.LogoRenderer gui.Gui renderer.GameRenderer Camera client.multiplayer.ClientLevel; do
-            for full in net.minecraft.client.$c net.minecraft.$c; do javap -p -cp "$J" $full 2>/dev/null | grep -E "class|render|Render|extract|progress|fade|Progress|Skyc|SkyColor|sky|Sky|bob|hurt|Hurt|setRotation|update|draw|Logo" ; done
-          done | head -150
+          J=$(find /tmp/gh-home -name "minecraft-merged-deobf-26.1.jar" | head -1)
+          for n in LoadingOverlay BossHealthOverlay PanoramaRenderer SplashRenderer LogoRenderer ClientLevel GameRenderer Camera Gui; do
+            c=$(unzip -Z1 "$J" | grep -E "(^|/)$n\.class$" | grep -E "net/minecraft/client" | head -1 | sed 's/\.class$//; s#/#.#g')
+            echo "=== $c"; javap -p -cp "$J" "$c" 2>/dev/null | grep -E "render|Render|extract|rogress|fade|Fade|SkyColor|bob|Bob|hurt|Hurt|setRotation|update\(|draw|Logo|Crosshair|crosshair|Scoreboard|scoreboard" | cut -c1-200
+          done
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - name: Install tools
