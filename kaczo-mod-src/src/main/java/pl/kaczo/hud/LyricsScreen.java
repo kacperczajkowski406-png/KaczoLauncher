@@ -7,7 +7,7 @@ import net.minecraft.text.Text;
 
 /** Studio tekstu piosenki (Music Display): zakładki, gotowe style, czcionki, animacje i podgląd na żywo. */
 public class LyricsScreen extends KScreen {
-    private static final String[] TABS = {"Presets", "Style", "Animation", "Layout", "General"};
+    private static final String[] TABS = {"Styles", "Look", "Animation", "Layout", "General"};
     private static final String[] FONTS = {"Global", "Inter", "Poppins", "Lora", "Mono", "Minecraft"};
     private static final String[] ANIMS = {"Typewriter", "Fade", "Rise", "Pop", "Wave"};
     private static final String[][] COLORS = {
@@ -29,10 +29,11 @@ public class LyricsScreen extends KScreen {
             new Preset("Dreamy", 3, "190,170,255,255,0", 90, 1, false),
     };
     private static int tab = 0;
+    static void openTab(int t) { tab = Math.max(0, Math.min(4, t)); }
 
     private final Screen parent;
     private final long opened = System.currentTimeMillis();
-    private int px, py, pw, ph, sbw = 76, cx, cy, cw, chh, prevH = 46;
+    private int px, py, pw, ph, sbw = 92, cx, cy, cw, chh, prevH = 38;
     private float S = 1f;
     private int vw, vh;
     private double scroll = 0;
@@ -44,10 +45,10 @@ public class LyricsScreen extends KScreen {
     @Override public void close() { client.setScreen(parent); }
 
     private void layout() {
-        S = (float) Math.min(1.0, 2.6 / Ui.baseSf());
+        S = (float) Math.min(1.0, 1.5 / Ui.baseSf());
         vw = Math.round(width / S); vh = Math.round(height / S);
-        pw = Math.min(Math.round(vw * 0.82f), 420);
-        ph = Math.min(Math.round(vh * 0.88f), 300);
+        pw = Math.min(Math.round(vw * 0.88f), 470);
+        ph = Math.min(Math.round(vh * 0.92f), 330);
         px = (vw - pw) / 2; py = (vh - ph) / 2;
         cx = px + sbw + 6; cy = py + 30; cw = pw - sbw - 12;
         chh = ph - 30 - prevH - 34;
@@ -134,7 +135,7 @@ public class LyricsScreen extends KScreen {
             int ty = py + 30 + i * 22;
             boolean on = i == tab, h = Ui.in(mx, my, px + 6, ty, sbw - 4, 19);
             Ui.card(ctx, px + 6, ty, sbw - 4, 19, 9, on ? 0x38FFFFFF : (h ? 0x20FFFFFF : 0x0CFFFFFF), on ? 0xAAFFFFFF : 0x22FFFFFF);
-            ctx.drawText(tr, L.t(TABS[i]), px + 14, ty + 6, on ? 0xFFFFFFFF : 0xFFB8BFCC, false);
+            ctx.drawText(tr, tr.trimToWidth(L.t(TABS[i]), sbw - 20), px + 14, ty + 6, on ? 0xFFFFFFFF : 0xFFB8BFCC, false);
         }
         // zawartość
         ctx.enableScissor(Math.round(cx * S), Math.round(cy * S), Math.round((cx + cw) * S), Math.round((cy + chh) * S));
@@ -147,10 +148,12 @@ public class LyricsScreen extends KScreen {
         sample(ctx, tr, "Under a midnight blue sky", cx + cw / 2, pY + prevH / 2 - 2, fontIdx(), col, m().num("wglow"), m().num("wanim"), ms, 1f);
         // stopka
         int fy = py + ph - 24;
-        button(ctx, tr, px + 10, fy, 76, 16, L.t("Reset Tab"), mx, my, false);
-        button(ctx, tr, px + 92, fy, 86, 16, L.t("Move on screen"), mx, my, false);
-        button(ctx, tr, px + pw - 66, fy, 56, 16, L.t("Done"), mx, my, true);
+        button(ctx, tr, px + 10, fy, bw(L.t("Reset Tab")), 16, L.t("Reset Tab"), mx, my, false);
+        button(ctx, tr, px + 16 + bw(L.t("Reset Tab")), fy, bw(L.t("Move on screen")), 16, L.t("Move on screen"), mx, my, false);
+        button(ctx, tr, px + pw - 10 - bw(L.t("Done")), fy, bw(L.t("Done")), 16, L.t("Done"), mx, my, true);
     }
+
+    private int bw(String l) { return client.textRenderer.getWidth(l) + 20; }
 
     private void button(DrawContext ctx, TextRenderer tr, int x, int y, int w, int h, String label, int mx, int my, boolean accent) {
         boolean hv = Ui.in(mx, my, x, y, w, h);
@@ -191,7 +194,7 @@ public class LyricsScreen extends KScreen {
 
     private int totalH;
 
-    private int presetBoxH() { return 26; }
+    private int presetBoxH() { return 24; }
 
     private void presets(DrawContext ctx, TextRenderer tr, int mx, int my, long ms) {
         Module m = m();
@@ -200,7 +203,7 @@ public class LyricsScreen extends KScreen {
             boolean hv = Ui.in(mx, my, cx, y, cw, presetBoxH()) && my >= cy && my < cy + chh;
             boolean on = p.font == m.num("font") && p.color.equals(m.raw("wtext")) && p.glow == m.num("wglow") && p.anim == m.num("wanim");
             Ui.card(ctx, cx, y, cw, presetBoxH(), 6, hv ? 0x30FFFFFF : 0x18FFFFFF, on ? 0xFF6BE08A : 0x33FFFFFF);
-            sample(ctx, tr, p.name, cx + cw / 2, y + 9, p.font, colorOf(p.color, ms), p.glow, p.anim == 0 ? 1 : p.anim, ms, 1f);
+            sample(ctx, tr, p.name, cx + cw / 2, y + 8, p.font, colorOf(p.color, ms), p.glow, p.anim == 0 ? 1 : p.anim, ms, 1f);
             rowY += presetBoxH() + 4;
         }
     }
@@ -264,9 +267,9 @@ public class LyricsScreen extends KScreen {
         if (Ui.in(mx, my, px + pw - 22, py + 8, 14, 14)) { close(); return true; }
         for (int i = 0; i < TABS.length; i++) if (Ui.in(mx, my, px + 6, py + 30 + i * 22, sbw - 4, 19)) { tab = i; scroll = 0; return true; }
         int fy = py + ph - 24;
-        if (Ui.in(mx, my, px + pw - 66, fy, 56, 16)) { close(); return true; }
-        if (Ui.in(mx, my, px + 92, fy, 86, 16)) { client.setScreen(new EditScreen(this, m())); return true; }
-        if (Ui.in(mx, my, px + 10, fy, 76, 16)) { resetTab(); return true; }
+        if (Ui.in(mx, my, px + pw - 10 - bw(L.t("Done")), fy, bw(L.t("Done")), 16)) { close(); return true; }
+        if (Ui.in(mx, my, px + 16 + bw(L.t("Reset Tab")), fy, bw(L.t("Move on screen")), 16)) { client.setScreen(new EditScreen(this, m())); return true; }
+        if (Ui.in(mx, my, px + 10, fy, bw(L.t("Reset Tab")), 16)) { resetTab(); return true; }
         if (!Ui.in(mx, my, cx, cy, cw, chh)) return true;
         Module m = m();
         int y = cy - (int) scroll;

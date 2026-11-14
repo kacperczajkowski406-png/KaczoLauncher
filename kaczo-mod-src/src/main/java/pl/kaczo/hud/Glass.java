@@ -64,7 +64,7 @@ public final class Glass {
     private static boolean autoDone;
     private static Screen testScreen(String k) {
         if ("wall".equals(k)) return new WallpaperScreen(null);
-        if ("lyrics".equals(k)) return new LyricsScreen(null);
+        if (k != null && k.startsWith("lyrics")) { LyricsScreen.openTab(k.length() > 6 ? k.charAt(6) - '0' : 0); return new LyricsScreen(null); }
         ModMenuScreen m = new ModMenuScreen();
         if ("drawer".equals(k)) m.sel = Modules.byId("keystrokes");
         return m;
