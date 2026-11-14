@@ -168,9 +168,14 @@ public final class Extras {
 
     // ───────────── rysowanie niestandardowych modułów ─────────────
 
-    private static final ItemStack[] PVP = {
-            new ItemStack(Items.TOTEM_OF_UNDYING), new ItemStack(Items.END_CRYSTAL), new ItemStack(Items.GOLDEN_APPLE),
-            new ItemStack(Items.ENCHANTED_GOLDEN_APPLE), new ItemStack(Items.EXPERIENCE_BOTTLE), new ItemStack(Items.ENDER_PEARL)};
+    private static ItemStack[] pvpCache;
+    /** Tworzone dopiero przy pierwszym rysowaniu – w Minecrafcie 26.x komponenty przedmiotów nie są gotowe przy starcie klasy. */
+    private static ItemStack[] pvp() {
+        if (pvpCache == null) pvpCache = new ItemStack[]{
+                new ItemStack(Items.TOTEM_OF_UNDYING), new ItemStack(Items.END_CRYSTAL), new ItemStack(Items.GOLDEN_APPLE),
+                new ItemStack(Items.ENCHANTED_GOLDEN_APPLE), new ItemStack(Items.EXPERIENCE_BOTTLE), new ItemStack(Items.ENDER_PEARL)};
+        return pvpCache;
+    }
     private static final String[] PVP_KEYS = {"totem", "crystal", "gapple", "egapple", "xpb", "pearl"};
 
     public static int[] pvpSize(MinecraftClient mc) {
@@ -184,12 +189,12 @@ public final class Extras {
         if (mc.player == null) return;
         Module m = Modules.byId("pvpitems");
         int i = 0;
-        for (int k = 0; k < PVP.length; k++) {
+        for (int k = 0; k < pvp().length; k++) {
             if (!m.bool(PVP_KEYS[k])) continue;
             int cx = x + i * 26;
             Ui.box(ctx, cx - 1, y - 1, 24, 22, m.bg());
-            ctx.drawItem(PVP[k], cx + 3, y + 1);
-            int c = mc.player.getInventory().count(PVP[k].getItem());
+            ctx.drawItem(pvp()[k], cx + 3, y + 1);
+            int c = mc.player.getInventory().count(pvp()[k].getItem());
             String s = String.valueOf(c);
             ctx.drawText(mc.textRenderer, s, cx + 21 - mc.textRenderer.getWidth(s), y + 11, c == 0 ? 0xFFFF5C63 : 0xFFFFFFFF, true);
             i++;
