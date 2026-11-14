@@ -1,0 +1,4 @@
+gen ok
+kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java:75: error: incompatible types: ClipContext cannot be converted to ClipBlockStateContext
+  kaczo-mod-26/gen/java/pl/kaczo/hud/SkyWorld.java:75: error: incompatible types: ClipContext cannot be converted to ClipBlockStateContext
+poprawek: 0, nierozwiązanych: 0

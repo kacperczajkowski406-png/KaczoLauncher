@@ -1,0 +1,8 @@
+{
+  "menu_music": {
+    "category": "music",
+    "sounds": [
+      { "name": "kaczohud:music/kaczo_theme", "stream": true, "volume": 1.0 }
+    ]
+  }
+}
