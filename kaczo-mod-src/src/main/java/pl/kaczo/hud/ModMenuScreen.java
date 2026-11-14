@@ -214,7 +214,7 @@ public class ModMenuScreen extends KScreen {
         filter();
         int on = 0;
         for (Module m : Modules.ALL) if (m.enabled()) on++;
-        header(ctx, tr, L.t("Modules"), Modules.ALL.size() + " " + L.t("modules") + "  ·  " + on + " " + L.t("enabled"));
+        if (sel == null && drawer == null) header(ctx, tr, L.t("Modules"), Modules.ALL.size() + " " + L.t("modules") + "  ·  " + on + " " + L.t("enabled"));
         drawSearch(ctx, tr, mx, my);
         // zakładki
         int x = cx0 + 12, y = wy + 40;
@@ -327,7 +327,8 @@ public class ModMenuScreen extends KScreen {
         ctx.fill(cx0, wy + 6, wx + ww - 6, wy + wh - 6, f((int) (0x70 * d) << 24 | 0x050810));
         if (sel == null && drawer == null) return;
         Module m = sel != null ? sel : drawer.module();
-        Ui.glass(ctx, dx, dy, dw, dh, 9, f(0xF0101010));
+        Ui.rrectD(ctx, dx, dy, dw, dh, 9, f(0xFF141414));
+        Ui.glass(ctx, dx, dy, dw, dh, 9, f(0x30101010));
         // nagłówek
         int tc = tint(m.category);
         Ui.rrectD(ctx, dx + 8, dy + 8, 18, 18, 6, f(0x30FFFFFF));
