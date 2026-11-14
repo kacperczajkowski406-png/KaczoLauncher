@@ -79,7 +79,7 @@ public class ModMenuScreen extends KScreen {
     private int rowY(int i) { return listY + (i / cols()) * (RH + GAP) - (int) scroll; }
     private int maxScroll() { return Math.max(0, ((shown.size() + cols() - 1) / cols()) * (RH + GAP) - GAP - listH); }
 
-    private int drawerW() { return Math.min(214, cw - 20); }
+    private int drawerW() { return cw - 12; }
 
     // ───────────── rysowanie ─────────────
 
@@ -359,7 +359,7 @@ public class ModMenuScreen extends KScreen {
 
     private void button(DrawContext ctx, TextRenderer tr, int x, int y, int w, int h, String label, int mx, int my, int fill, int fg) {
         boolean hover = Ui.in(mx, my, x, y, w, h);
-        Ui.card(ctx, x, y, w, h, h / 2, f(Ui.mix(fill, fill | 0x30000000, hover ? 1f : 0f)), f(0x26FFFFFF));
+        Ui.card(ctx, x, y, w, h, h / 2, f(Ui.mix(0x1CFFFFFF, 0x3CFFFFFF, hover ? 1f : 0f)), f(hover ? 0xCCFFFFFF : 0x88FFFFFF));
         int tw = tr.getWidth(label);
         ctx.drawText(tr, label, x + (w - tw) / 2, y + (h - 8) / 2, f(fg), false);
     }

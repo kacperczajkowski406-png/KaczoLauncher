@@ -17,6 +17,7 @@ import java.util.List;
 /** Rejestr wszystkich modułów. */
 public class Modules {
     public static final List<Module> ALL = new ArrayList<>();
+    static Module TOPPILL;
     public static final Module GENERAL = new Module("general", "Settings", "", "", "");
     public static Module CROSSHAIR, SCOREBOARD, MUSIC, ZOOM;
 
@@ -36,6 +37,8 @@ public class Modules {
     private static final net.minecraft.util.Identifier LOGO = net.minecraft.util.Identifier.of("kaczohud", "textures/gui/logo.png");
 
     static {
+        GENERAL.add(Setting.header("Font"));
+        GENERAL.add(Setting.choice("font", "Mod font (not chat / Esc menu)", 0, Glass.FONTS));
         GENERAL.add(Setting.header("Title screen"));
         GENERAL.add(Setting.bool("glassbtn", "Glass buttons on title screen", true));
         GENERAL.add(Setting.bool("titlelogo", "Logo on title screen", true));
@@ -162,11 +165,21 @@ public class Modules {
                 .add(Setting.num("wdist", "Text distance (blocks)", 2, 16, 6))
                 .add(Setting.num("wsize", "Text size (%)", 50, 250, 100))
                 .add(Setting.num("wspread", "Side offset (degrees)", 0, 45, 22))
+                .add(Setting.choice("font", "Font (0 = global)", 0, "Global", "Inter", "Poppins", "Lora", "Mono", "Minecraft"))
                 .add(Setting.choice("wanim", "Text animation", 0, "Typewriter", "Fade", "Rise", "Pop", "Wave"))
                 .add(Setting.color("wtext", "Lyrics text color", Setting.WHITE))
                 .add(Setting.num("wglow", "Glow strength", 0, 100, 60))
                 .add(Setting.bool("wplate", "Dark plate behind text", true)));
 
+        TOPPILL = reg(new Module("toppill", "Top Pill", "Glass pill with the time and the current track.", "HUD", "PILL").fresh().hud(0, 4)
+                .size(mc -> new int[]{pillW(mc), 16})
+                .draw(120, 16, (ctx, mc, x, y) -> {
+                    String t = pillText();
+                    int w = pillW(mc);
+                    Ui.card(ctx, x, y, w, 16, 8, 0x66101418, 0xAAFFFFFF);
+                    ctx.drawText(mc.textRenderer, t, x + 9, y + 4, 0xFFFFFFFF, false);
+                })
+                .add(Setting.bool("showtrack", "Show current track", true)));
         reg(new Module("reach", "Reach Display", "Distance of your last hit.", "PvP", "REACH").fresh().hud(6, 290)
                 .text(mc -> Extras.reachText()));
         reg(new Module("combo", "Combo Display", "Consecutive hits in a row.", "PvP", "COMBO").fresh().hud(6, 304)
@@ -389,4 +402,11 @@ public class Modules {
         for (Module m : ALL) if (m.id.equals(id)) return m;
         return GENERAL;
     }
+
+    static String pillText() {
+        String t = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
+        if (TOPPILL.bool("showtrack") && !NowPlaying.title.isEmpty()) t += "  \u2022  " + NowPlaying.title;
+        return t;
+    }
+    static int pillW(MinecraftClient mc) { return mc.textRenderer.getWidth(pillText()) + 18; }
 }

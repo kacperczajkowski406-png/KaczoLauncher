@@ -45,6 +45,16 @@ public final class Glass {
     }
 
     public static final Identifier UI_FONT = Identifier.of("kaczohud", "ui");
+    public static final String[] FONTS = {"Inter", "Poppins", "Lora", "Mono", "Minecraft"};
+    private static final Identifier[] FONT_IDS = {UI_FONT, Identifier.of("kaczohud", "ui_poppins"), Identifier.of("kaczohud", "ui_lora"), Identifier.of("kaczohud", "ui_mono"), null};
+    /** Czy właśnie rysujemy elementy HUD moda (nie czat, nie menu Esc). */
+    public static boolean inHud;
+    /** Czcionka wybrana dla bieżącego modułu (-1 = globalna). */
+    public static int hudFont = -1;
+    public static Identifier fontNow() {
+        int i = hudFont >= 0 ? hudFont : Modules.GENERAL.num("font");
+        return FONT_IDS[Math.max(0, Math.min(FONT_IDS.length - 1, i))];
+    }
     /** Czy aktualnie rysujemy menu główne albo okno moda (tylko tam używamy czcionki Inter). */
     public static boolean interNow() {
         Screen s = MinecraftClient.getInstance().currentScreen;

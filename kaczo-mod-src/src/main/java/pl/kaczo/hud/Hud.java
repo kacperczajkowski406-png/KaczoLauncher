@@ -21,6 +21,12 @@ public class Hud {
 
     public static void drawModule(DrawContext ctx, MinecraftClient mc, Module m, int x, int y) {
         float s = m.scale();
+        boolean pi = Glass.inHud; int pf = Glass.hudFont;
+        Glass.inHud = true; Glass.hudFont = m.has("font") && m.num("font") > 0 ? m.num("font") - 1 : -1;
+        try { drawModule0(ctx, mc, m, x, y, s); } finally { Glass.inHud = pi; Glass.hudFont = pf; }
+    }
+
+    private static void drawModule0(DrawContext ctx, MinecraftClient mc, Module m, int x, int y, float s) {
         Compat.push(ctx);
         Compat.scale(ctx, s, s);
         int px = Math.round(x / s), py = Math.round(y / s);
@@ -39,13 +45,20 @@ public class Hud {
     }
 
     public static void render(DrawContext ctx) {
+        Glass.inHud = true;
+        try { render0(ctx); } finally { Glass.inHud = false; Glass.hudFont = -1; }
+    }
+
+    private static void render0(DrawContext ctx) {
         lastContext = ctx;
         Compat.alpha(1f); // na wszelki wypadek
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.options.hudHidden || mc.player == null) return;
         try { Sky.render(ctx, mc); } catch (Throwable ignored) { }
         try { Sb.render(ctx, mc); } catch (Throwable ignored) { }
+        Glass.hudFont = Modules.MUSIC.num("font") > 0 ? Modules.MUSIC.num("font") - 1 : -1;
         try { WorldLyrics.render(ctx, mc); } catch (Throwable ignored) { }
+        Glass.hudFont = -1;
         boolean anim = Modules.GENERAL.bool("hudanim");
         long since = Modules.sinceJoin();
         int idx = 0;

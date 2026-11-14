@@ -12,7 +12,7 @@ import pl.kaczo.hud.Glass;
 public class UiFontMixin {
     @ModifyVariable(method = "getFontStorage", at = @At("HEAD"), argsOnly = true, require = 0)
     private Identifier kaczo$font(Identifier id) {
-        try { if (Glass.interNow() && "default".equals(id.getPath()) && "minecraft".equals(id.getNamespace())) return Glass.UI_FONT; } catch (Throwable ignored) { }
+        try { if ((Glass.inHud || Glass.interNow()) && "default".equals(id.getPath()) && "minecraft".equals(id.getNamespace())) { Identifier f = Glass.fontNow(); if (f != null) return f; } } catch (Throwable ignored) { }
         return id;
     }
 }
