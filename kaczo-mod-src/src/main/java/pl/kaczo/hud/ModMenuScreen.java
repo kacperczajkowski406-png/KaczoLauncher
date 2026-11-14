@@ -23,7 +23,7 @@ public class ModMenuScreen extends KScreen {
     private int wx, wy, ww, wh, sb, cx0, cw;
     private int listX, listY, listW, listH;
     private boolean searchFocus = false;
-    private Module sel = null;
+    Module sel = null;
     private SettingsPanel drawer = null;
     private SettingsPanel general = null;
     private final List<Module> shown = new ArrayList<>();
@@ -272,7 +272,7 @@ public class ModMenuScreen extends KScreen {
         // ikona
         int tc = tint(m.category);
         Ui.rrectD(ctx, x + 6, y + 6, 22, 22, 7, f(Ui.mix(0x22FFFFFF, 0x40FFFFFF, ov)));
-        ItemIcons.draw(ctx, m.id, x + 17, y + 17, 16);
+        if (sel == null && drawer == null) ItemIcons.draw(ctx, m.id, x + 17, y + 17, 16);
         // opisy
         int textW = w - 40 - 58;
         String name = tr.trimToWidth(L.t(m.name), textW - (m.isNew ? 24 : 0));
