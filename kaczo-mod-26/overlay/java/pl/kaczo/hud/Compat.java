@@ -49,4 +49,5 @@ public final class Compat {
     /** Komunikat nad paskiem życia (action bar). */
     public static void actionBar(Minecraft mc, net.minecraft.network.chat.Component text) { mc.gui.setOverlayMessage(text, false); }
     public static void press(net.minecraft.client.gui.components.Button b) { b.onPress(new net.minecraft.client.input.KeyEvent(257, 0, 0)); }
+    public static float cooldown(net.minecraft.world.entity.player.Player p, net.minecraft.world.item.ItemStack s) { return p.getCooldowns().getCooldownPercent(s, 0f); }
 }

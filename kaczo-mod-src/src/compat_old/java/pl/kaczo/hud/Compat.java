@@ -51,4 +51,5 @@ public final class Compat {
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
     }
     public static void press(net.minecraft.client.gui.widget.ButtonWidget b) { b.onPress(); }
+    public static float cooldown(net.minecraft.entity.player.PlayerEntity p, net.minecraft.item.ItemStack s) { return p.getItemCooldownManager().getCooldownProgress(s.getItem(), 0f); }
 }

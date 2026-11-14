@@ -47,4 +47,5 @@ public final class Compat {
         ctx.drawTexture(RenderPipelines.GUI_TEXTURED, id, 0, 0, 0f, 0f, w, h, w, h, (al << 24) | (rgb & 0xFFFFFF));
     }
     public static void press(net.minecraft.client.gui.widget.ButtonWidget b) { b.onPress(new net.minecraft.client.input.KeyInput(257, 0, 0)); }
+    public static float cooldown(net.minecraft.entity.player.PlayerEntity p, net.minecraft.item.ItemStack s) { return p.getItemCooldownManager().getCooldownProgress(s, 0f); }
 }

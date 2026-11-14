@@ -36,6 +36,7 @@ final class ItemIcons {
             case "reach" -> Items.ARROW;         case "combo" -> Items.BLAZE_POWDER;
             case "pvpitems" -> Items.DIAMOND_SWORD; case "deathinfo" -> Items.SKELETON_SKULL;
             case "waypoint" -> Items.LODESTONE;  case "freelook" -> Items.ENDER_EYE;
+            case "cooldowns" -> Items.ENDER_PEARL; case "toppill" -> Items.CLOCK;
             case "sky", "shaders" -> Items.AMETHYST_SHARD;  case "theme" -> Items.PAINTING;
             case "nofire" -> Items.MAGMA_CREAM;  case "nowater" -> Items.WATER_BUCKET;
             case "hitbox" -> Items.IRON_BARS;    case "nohurtcam" -> Items.SHIELD;

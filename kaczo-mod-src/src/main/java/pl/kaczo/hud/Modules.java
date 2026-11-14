@@ -180,6 +180,9 @@ public class Modules {
                     ctx.drawText(mc.textRenderer, t, x + 9, y + 4, 0xFFFFFFFF, false);
                 })
                 .add(Setting.bool("showtrack", "Show current track", true)));
+        reg(new Module("cooldowns", "Item Cooldowns", "Shows how long until a weapon or item in your inventory can be used again.", "PvP", "CD").fresh().on().hud(6, 120)
+                .size(mc -> new int[]{Cooldowns.widthOf(mc), Cooldowns.heightOf(mc)})
+                .draw(96, 16, (ctx, mc, x, y) -> Cooldowns.draw(ctx, mc, x, y)));
         reg(new Module("reach", "Reach Display", "Distance of your last hit.", "PvP", "REACH").fresh().hud(6, 290)
                 .text(mc -> Extras.reachText()));
         reg(new Module("combo", "Combo Display", "Consecutive hits in a row.", "PvP", "COMBO").fresh().hud(6, 304)
