@@ -190,7 +190,7 @@ public final class Visual {
         // szklany pasek ładowania z procentami
         float ba = a * ease((now - 700) / 800f) * (1f - done);
         if (ba > 0.01f) {
-            int bw = Math.round(Math.min(w * 0.34f, 280f)), bx = cx - bw / 2, by = Math.round(cy + R * 2.2f * open + 128 * tx / 2f + 12);
+            int bw = Math.round(Math.min(w * 0.34f, 280f)), bx = cx - bw / 2, by = Math.round(h * 0.9f);
             Ui.rrectD(ctx, bx, by, bw, 5, 2.5, Ui.fade(0x40FFFFFF, ba));
             Ui.rrectD(ctx, bx, by, Math.max(5, bw * pr), 5, 2.5, Ui.fade(0xFFFFFFFF, ba));
             Ui.rrectD(ctx, bx + Math.max(5, bw * pr) - 7, by - 3, 9, 11, 4.5, Ui.fade(0x66FFFFFF, ba));
