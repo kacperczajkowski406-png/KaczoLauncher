@@ -106,6 +106,30 @@ public final class Visual {
             double rr = R * (0.7 + i * 0.28) * open * pulse;
             Ui.rrectD(ctx, cx - rr, cy - rr, rr * 2, rr * 2, rr, Ui.fade(0x10FFFFFF | 0, a * k * (1f - done)));
         }
+        // promienie światła obracające się za logo
+        for (int i = 0; i < 14; i++) {
+            float ang = tt * 0.12f + i * (float) (Math.PI * 2 / 14);
+            int al = (int) (26 * a * k * (1f - done) * (0.6f + 0.4f * Math.sin(tt * 1.3 + i)));
+            if (al < 2) continue;
+            Compat.push(ctx);
+            Compat.translate(ctx, cx, cy);
+            Compat.rotate(ctx, ang);
+            ctx.fillGradient(-1, Math.round(R * 0.9f), 1, Math.round(R * 4.4f * open), al << 24 | 0xFFFFFF, 0);
+            Compat.pop(ctx);
+        }
+        // unoszące się drobinki światła
+        for (int i = 0; i < 46; i++) {
+            double sd = i * 7.31;
+            double sx = (Math.sin(sd * 12.9898) * 43758.5453) % 1; sx = Math.abs(sx);
+            double sp = 0.03 + (i % 7) * 0.012;
+            double yy = ((sx * 3.7 + tt * sp + i * 0.137) % 1.0);
+            double px = sx * w + Math.sin(tt * 0.7 + i) * 14;
+            double py = h - yy * (h + 20);
+            double tw = 0.5 + 0.5 * Math.sin(tt * 2.2 + i * 1.9);
+            double ds = 1.2 + (i % 4) * 0.7;
+            int al = (int) (150 * tw * a * k * (1f - done));
+            if (al > 3) Ui.rrectD(ctx, px, py, ds, ds, ds / 2, al << 24 | (i % 5 == 0 ? 0xBFD8FF : 0xFFFFFF));
+        }
         // fale pierścieni rozchodzące się od logo
         for (int i = 0; i < 4; i++) {
             float ph = ((tt / 2.8f) + i / 4f) % 1f;
@@ -163,6 +187,29 @@ public final class Visual {
         Compat.pop(ctx);
         Compat.flush(ctx);
         Compat.alpha(1f);
+        // szklany pasek ładowania z procentami
+        float ba = a * ease((now - 700) / 800f) * (1f - done);
+        if (ba > 0.01f) {
+            int bw = Math.round(Math.min(w * 0.34f, 280f)), bx = cx - bw / 2, by = Math.round(cy + R * 2.2f * open + 40 * ts) ;
+            Ui.rrectD(ctx, bx, by, bw, 5, 2.5, Ui.fade(0x40FFFFFF, ba));
+            Ui.rrectD(ctx, bx, by, Math.max(5, bw * pr), 5, 2.5, Ui.fade(0xFFFFFFFF, ba));
+            Ui.rrectD(ctx, bx + Math.max(5, bw * pr) - 7, by - 3, 9, 11, 4.5, Ui.fade(0x66FFFFFF, ba));
+            String pt = Math.round(pr * 100) + "%";
+            ctx.drawText(mc.textRenderer, pt, cx - mc.textRenderer.getWidth(pt) / 2, by + 11, Ui.fade(0xFFC8D0E0, ba), false);
+        }
+        // błyski gwiazdek wokół logo
+        for (int i = 0; i < 6; i++) {
+            double ph = (tt * 0.55 + i * 0.37) % 1.0;
+            double ang = i * 1.9 + 0.6, rr = R * (0.8 + (i % 3) * 0.28);
+            double sx = cx + Math.cos(ang) * rr, sy = cy + Math.sin(ang) * rr * 0.9;
+            double sz = Math.sin(ph * Math.PI) * (3 + (i % 3) * 1.5);
+            int al = (int) (230 * Math.sin(ph * Math.PI) * a * k * (1f - done));
+            if (al < 6) continue;
+            Ui.rrectD(ctx, sx - sz, sy - 0.6, sz * 2, 1.2, 0.6, al << 24 | 0xFFFFFF);
+            Ui.rrectD(ctx, sx - 0.6, sy - sz, 1.2, sz * 2, 0.6, al << 24 | 0xFFFFFF);
+        }
+        // finałowy błysk przy wejściu do menu
+        if (done > 0f && done < 0.5f) ctx.fill(0, 0, w, h, Ui.fade(0xFFFFFFFF, (1f - done * 2f) * 0.28f * a));
     }
 
     private static float splashP;
