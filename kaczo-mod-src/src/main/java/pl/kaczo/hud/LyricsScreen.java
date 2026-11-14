@@ -126,7 +126,7 @@ public class LyricsScreen extends KScreen {
         long ms = System.currentTimeMillis();
         Ui.glass(ctx, px, py, pw, ph, 14, Ui.fade(0xC4080C16, anim));
         if (anim < 0.3f) return;
-        ctx.drawText(tr, "♪ " + L.t("Music Display"), px + 12, py + 10, 0xFFFFFFFF, true);
+        ctx.drawText(tr, L.t("Music Display"), px + 12, py + 10, 0xFFFFFFFF, true);
         boolean xh = Ui.in(mx, my, px + pw - 22, py + 8, 14, 14);
         Ui.card(ctx, px + pw - 22, py + 8, 14, 14, 7, xh ? 0x40FFFFFF : 0x1CFFFFFF, 0x44FFFFFF);
         ctx.drawText(tr, "x", px + pw - 17, py + 11, 0xFFFFFFFF, false);
