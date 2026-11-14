@@ -138,7 +138,7 @@ public class LyricsScreen extends KScreen {
             ctx.drawText(tr, tr.trimToWidth(L.t(TABS[i]), sbw - 20), px + 14, ty + 6, on ? 0xFFFFFFFF : 0xFFB8BFCC, false);
         }
         // zawartość
-        ctx.enableScissor(Math.round(cx * S), Math.round(cy * S), Math.round((cx + cw) * S), Math.round((cy + chh) * S));
+        ctx.enableScissor(cx, cy, cx + cw, cy + chh);
         try { content(ctx, tr, mx, my, ms); } finally { ctx.disableScissor(); }
         // podgląd
         int pY = py + ph - 34 - prevH;
