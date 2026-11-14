@@ -195,6 +195,7 @@ POST = [
     ('ClipContext.ShapeType.', 'ClipContext.Block.'), ('ClipContext.FluidHandling.', 'ClipContext.Fluid.'),
     ('Heightmap.Type.', 'Heightmap.Types.'), ('.getTopY(Heightmap', '.getHeight(Heightmap'),
     ('dir.multiply(d)', 'dir.scale(d)'),
+    ('.isBlockInLine(new ClipContext(', '.clip(new ClipContext('),
 ]
 def postfix(out):
     n = 0
