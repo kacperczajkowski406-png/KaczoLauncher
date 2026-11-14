@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class ModMenuScreen extends KScreen {
     private static final String[] TABS = {"All", "Favorites", "New", "HUD", "PvP", "Utility", "Visual"};
-    private static final String[] NAV = {"Modules", "Appearance", "Edit HUD", "About", "Wallpapers"};
+    private static final String[] NAV = {"Modules", "Appearance", "Edit HUD", "About", "Wallpapers", "Apps"};
     private static int page = 0;
     private static String tab = "All", query = "";
     private static double scroll = 0;
@@ -103,6 +103,7 @@ public class ModMenuScreen extends KScreen {
         Ui.extra = S;
         try {
             float pop = 0.94f + 0.06f * anim;                 // panel „wyskakuje” z lekkim powiększeniem
+            Tilt3D.begin(ctx, mx, my, wx + ww / 2.0, wy + wh / 2.0, ww, wh);
             Compat.push(ctx);
             Compat.translate(ctx, vw / 2f * (1 - pop), vh / 2f * (1 - pop));
             Compat.scale(ctx, pop, pop);
@@ -115,6 +116,7 @@ public class ModMenuScreen extends KScreen {
                 drawDrawer(ctx, tr, mx, my);
             }
             Compat.pop(ctx);
+            Tilt3D.end(ctx);
         } finally { Ui.extra = 1f; Compat.pop(ctx); }
     }
 
@@ -173,6 +175,9 @@ public class ModMenuScreen extends KScreen {
             case 2 -> {
                 Ui.ringT(ctx, cx - 6, cy - 5, 12, 10, 2.5, 1, col);
                 Ui.rrectD(ctx, cx - 3.5, cy - 2.5, 4.5, 4, 1, col);
+            }
+            case 5 -> {
+                for (int a = 0; a < 3; a++) for (int b = 0; b < 3; b++) Ui.rrectD(ctx, cx - 6 + a * 4.4, cy - 6 + b * 4.4, 3.2, 3.2, 1.6, col);
             }
             case 4 -> {
                 Ui.ringT(ctx, cx - 6, cy - 5, 12, 10, 2.5, 1, col);
@@ -400,6 +405,7 @@ public class ModMenuScreen extends KScreen {
             if (Ui.in(mx, my, wx + 10, y, sb - 16, 22)) {
                 if (i == 2) client.setScreen(new EditScreen(this, null));
                 else if (i == 4) client.setScreen(new WallpaperScreen(this));
+                else if (i == 5) client.setScreen(new AppsScreen(this));
                 else { page = i; sel = null; scroll = 0; }
                 return true;
             }

@@ -37,6 +37,8 @@ public class Modules {
     private static final net.minecraft.util.Identifier LOGO = net.minecraft.util.Identifier.of("kaczohud", "textures/gui/logo.png");
 
     static {
+        GENERAL.add(Setting.header("3D GUI"));
+        GENERAL.add(Setting.bool("gui3d", "3D GUI (panels tilt toward the cursor)", true));
         GENERAL.add(Setting.header("Font"));
         GENERAL.add(Setting.choice("font", "Mod font (not chat / Esc menu)", 0, Glass.FONTS));
         GENERAL.add(Setting.header("Title screen"));

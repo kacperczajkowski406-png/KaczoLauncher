@@ -80,7 +80,8 @@ public class WallpaperScreen extends KScreen {
         Compat.push(ctx);
         Compat.scale(ctx, S, S);
         Ui.extra = S;
-        try { drawPanel(ctx, tr, mx, my, anim, cur); } finally { Ui.extra = 1f; Compat.pop(ctx); }
+        Tilt3D.begin(ctx, mx, my, px + pw / 2.0, py + ph / 2.0, pw, ph);
+        try { drawPanel(ctx, tr, mx, my, anim, cur); } finally { Tilt3D.end(ctx); Ui.extra = 1f; Compat.pop(ctx); }
     }
 
     private void drawPanel(DrawContext ctx, TextRenderer tr, int mx, int my, float anim, Wallpapers.Wp cur) {

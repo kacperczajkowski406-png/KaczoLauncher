@@ -119,7 +119,8 @@ public class LyricsScreen extends KScreen {
         Compat.push(ctx);
         Compat.scale(ctx, S, S);
         Ui.extra = S;
-        try { panel(ctx, tr, mx, my, anim); } finally { Ui.extra = 1f; Compat.pop(ctx); }
+        Tilt3D.begin(ctx, mx, my, px + pw / 2.0, py + ph / 2.0, pw, ph);
+        try { panel(ctx, tr, mx, my, anim); } finally { Tilt3D.end(ctx); Ui.extra = 1f; Compat.pop(ctx); }
     }
 
     private void panel(DrawContext ctx, TextRenderer tr, int mx, int my, float anim) {
