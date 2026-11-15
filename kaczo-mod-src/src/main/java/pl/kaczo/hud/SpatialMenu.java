@@ -15,6 +15,7 @@ final class SpatialMenu {
     private static ModMenuScreen menu;
     private static double yaw0, pitch0, gdy, gdp;
     private static boolean grabbing, down0, down1;
+    private static final boolean CI = System.getenv("KACZO_SPATIALMENU") != null;
     private static int dbg;
     private static double lastX = -1, lastY = -1;
 
@@ -74,6 +75,7 @@ final class SpatialMenu {
         if (g && !grabbing) { gdy = wrap(yaw0 - py); gdp = pitch0 - pp; }
         grabbing = g;
         if (g) { yaw0 = py + gdy; pitch0 = Math.max(-80, Math.min(80, pp + gdp)); }
+        if (CI) { yaw0 = py; pitch0 = pp; }   // tylko test CI: bot obraca głowę, więc panel podąża
         double[] geo = geom(mc);
         double[] a = geo == null ? null : aim(mc, geo);
         boolean d0 = GLFW.glfwGetMouseButton(win, GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS;
