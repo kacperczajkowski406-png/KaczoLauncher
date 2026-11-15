@@ -30,7 +30,16 @@ public class ModMenuScreen extends KScreen {
     private boolean grabbing;
     /** true, gdy menu jest osadzone w świecie (SpatialMenu), a nie otwarte jako zwykły ekran. */
     boolean embedded;
-    void embed(MinecraftClient mc, int w, int h) { this.client = mc; this.width = w; this.height = h; init(); }
+    void embed(MinecraftClient mc, int w, int h) {
+        try {
+            for (java.lang.reflect.Method m : Screen.class.getDeclaredMethods())
+                if (m.getName().equals("init") && m.getParameterCount() == 3 && m.getParameterTypes()[0] == MinecraftClient.class) { m.setAccessible(true); m.invoke(this, mc, w, h); return; }
+        } catch (Throwable ignored) { }
+        try {
+            java.lang.reflect.Field f = Screen.class.getDeclaredField("client"); f.setAccessible(true); f.set(this, mc);
+        } catch (Throwable ignored) { }
+        this.width = w; this.height = h; init();
+    }
     boolean spatialClick(double x, double y, int b) { return onClick(x, y, b); }
     boolean spatialDrag(double x, double y, double dx, double dy) { return onDrag(x, y, 0, dx, dy); }
     boolean spatialRelease(double x, double y) { return onRelease(x, y, 0); }
