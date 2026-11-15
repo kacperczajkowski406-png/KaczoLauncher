@@ -27,6 +27,7 @@ public class Hud {
     /** Okno w przestrzeni: szklana płyta, uchwyt do chwytania i zwężenie przy patrzeniu pod kątem (perspektywa). */
     private static void drawSpatial(DrawContext ctx, MinecraftClient mc, Module m, int x, int y) {
         if (x < -5000) return;
+        if (m.id.equals("cooldowns") && mc.currentScreen == null && Cooldowns.active(mc).isEmpty()) return;   // pusta płyta bez cooldownów byłaby tylko zawadą
         int w = Math.round(m.width(mc) * m.scale()), h = Math.round(m.height(mc) * m.scale());
         double[] a = Spatial.angles(m);
         float sx = (float) Math.max(0.3, Math.cos(Math.toRadians(a[0]))), sy = (float) Math.max(0.3, Math.cos(Math.toRadians(a[1])));
