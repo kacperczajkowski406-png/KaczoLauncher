@@ -9,6 +9,7 @@ on:
       loom:   { description: 'loom',       default: '1.9-SNAPSHOT' }
       gradle: { description: 'gradle',     default: '8.12' }
       style:  { description: 'styl nieba', default: '8' }
+      spatial: { description: 'spatial 1/0', default: '0' }
       world:  { description: 'wejdź do świata (1/0)', default: '1' }
       shaders: { description: 'shadery Iris (1/0)', default: '0' }
       shdstyle: { description: 'styl shaderow 0/1/2', default: '0' }
@@ -42,6 +43,7 @@ jobs:
           MC: ${{ inputs.mc }}
           STYLE: ${{ inputs.style }}
           WORLD: ${{ inputs.world }}
+          SPATIAL: ${{ inputs.spatial }}
           WALL: ${{ inputs.wall }}
           PRESS: ${{ inputs.press }}
           SHADERS: ${{ inputs.shaders }}
