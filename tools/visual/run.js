@@ -46,9 +46,10 @@ const shot = (name) => { try { execSync(`import -window root ${path.join(OUT, na
   }
   // ustawienia moda: wybrany styl nieba
   const home = process.env.HOME; fs.mkdirSync(path.join(home, '.kaczo-client'), { recursive: true });
-  if (!(process.env.SHDSTYLE || '').startsWith('toggle')) fs.writeFileSync(path.join(home, '.kaczo-client', 'hud-settings.json'), JSON.stringify({ mods: { sky: { enabled: true, vals: { style: STYLE } }, general: { vals: { spatial: process.env.SPATIAL === '1' ? 'true' : 'false' } } } }));
+  if (!(process.env.SHDSTYLE || '').startsWith('toggle')) fs.writeFileSync(path.join(home, '.kaczo-client', 'hud-settings.json'), JSON.stringify({ mods: { sky: { enabled: true, vals: { style: STYLE } }, general: { vals: { spatial: 'true' } } } }));
   fs.writeFileSync(path.join(GAME, 'options.txt'), 'onboardAccessibility:false\ntutorialStep:none\nguiScale:2\nmaxFps:30\nrenderDistance:6\nlang:pl_pl\n');
 
+  if (process.env.SPATIAL === '2') process.env.KACZO_SPATIALMENU = '1';
   if (process.env.WORLD === '1') process.env.KACZO_AUTOWORLD = '1';
   if (process.env.WORLD === '2') process.env.KACZO_OPENMENU = '1';
   if (process.env.WORLD === '4') process.env.KACZO_OPENMENU = 'wall';
