@@ -15,6 +15,7 @@ final class SpatialMenu {
     private static ModMenuScreen menu;
     private static double yaw0, pitch0, gdy, gdp;
     private static boolean grabbing, down0, down1;
+    private static int dbg;
     private static double lastX = -1, lastY = -1;
 
     static boolean isOpen() { return menu != null; }
@@ -65,7 +66,7 @@ final class SpatialMenu {
     /** Wywoływane na początku każdego ticku: obsługa klików, przeciągania i chwytania. */
     static void tick(MinecraftClient mc) {
         if (menu == null) return;
-        if (mc.player == null || mc.currentScreen != null) { close(); return; }
+        if (mc.player == null || mc.currentScreen != null) { System.out.println("[KaczoSpatial] closed: screen=" + mc.currentScreen); close(); return; }
         long win = mc.getWindow().getHandle();
         // chwyt: panel podąża za spojrzeniem, dopóki trzymasz G
         boolean g = KaczoHudClient.grabKey != null && KaczoHudClient.grabKey.isPressed();
@@ -99,6 +100,7 @@ final class SpatialMenu {
     static void render(DrawContext ctx, MinecraftClient mc) {
         if (menu == null || mc.player == null) return;
         double[] g = geom(mc);
+        if ((dbg++ % 120) == 0) System.out.println("[KaczoSpatial] render g=" + (g == null ? "null" : java.util.Arrays.toString(g)) + " yaw=" + mc.player.getYaw() + " w=" + mc.getWindow().getScaledWidth() + " scr=" + mc.currentScreen);
         if (g == null) return;
         double[] a = aim(mc, g);
         boolean pi = Glass.inHud, pf = Glass.forceUi;
