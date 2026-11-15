@@ -30,6 +30,7 @@ final class SpatialMenu {
         yaw0 = mc.player.getYaw();
         pitch0 = Math.max(-35, Math.min(35, mc.player.getPitch()));
         down0 = down1 = grabbing = false;
+        System.out.println("[KaczoSpatial] opened yaw=" + yaw0 + " pitch=" + pitch0);
     }
 
     static void close() { menu = null; Config.save(); }

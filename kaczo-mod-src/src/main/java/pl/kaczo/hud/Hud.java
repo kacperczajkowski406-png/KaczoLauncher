@@ -5,6 +5,7 @@ import net.minecraft.client.gui.DrawContext;
 
 /** Rysowanie elementów HUD oraz własnego celownika. */
 public class Hud {
+    private static boolean spatialErr;
     /** Ostatni DrawContext używany do rysowania HUD (potrzebny mixinowi scoreboardu). */
     public static volatile DrawContext lastContext;
 
@@ -55,7 +56,7 @@ public class Hud {
 
     private static void render0(DrawContext ctx) {
         lastContext = ctx;
-        try { SpatialMenu.render(ctx, MinecraftClient.getInstance()); } catch (Throwable ignored) { }
+        try { SpatialMenu.render(ctx, MinecraftClient.getInstance()); } catch (Throwable t) { if (!spatialErr) { spatialErr = true; System.out.println("[KaczoSpatial] render failed"); t.printStackTrace(); } }
         Compat.alpha(1f); // na wszelki wypadek
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.options.hudHidden || mc.player == null) return;
