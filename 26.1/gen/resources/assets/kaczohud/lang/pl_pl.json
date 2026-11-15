@@ -1,0 +1,8 @@
+{
+  "key.kaczohud.open": "Otwórz menu Kaczo HUD",
+  "key.kaczohud.freelook": "Widok wolny (przytrzymaj)",
+  "key.kaczohud.waypoint": "Ustaw znacznik (Shift = usuń)",
+  "key.kaczohud.grab": "Chwyć okna HUD (przestrzenne)",
+  "key.categories.kaczohud": "Kaczo Client",
+  "key.category.kaczohud.main": "Kaczo Client"
+}
