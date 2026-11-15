@@ -197,6 +197,17 @@ POST = [
     ('dir.multiply(d)', 'dir.scale(d)'),
     ('.isBlockInLine(new ClipContext(', '.clip(new ClipContext('),
 ]
+POSTF = {
+    'ClickableWidgetMixin.java': [('method = "render"', 'method = "extractRenderState"')],
+    'BossBarMixin.java': [('method = "render"', 'method = "extractRenderState"')],
+    'SplashTextMixin.java': [('method = "render"', 'method = "extractRenderState"')],
+    'LogoDrawerMixin.java': [('method = "draw"', 'method = "extractRenderState"')],
+    'SplashOverlayMixin.java': [('method = "render"', 'method = "extractRenderState"'), ('@Shadow private float progress;', '@Shadow private float currentProgress;'),
+        ('@Shadow private long reloadCompleteTime;', '@Shadow private long fadeOutStart;'), ('progress, reloadCompleteTime)', 'currentProgress, fadeOutStart)')],
+    'InGameHudMixin.java': [('"renderCrosshair"', '"extractCrosshair"'), ('"renderScoreboardSidebar"', '"extractScoreboardSidebar"')],
+    'GameRendererMixin.java': [('"tiltViewWhenHurt"', '"bobHurt"')],
+}
+
 def postfix(out):
     n = 0
     for root, _, fs in os.walk(out):
@@ -204,6 +215,7 @@ def postfix(out):
             if not f.endswith('.java'): continue
             p = os.path.join(root, f); t = open(p, encoding='utf8').read(); o = t
             for a, b in POST: t = t.replace(a, b)
+            for a, b in POSTF.get(f, []): t = t.replace(a, b)
             if t != o: open(p, 'w', encoding='utf8').write(t); n += 1
     return n
 
