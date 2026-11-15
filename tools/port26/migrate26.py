@@ -205,6 +205,7 @@ POSTF = {
     'SplashOverlayMixin.java': [('method = "render"', 'method = "extractRenderState"'), ('@Shadow private float progress;', '@Shadow private float currentProgress;'),
         ('@Shadow private long reloadCompleteTime;', '@Shadow private long fadeOutStart;'), ('progress, reloadCompleteTime)', 'currentProgress, fadeOutStart)')],
     'InGameHudMixin.java': [('"renderCrosshair"', '"extractCrosshair"'), ('"renderScoreboardSidebar"', '"extractScoreboardSidebar"')],
+    'SpatialMenu.java': [('menu.render(ctx, mx, my, 0f)', 'menu.extractRenderState(ctx, mx, my, 0f)')],
     'GameRendererMixin.java': [('"tiltViewWhenHurt"', '"bobHurt"')],
 }
 
