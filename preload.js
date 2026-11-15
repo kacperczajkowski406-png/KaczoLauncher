@@ -10,7 +10,7 @@ const INVOKE = new Set([
   'mods:list', 'mods:toggle', 'mods:remove', 'mods:addLocal', 'mods:search', 'mods:install', 'mods:importFolder', 'mods:importInstance',
   'settings:save', 'settings:pickJava', 'app:openData',
   'owner:diagnostics', 'owner:copyDiagnostics', 'owner:openLogs', 'owner:devtools',
-  'owner:resetOptions', 'owner:clearJava', 'owner:discordId', 'owner:blockNick', 'owner:unblockNick',
+  'owner:resetOptions', 'owner:clearJava', 'owner:setNoHud', 'owner:discordId', 'owner:blockNick', 'owner:unblockNick',
   'game:play', 'game:stop',
   'update:check', 'update:install', 'update:state',
 ]);

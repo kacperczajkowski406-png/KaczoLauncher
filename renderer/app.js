@@ -700,6 +700,7 @@ function renderOwner(view) {
       el('div', { class: 'stack' },
         el('button', { class: 'btn danger', disabled: !game.running, onclick: () => act('game:stop') }, t('own.stopGame')),
         el('button', { class: 'btn', disabled: !inst, onclick: async () => { const m = await act('owner:resetOptions', inst.id); if (m) toast(m, 'ok'); } }, t('own.resetOptions')),
+        el('label', { class: 'check' }, el('input', { type: 'checkbox', checked: !!S.settings.noHud, onchange: (e) => actState('owner:setNoHud', e.target.checked) }), el('span', {}, t('own.noHud'))),
         el('button', { class: 'btn', onclick: async () => { if (await act('owner:clearJava')) toast(t('own.javaCleared'), 'ok'); } }, t('own.clearJava'))))));
 
   const nick = el('input', { type: 'text', maxlength: '16', placeholder: t('own.blockedPh'), onkeydown: (e) => { if (e.key === 'Enter') block(); } });

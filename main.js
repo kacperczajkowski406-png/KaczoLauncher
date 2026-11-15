@@ -268,7 +268,7 @@ async function doPrepare(inst) {
   const log = (l) => emit('game:log', String(l));
   try {
     emit('game:state', { text: T('inst.modsPrep'), busy: true });
-    mods.installHud(inst, log);
+    if (store.load().settings.noHud) mods.removeHud(inst); else mods.installHud(inst, log);
     if (inst.optimize !== false) await mods.ensurePack(inst, log);
     emit('game:state', { text: T('inst.modsDone'), busy: false });
   } catch (e) {
@@ -443,6 +443,15 @@ handle('owner:discordId', (id) => {
   const d = store.load();
   d.settings.discordAppId = v;
   store.save();
+  return publicState();
+});
+
+handle('owner:setNoHud', (on) => {
+  requireOwner();
+  const d = store.load();
+  d.settings.noHud = !!on;
+  store.save();
+  if (on) for (const i of d.instances) { try { mods.removeHud(i); } catch { /* instancja bez folderu mods */ } }
   return publicState();
 });
 

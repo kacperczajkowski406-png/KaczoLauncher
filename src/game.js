@@ -69,7 +69,8 @@ async function play(opts) {
         await mods.ensurePack(instance, log);
       }
       if (!safe) await mods.ensureShaders(instance, log); else mods.disableShaders(instance);
-      if (safe) { mods.removeHud(instance); log('Kaczo HUD wyłączony (tryb bezpieczny)'); }
+      if (settings.noHud && !safe) { mods.removeHud(instance); log('Kaczo HUD wyłączony (opcja właściciela)'); }
+      else if (safe) { mods.removeHud(instance); log('Kaczo HUD wyłączony (tryb bezpieczny)'); }
       else mods.installHud(instance, log);
     }
 
