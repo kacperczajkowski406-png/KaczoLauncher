@@ -2,6 +2,7 @@
   "key.kaczohud.open": "Open Kaczo HUD menu",
   "key.kaczohud.freelook": "Freelook (hold)",
   "key.kaczohud.waypoint": "Set waypoint (Shift = clear)",
+  "key.kaczohud.grab": "Grab HUD windows (spatial)",
   "key.categories.kaczohud": "Kaczo Client",
   "key.category.kaczohud.main": "Kaczo Client"
 }

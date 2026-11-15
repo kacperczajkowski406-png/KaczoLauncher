@@ -58,9 +58,11 @@ public final class Glass {
     /** Czy aktualnie rysujemy menu główne albo okno moda (tylko tam używamy czcionki Inter). */
     public static boolean interNow() {
         Screen s = MinecraftClient.getInstance().currentScreen;
-        return s instanceof TitleScreen || s instanceof KScreen;
+        return forceUi || s instanceof KScreen;
     }
 
+    /** Włączane tylko na czas rysowania własnych elementów moda na ekranie tytułowym (stopki Mojang zostają w zwykłej czcionce). */
+    private static boolean forceUi;
     private static boolean autoDone;
     private static Screen testScreen(String k) {
         if ("wall".equals(k)) return new WallpaperScreen(null);
@@ -83,12 +85,12 @@ public final class Glass {
         if (autoDone || System.getenv("KACZO_AUTOWORLD") == null) return;
         try {
             if (screen instanceof TitleScreen) {
-                for (java.lang.reflect.Method m : Class.forName("net.minecraft.client.gui.screen.world.CreateWorldScreen").getMethods())
+                for (java.lang.reflect.Method m : net.minecraft.client.gui.screen.world.CreateWorldScreen.class.getMethods())
                     if (m.getName().equals("show") && m.getParameterCount() == 2) {
                         Object arg = m.getParameterTypes()[1] == Runnable.class ? (Runnable) () -> client.setScreen(screen) : screen;
                         m.invoke(null, client, arg); return;
                     }
-            } else if (screen.getClass().getSimpleName().contains("CreateWorld")) {
+            } else if (screen instanceof net.minecraft.client.gui.screen.world.CreateWorldScreen) {
                 autoDone = true;
                 new Thread(() -> {
                     try { Thread.sleep(4000); } catch (Throwable ignored) { }
@@ -124,7 +126,8 @@ public final class Glass {
                 });
             }
             ScreenEvents.afterRender(screen).register((s, ctx, mx, my, delta) -> {
-                try { paint(client, s, ctx, mx, my); } catch (Throwable ignored) { /* wygląd nie może wywrócić gry */ }
+                forceUi = true;
+                try { paint(client, s, ctx, mx, my); } catch (Throwable ignored) { /* wygląd nie może wywrócić gry */ } finally { forceUi = false; }
             });
         });
     }

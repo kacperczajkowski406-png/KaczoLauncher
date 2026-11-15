@@ -24,6 +24,9 @@ public class ModMenuScreen extends KScreen {
     private int listX, listY, listW, listH;
     private boolean searchFocus = false;
     Module sel = null;
+    /** Przesunięcie okna menu (można je „chwycić” za górny pasek i przenieść). */
+    private static double offX, offY;
+    private boolean grabbing;
     private SettingsPanel drawer = null;
     private SettingsPanel general = null;
     private final List<Module> shown = new ArrayList<>();
@@ -46,8 +49,9 @@ public class ModMenuScreen extends KScreen {
         vw = Math.round(width / S); vh = Math.round(height / S);
         ww = Math.min(Math.round(vw * 0.84f), 620);
         wh = Math.min(Math.round(vh * 0.84f), 350);
-        wx = (vw - ww) / 2;
-        wy = (vh - wh) / 2;
+        wx = (vw - ww) / 2 + (int) offX;
+        wy = (vh - wh) / 2 + (int) offY;
+        wx = Math.max(-ww + 40, Math.min(vw - 40, wx)); wy = Math.max(0, Math.min(vh - 24, wy));
         sb = ww >= 440 ? 116 : 38;
         cx0 = wx + sb;
         cw = ww - sb;
@@ -375,6 +379,7 @@ public class ModMenuScreen extends KScreen {
     @Override
     protected boolean onClick(double mx, double my, int button) {
         layout(); mx /= S; my /= S;
+        if (button == 0 && sel == null && Ui.in(mx, my, wx + sb, wy, cw - Math.min(150, cw / 3) - 16, 14)) { grabbing = true; return true; }
         // szuflada
         if (sel != null) {
             int dw = drawerW(), dx = wx + ww - 6 - dw, dy = wy + 6, dh = wh - 12;
@@ -441,6 +446,7 @@ public class ModMenuScreen extends KScreen {
 
     @Override
     protected boolean onDrag(double mx, double my, int button, double dx, double dy) {
+        if (grabbing) { offX += dx / S; offY += dy / S; return true; }
         mx /= S; my /= S;
         if (drawer != null && sel != null && drawer.mouseDragged(mx, my)) return true;
         return page == 1 && general != null && general.mouseDragged(mx, my);
@@ -448,7 +454,7 @@ public class ModMenuScreen extends KScreen {
 
     @Override
     protected boolean onRelease(double mx, double my, int button) {
-        boolean r = false;
+        boolean r = grabbing; grabbing = false;
         if (drawer != null) r |= drawer.mouseReleased();
         if (general != null) r |= general.mouseReleased();
         return r;

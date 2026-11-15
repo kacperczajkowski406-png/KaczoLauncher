@@ -9,7 +9,7 @@ import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
 public class KaczoHudClient implements ClientModInitializer {
-    public static KeyBinding openKey, freelookKey, waypointKey;
+    public static KeyBinding openKey, freelookKey, waypointKey, grabKey;
 
     @Override
     public void onInitializeClient() {
@@ -17,6 +17,7 @@ public class KaczoHudClient implements ClientModInitializer {
         try { Glass.init(); } catch (Throwable ignored) { }
         openKey = KeyBindingHelper.registerKeyBinding(Compat.newKey("key.kaczohud.open", GLFW.GLFW_KEY_RIGHT_SHIFT));
         freelookKey = KeyBindingHelper.registerKeyBinding(Compat.newKey("key.kaczohud.freelook", GLFW.GLFW_KEY_LEFT_ALT));
+        grabKey = KeyBindingHelper.registerKeyBinding(Compat.newKey("key.kaczohud.grab", GLFW.GLFW_KEY_G));
         waypointKey = KeyBindingHelper.registerKeyBinding(Compat.newKey("key.kaczohud.waypoint", GLFW.GLFW_KEY_B));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -24,6 +25,9 @@ public class KaczoHudClient implements ClientModInitializer {
             try { ShaderCtl.tick(client); } catch (Throwable ignored) { }
             while (openKey.wasPressed()) {
                 if (client.currentScreen == null) client.setScreen(new ModMenuScreen());
+            }
+            while (grabKey.wasPressed()) {
+                if (client.currentScreen == null && client.player != null) client.setScreen(new EditScreen(null, null));
             }
             while (waypointKey.wasPressed()) {
                 if (client.currentScreen != null || client.player == null || !Modules.byId("waypoint").enabled()) continue;
