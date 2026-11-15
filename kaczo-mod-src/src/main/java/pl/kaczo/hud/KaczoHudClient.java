@@ -12,6 +12,9 @@ public class KaczoHudClient implements ClientModInitializer {
     public static KeyBinding openKey, freelookKey, waypointKey, grabKey;
 
     @Override
+    private static final boolean CI_SPATIAL = System.getenv("KACZO_SPATIALMENU") != null;
+    private static int ciTicks;
+
     public void onInitializeClient() {
         Config.load();
         try { Glass.init(); } catch (Throwable ignored) { }
@@ -22,6 +25,9 @@ public class KaczoHudClient implements ClientModInitializer {
 
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
             try { SpatialMenu.tick(client); } catch (Throwable ignored) { }
+            if (CI_SPATIAL && client.player != null && client.currentScreen == null && !SpatialMenu.isOpen() && ++ciTicks == 900) {
+                try { SpatialMenu.toggle(client); } catch (Throwable t) { t.printStackTrace(); }
+            }
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             try { Modules.tick(client); } catch (Throwable ignored) { /* moduł nie może wywrócić gry */ }
