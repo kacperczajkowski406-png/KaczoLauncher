@@ -20,14 +20,15 @@ public class KaczoHudClient implements ClientModInitializer {
         grabKey = KeyBindingHelper.registerKeyBinding(Compat.newKey("key.kaczohud.grab", GLFW.GLFW_KEY_G));
         waypointKey = KeyBindingHelper.registerKeyBinding(Compat.newKey("key.kaczohud.waypoint", GLFW.GLFW_KEY_B));
 
+        ClientTickEvents.START_CLIENT_TICK.register(client -> {
+            try { SpatialMenu.tick(client); } catch (Throwable ignored) { }
+        });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             try { Modules.tick(client); } catch (Throwable ignored) { /* moduł nie może wywrócić gry */ }
             try { ShaderCtl.tick(client); } catch (Throwable ignored) { }
             while (openKey.wasPressed()) {
-                if (client.currentScreen == null) client.setScreen(new ModMenuScreen());
-            }
-            while (grabKey.wasPressed()) {
-                if (client.currentScreen == null && client.player != null) client.setScreen(new EditScreen(null, null));
+                if (client.currentScreen == null && client.player != null && SpatialMenu.enabled()) SpatialMenu.toggle(client);
+                else if (client.currentScreen == null) client.setScreen(new ModMenuScreen());
             }
             while (waypointKey.wasPressed()) {
                 if (client.currentScreen != null || client.player == null || !Modules.byId("waypoint").enabled()) continue;

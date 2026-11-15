@@ -62,7 +62,7 @@ public final class Glass {
     }
 
     /** Włączane tylko na czas rysowania własnych elementów moda na ekranie tytułowym (stopki Mojang zostają w zwykłej czcionce). */
-    private static boolean forceUi;
+    public static boolean forceUi;
     private static boolean autoDone;
     private static Screen testScreen(String k) {
         if ("wall".equals(k)) return new WallpaperScreen(null);

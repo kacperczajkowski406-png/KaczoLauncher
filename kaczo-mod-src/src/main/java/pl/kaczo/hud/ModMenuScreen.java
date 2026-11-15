@@ -27,6 +27,11 @@ public class ModMenuScreen extends KScreen {
     /** Przesunięcie okna menu (można je „chwycić” za górny pasek i przenieść). */
     private static double offX, offY;
     private boolean grabbing;
+    /** true, gdy menu jest osadzone w świecie (SpatialMenu), a nie otwarte jako zwykły ekran. */
+    boolean embedded;
+    boolean spatialClick(double x, double y, int b) { return onClick(x, y, b); }
+    boolean spatialDrag(double x, double y, double dx, double dy) { return onDrag(x, y, 0, dx, dy); }
+    boolean spatialRelease(double x, double y) { return onRelease(x, y, 0); }
     private SettingsPanel drawer = null;
     private SettingsPanel general = null;
     private final List<Module> shown = new ArrayList<>();
@@ -97,17 +102,17 @@ public class ModMenuScreen extends KScreen {
         TextRenderer tr = client.textRenderer;
         // tło: gra / tapeta menu zostaje widoczna, tylko lekko przyciemniona i rozmyta światłem
         // za panelem zwykła gra (albo zwykłe menu główne) – żadnej osobnej tapety
-        if (client.world == null) {                      // menu główne: zwykła panorama Minecrafta
+        if (client.world == null && !embedded) {                      // menu główne: zwykła panorama Minecrafta
             try { renderBackground(ctx, -1, -1, delta); } catch (Throwable ignored) { }
         }
-        ctx.fill(0, 0, width, height, f(0x48000000));
+        if (!embedded) ctx.fill(0, 0, width, height, f(0x48000000));
         mx = Math.round(mx / S); my = Math.round(my / S);
         Compat.push(ctx);
         Compat.scale(ctx, S, S);
         Ui.extra = S;
         try {
             float pop = 0.94f + 0.06f * anim;                 // panel „wyskakuje” z lekkim powiększeniem
-            Tilt3D.begin(ctx, mx, my, wx + ww / 2.0, wy + wh / 2.0, ww, wh);
+            if (!embedded) Tilt3D.begin(ctx, mx, my, wx + ww / 2.0, wy + wh / 2.0, ww, wh);
             Compat.push(ctx);
             Compat.translate(ctx, vw / 2f * (1 - pop), vh / 2f * (1 - pop));
             Compat.scale(ctx, pop, pop);
@@ -491,6 +496,7 @@ public class ModMenuScreen extends KScreen {
 
     @Override
     public void close() {
+        if (embedded) { SpatialMenu.close(); return; }
         Config.save();
         client.setScreen(null);
     }

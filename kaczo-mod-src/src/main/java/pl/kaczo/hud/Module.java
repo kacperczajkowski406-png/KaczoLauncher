@@ -116,9 +116,9 @@ public class Module {
     /** Tło elementu HUD (0, gdy wyłączone). */
     public int bg() { return bool("bg") ? color("bgc") : 0; }
 
-    public int x() { if (hud && Spatial.on()) return Spatial.topLeft(this)[0]; int v = Config.st(id).x; return v < 0 ? defX : v; }
-    public int y() { if (hud && Spatial.on()) return Spatial.topLeft(this)[1]; int v = Config.st(id).y; return v < 0 ? defY : v; }
-    public void setPos(int x, int y) { if (hud && Spatial.on()) { Spatial.drag(this, x, y); return; } Config.st(id).x = x; Config.st(id).y = y; }
+    public int x() { int v = Config.st(id).x; return v < 0 ? defX : v; }
+    public int y() { int v = Config.st(id).y; return v < 0 ? defY : v; }
+    public void setPos(int x, int y) { Config.st(id).x = x; Config.st(id).y = y; }
 
     public float scale() { return hud ? num("scale") / 100f : 1f; }
 
