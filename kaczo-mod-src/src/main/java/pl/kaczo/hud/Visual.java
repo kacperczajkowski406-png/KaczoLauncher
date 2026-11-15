@@ -194,8 +194,7 @@ public final class Visual {
             Ui.rrectD(ctx, bx, by, bw, 5, 2.5, Ui.fade(0x40FFFFFF, ba));
             Ui.rrectD(ctx, bx, by, Math.max(5, bw * pr), 5, 2.5, Ui.fade(0xFFFFFFFF, ba));
             Ui.rrectD(ctx, bx + Math.max(5, bw * pr) - 7, by - 3, 9, 11, 4.5, Ui.fade(0x66FFFFFF, ba));
-            String pt = Math.round(pr * 100) + "%";
-            ctx.drawText(mc.textRenderer, pt, cx - mc.textRenderer.getWidth(pt) / 2, by + 11, Ui.fade(0xFFC8D0E0, ba), false);
+            // bez tekstu: w trakcie ładowania zasobów czcionki/shadery tekstu nie są jeszcze gotowe
         }
         // błyski gwiazdek wokół logo
         for (int i = 0; i < 6; i++) {
