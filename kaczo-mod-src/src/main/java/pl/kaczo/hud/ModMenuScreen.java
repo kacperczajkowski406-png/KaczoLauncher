@@ -1,5 +1,6 @@
 package pl.kaczo.hud;
 
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.MinecraftClient;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.font.TextRenderer;
