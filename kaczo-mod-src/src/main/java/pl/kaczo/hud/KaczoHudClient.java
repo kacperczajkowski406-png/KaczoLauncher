@@ -11,10 +11,10 @@ import org.lwjgl.glfw.GLFW;
 public class KaczoHudClient implements ClientModInitializer {
     public static KeyBinding openKey, freelookKey, waypointKey, grabKey;
 
-    @Override
     private static final boolean CI_SPATIAL = System.getenv("KACZO_SPATIALMENU") != null;
     private static int ciTicks;
 
+    @Override
     public void onInitializeClient() {
         Config.load();
         try { Glass.init(); } catch (Throwable ignored) { }
