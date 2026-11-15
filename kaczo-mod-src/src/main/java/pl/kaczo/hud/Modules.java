@@ -39,6 +39,7 @@ public class Modules {
     static {
         GENERAL.add(Setting.header("3D GUI"));
         GENERAL.add(Setting.bool("gui3d", "3D GUI (panels tilt toward the cursor)", true));
+        GENERAL.add(Setting.bool("spatial", "Spatial HUD (windows float in the world, move them in Edit HUD)", false));
         GENERAL.add(Setting.header("Font"));
         GENERAL.add(Setting.choice("font", "Mod font (not chat / Esc menu)", 0, Glass.FONTS));
         GENERAL.add(Setting.header("Title screen"));

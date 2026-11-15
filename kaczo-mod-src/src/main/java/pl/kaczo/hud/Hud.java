@@ -20,6 +20,28 @@ public class Hud {
     }
 
     public static void drawModule(DrawContext ctx, MinecraftClient mc, Module m, int x, int y) {
+        if (m.hud && Spatial.on()) { drawSpatial(ctx, mc, m, x, y); return; }
+        drawFlat(ctx, mc, m, x, y);
+    }
+
+    /** Okno w przestrzeni: szklana płyta, uchwyt do chwytania i zwężenie przy patrzeniu pod kątem (perspektywa). */
+    private static void drawSpatial(DrawContext ctx, MinecraftClient mc, Module m, int x, int y) {
+        if (x < -5000) return;
+        int w = Math.round(m.width(mc) * m.scale()), h = Math.round(m.height(mc) * m.scale());
+        double[] a = Spatial.angles(m);
+        float sx = (float) Math.max(0.3, Math.cos(Math.toRadians(a[0]))), sy = (float) Math.max(0.3, Math.cos(Math.toRadians(a[1])));
+        float cx = x + w / 2f, cy = y + h / 2f;
+        Compat.push(ctx);
+        Compat.translate(ctx, cx, cy);
+        Compat.scale(ctx, sx, sy);
+        Compat.translate(ctx, -cx, -cy);
+        Ui.glass(ctx, x - 6, y - 5, w + 12, h + 10, 10, 0x66101820);
+        drawFlat(ctx, mc, m, x, y);
+        Ui.rrectD(ctx, x + w / 2.0 - 14, y + h + 8, 28, 3, 1.5, 0x88FFFFFF);       // uchwyt – za niego „łapiesz” okno
+        Compat.pop(ctx);
+    }
+
+    private static void drawFlat(DrawContext ctx, MinecraftClient mc, Module m, int x, int y) {
         float s = m.scale();
         boolean pi = Glass.inHud; int pf = Glass.hudFont;
         Glass.inHud = true; Glass.hudFont = m.has("font") && m.num("font") > 0 ? m.num("font") - 1 : -1;
