@@ -33,11 +33,14 @@ public class ModMenuScreen extends KScreen {
     boolean embedded;
     void embed(MinecraftClient mc, int w, int h) {
         try {
-            for (java.lang.reflect.Method m : Screen.class.getDeclaredMethods())
-                if (m.getName().equals("init") && m.getParameterCount() == 3 && m.getParameterTypes()[0] == MinecraftClient.class) { m.setAccessible(true); m.invoke(this, mc, w, h); return; }
+            for (java.lang.reflect.Method m : Screen.class.getDeclaredMethods()) {
+                Class<?>[] t = m.getParameterTypes();
+                if (t.length == 3 && t[0] == MinecraftClient.class && t[1] == int.class && t[2] == int.class) { m.setAccessible(true); m.invoke(this, mc, w, h); return; }
+            }
         } catch (Throwable ignored) { }
         try {
-            java.lang.reflect.Field f = Screen.class.getDeclaredField("client"); f.setAccessible(true); f.set(this, mc);
+            for (java.lang.reflect.Field f : Screen.class.getDeclaredFields())
+                if (f.getType() == MinecraftClient.class) { f.setAccessible(true); f.set(this, mc); }
         } catch (Throwable ignored) { }
         this.width = w; this.height = h; init();
     }
