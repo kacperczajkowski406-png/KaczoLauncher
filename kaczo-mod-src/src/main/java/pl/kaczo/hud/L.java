@@ -69,7 +69,7 @@ public class L {
             {"Animated title background", "Animowane tło ekranu tytułowego"}, {"Custom loading screen", "Własny ekran ładowania"},
             {"Lines", "Linijki"}, {"Min width", "Min. szerokość"},
             {"Favorites", "Ulubione"}, {"Visual", "Wizualne"}, {"Modules", "Moduły"}, {"Appearance", "Wygląd"}, {"Edit HUD", "Edytor HUD"}, {"About", "O modzie"},
-            {"Esc = close", "Esc = zamknij"}, {"modules", "modułów"}, {"enabled", "włączonych"}, {"NEW", "NOWE"},
+            {"Right Shift = close  |  G = move", "Prawy Shift = zamknij  |  G = przesuń"}, {"Esc = close", "Esc = zamknij"}, {"modules", "modułów"}, {"enabled", "włączonych"}, {"NEW", "NOWE"},
             {"Look and behaviour of the whole client", "Wygląd i zachowanie całego klienta"},
             {"Right Shift – open this menu anywhere in the game.", "Prawy Shift – otwiera to menu w dowolnym miejscu gry."},
             {"Edit HUD: drag elements, right-click an element to configure it.", "Edytor HUD: przeciągaj elementy, a prawym przyciskiem otwierasz ich ustawienia."},

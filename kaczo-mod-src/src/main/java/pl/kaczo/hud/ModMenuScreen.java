@@ -173,7 +173,7 @@ public class ModMenuScreen extends KScreen {
         if (expanded()) {
             String v = version();
             ctx.drawText(tr, "v" + v, wx + 14, wy + wh - 24, f(0xFF707070), false);
-            ctx.drawText(tr, L.t("Esc = close"), wx + 14, wy + wh - 15, f(0xFF707070), false);
+            ctx.drawText(tr, L.t(embedded ? "Right Shift = close  |  G = move" : "Esc = close"), wx + 14, wy + wh - 15, f(0xFF707070), false);
         }
     }
 
