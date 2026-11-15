@@ -26,7 +26,7 @@ final class SpatialMenu {
         if (mc.player == null) return;
         menu = new ModMenuScreen();
         menu.embedded = true;
-        menu.init(mc, PW, PH);
+        menu.embed(mc, PW, PH);
         yaw0 = mc.player.getYaw();
         pitch0 = Math.max(-35, Math.min(35, mc.player.getPitch()));
         down0 = down1 = grabbing = false;

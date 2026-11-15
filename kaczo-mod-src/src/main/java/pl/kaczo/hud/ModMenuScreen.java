@@ -1,5 +1,6 @@
 package pl.kaczo.hud;
 
+import net.minecraft.client.MinecraftClient;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -29,6 +30,7 @@ public class ModMenuScreen extends KScreen {
     private boolean grabbing;
     /** true, gdy menu jest osadzone w świecie (SpatialMenu), a nie otwarte jako zwykły ekran. */
     boolean embedded;
+    void embed(MinecraftClient mc, int w, int h) { this.client = mc; this.width = w; this.height = h; init(); }
     boolean spatialClick(double x, double y, int b) { return onClick(x, y, b); }
     boolean spatialDrag(double x, double y, double dx, double dy) { return onDrag(x, y, 0, dx, dy); }
     boolean spatialRelease(double x, double y) { return onRelease(x, y, 0); }
